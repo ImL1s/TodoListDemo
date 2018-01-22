@@ -1,0 +1,116 @@
+/*  把padding和border算入寬度 */
+* {
+    box-sizing: border-box;
+}
+/* 消除List裡的margin和padding */
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+/* 設置li樣式 */
+ul li {
+    cursor: pointer;
+    position: relative;
+    /* 代表每個li內部距離(上 右 下 左) */
+    padding: 12px 8px 12px 40px;
+    /* margin: 10px 0px 0px 0px; */
+    background: #eee;
+    font-size: 18px;
+    /* 當有類似css hover動畫效果時的漸變時間 */
+    transition: 0.2s;
+    -moz-transition:width 0.2s; /* Firefox 4 */
+    -webkit-transition:width 0.2s; /* Safari and Chrome */
+    -o-transition:width 0.2s; /* Opera */
+    user-select: none; /*使用者不能選中文字*/
+}
+
+/* 奇數li顏色不同，為了美觀 */
+/* nth-child為 第n個th(3th,4th...)的子元素 */
+/* odd為基數*/
+ul li:nth-child(odd) {
+    background: #f9f9f9;
+}
+
+/* hover時背景色改變 */
+ul li:hover {
+    background: #ddd;
+}
+
+/* 當被選中，文字中加橫線 */
+ul li.checked {
+    background: #888;
+    color: #fff;
+    /* 文字裝飾 line-through為刪除線 */
+    text-decoration: line-through;
+}
+
+/* 為被選中的li增加 “對勾” 圖標 */
+ul li.checked::before {
+    content: '';
+    position: absolute;
+    border-color: #fff;
+    border-style: solid;
+    border-width: 0 2px 2px 0;
+    top: 10px;
+    left: 16px;
+    transform: rotate(45deg);
+    height: 15px;
+    width: 7px;
+}
+
+/* 關閉按鈕樣式 */
+.close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 12px 16px 12px 16px
+}
+
+.close:hover {
+    background-color: #f44336;
+    color: white;
+}
+
+/* 頭部樣式 */
+/* .header {
+    background-color: #f44336;
+    padding: 30px 40px;
+    color: white;
+    text-align: center;
+} */
+
+/* 清除浮動 */
+/* .header:after {
+    content: "";
+    display: table;
+    clear: both;
+} */
+
+/* 輸入框樣式 */
+/* input {
+    border: none;
+    width: 75%;
+    padding: 10px;
+    float: left;
+    font-size: 16px;
+    outline: 0;
+} */
+
+/* “添加”按鈕樣式 */
+/* .addBtn {
+    padding: 9px 10px 8px;
+    width: 25%;
+    background: #d9d9d9;
+    color: #555;
+    float: left;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+} */
+
+/* .addBtn:hover {
+    background-color: #bbb;
+} */

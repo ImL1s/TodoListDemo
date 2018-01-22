@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <!-- 屬性值常見有三種，分別為 content-type、default-style、refresh，
+        其中 content-type 用來設定網頁編碼、default-style 用來設定預設樣式、
+        refresh 則用來設定自動更新時間，無論是使用哪一種屬性值，都必須搭配一個 content，
+        來告訴瀏覽器內容是什麼，整個 HTML meta http-equiv 必須寫在 HTML head 的區域內，
+        三種屬性可以寫在同一個網頁內。 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- <meta http-equiv="refresh" content="10"> -->
+    <title>Hello</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="./todo_list.css" />
+    <script src="./todo_list.js"></script>
+</head>
+
+<body>
+    <!-- 任務輸入框 -->
+    <div id="myDIV" class="header">
+        <h2>任務清單</h2>
+        <input type="text" id="myInput" placeholder="請輸入任務">
+        <span id="addButton" class="addBtn">添加</span>
+    </div>
+
+    <!-- 任務列表 -->
+    <ul id="myUL">
+        <li>七點半起床</li>
+        <li class="checked">洗漱</li>
+        <li>去上班</li>
+        <li>完成報表</li>
+        <li>和小明吃午飯</li>
+        <li>去超市</li>
+    </ul>
+</body>
+
+</html>
