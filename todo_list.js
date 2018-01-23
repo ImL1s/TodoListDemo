@@ -1,4 +1,4 @@
-return;
+
 window.onload = function() {
     var i; /*index*/
     
@@ -8,8 +8,9 @@ window.onload = function() {
       for (i = 0; i < myNodelist.length; i++) {
         var span = document.createElement("span");
         var txt = document.createTextNode("\u00D7"); /*unicode代碼*/
+        span.appendChild(txt);       
+        // same with ->  span.innerHTML = "\u00D7";
         span.className = "close";
-        span.appendChild(txt);
         myNodelist[i].appendChild(span);
       }
     }
@@ -29,6 +30,7 @@ window.onload = function() {
     function ifChecked() {
       var list = document.querySelector('ul');
       list.onclick = function(ev) {
+        // tagName是大寫,規定的
         if (ev.target.tagName === 'LI') {
           ev.target.classList.toggle('checked');
         }
