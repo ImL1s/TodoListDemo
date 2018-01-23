@@ -73,19 +73,19 @@ ul li.checked::before {
 }
 
 /* 頭部樣式 */
-/* .header {
+.header {
     background-color: #f44336;
     padding: 30px 40px;
     color: white;
     text-align: center;
-} */
+}
 
 /* 清除浮動 */
-/* .header:after {
+.header:after {
     content: "";
     display: table;
     clear: both;
-} */
+}
 
 /* 輸入框樣式 */
 /* input {
