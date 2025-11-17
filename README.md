@@ -11,7 +11,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
-[📖 完整規劃](./PROJECT_PLAN.md) | [🔍 技術對比](./TECH_COMPARISON.md) | [🎓 學習路線](./LEARNING_PATH.md)
+[📖 完整規劃](./PROJECT_PLAN.md) | [🔍 技術對比](./TECH_COMPARISON.md) | [🎓 學習路線](./LEARNING_PATH.md) | [📊 當前進度](./PROGRESS.md)
 
 </div>
 
@@ -45,7 +45,7 @@ Todo List 是學習新技術的**完美載體**:
 #### 原生開發 (4 種)
 - ✅ HTML/CSS/JavaScript (已完成)
 - jQuery
-- TypeScript
+- ✅ TypeScript (已完成)
 - Web Components
 
 #### 經典框架 (4 種)
@@ -55,9 +55,9 @@ Todo List 是學習新技術的**完美載體**:
 - Polymer
 
 #### 現代框架 (12 種)
-- React 18
+- ✅ React 18 (已完成)
 - React + TypeScript
-- Vue 3
+- ✅ Vue 3 (已完成)
 - Vue 3 + TypeScript
 - Angular 17+
 - Svelte
