@@ -1,0 +1,18 @@
+{
+  "name": "todo-list-vue3",
+  "version": "1.0.0",
+  "description": "Todo List implemented with Vue 3 Composition API",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.3.11"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.2",
+    "vite": "^5.0.8"
+  }
+}

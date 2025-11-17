@@ -1,0 +1,207 @@
+/* 全局樣式 */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+/* 頭部樣式 */
+.header {
+    background-color: #f44336;
+    padding: 30px 40px;
+    color: white;
+    text-align: center;
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    margin-top: 50px;
+}
+
+.header h2 {
+    margin-bottom: 20px;
+    font-size: 28px;
+}
+
+.tech-badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: normal;
+    margin-left: 10px;
+}
+
+.header:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* 輸入框樣式 */
+input {
+    border: none;
+    width: 75%;
+    padding: 12px;
+    float: left;
+    font-size: 16px;
+    outline: none;
+    border-radius: 4px 0 0 4px;
+}
+
+input:focus {
+    background: #f0f0f0;
+}
+
+/* 添加按鈕樣式 */
+.addBtn {
+    padding: 12px 10px;
+    width: 25%;
+    background: #d9d9d9;
+    color: #555;
+    float: left;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    border-radius: 0 4px 4px 0;
+    user-select: none;
+}
+
+.addBtn:hover {
+    background-color: #bbb;
+}
+
+.addBtn:active {
+    transform: scale(0.98);
+}
+
+/* 列表容器 */
+ul {
+    margin: 0;
+    padding: 0;
+    background: white;
+    width: 100%;
+    max-width: 600px;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* 列表項樣式 */
+ul li {
+    cursor: pointer;
+    position: relative;
+    padding: 16px 16px 16px 50px;
+    background: #fff;
+    font-size: 18px;
+    transition: 0.2s;
+    list-style-type: none;
+    border-bottom: 1px solid #f0f0f0;
+    user-select: none;
+}
+
+ul li:last-child {
+    border-bottom: none;
+}
+
+/* 奇數項背景色 */
+ul li:nth-child(odd) {
+    background: #f9f9f9;
+}
+
+/* Hover 效果 */
+ul li:hover {
+    background: #ddd;
+}
+
+/* 完成狀態 */
+ul li.checked {
+    background: #888;
+    color: #fff;
+    text-decoration: line-through;
+}
+
+ul li.checked:hover {
+    background: #777;
+}
+
+/* 完成狀態的對勾圖標 */
+ul li.checked::before {
+    content: '';
+    position: absolute;
+    border-color: #fff;
+    border-style: solid;
+    border-width: 0 2px 2px 0;
+    top: 18px;
+    left: 20px;
+    transform: rotate(45deg);
+    height: 18px;
+    width: 9px;
+}
+
+/* 關閉按鈕 */
+.close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 16px 20px;
+    color: #999;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.close:hover {
+    background-color: #f44336;
+    color: white;
+}
+
+/* 響應式設計 */
+@media (max-width: 600px) {
+    .header {
+        padding: 20px 20px;
+        margin-top: 20px;
+    }
+
+    .header h2 {
+        font-size: 22px;
+    }
+
+    ul li {
+        padding: 14px 14px 14px 45px;
+        font-size: 16px;
+    }
+
+    input {
+        width: 70%;
+        font-size: 14px;
+    }
+
+    .addBtn {
+        width: 30%;
+        font-size: 14px;
+    }
+}
+
+/* 空狀態提示 */
+ul:empty::after {
+    content: "還沒有任務，添加一個吧！";
+    display: block;
+    text-align: center;
+    padding: 40px;
+    color: #999;
+    font-style: italic;
+}
