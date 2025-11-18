@@ -1,0 +1,37 @@
+name: flutter_riverpod_todo
+description: A Todo List app demonstrating Flutter with Riverpod state management
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Riverpod - Modern state management solution
+  flutter_riverpod: ^2.4.9
+
+  # For immutable data models
+  freezed_annotation: ^2.4.1
+
+  # UUID generation for unique IDs
+  uuid: ^4.2.2
+
+  # Material Design icons
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # Code generation tools for freezed
+  build_runner: ^2.4.7
+  freezed: ^2.4.6
+
+  # Linting
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true

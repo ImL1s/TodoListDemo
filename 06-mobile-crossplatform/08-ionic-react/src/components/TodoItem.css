@@ -1,0 +1,86 @@
+.todo-item {
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --min-height: 60px;
+  border-bottom: 1px solid var(--ion-color-light);
+}
+
+.todo-item:last-child {
+  border-bottom: none;
+}
+
+.todo-item.completed {
+  opacity: 0.7;
+  background-color: var(--ion-color-light);
+}
+
+.todo-checkbox {
+  margin-right: 12px;
+  --size: 24px;
+  --border-radius: 50%;
+}
+
+.todo-label {
+  margin: 8px 0;
+}
+
+.todo-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.todo-text p {
+  margin: 0;
+  font-size: 1rem;
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+.strikethrough {
+  text-decoration: line-through;
+}
+
+.check-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.todo-date {
+  font-size: 0.75rem;
+  margin: 4px 0 0;
+}
+
+.delete-button {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  margin-left: 8px;
+}
+
+/* iOS specific styles */
+.ios .todo-checkbox {
+  --border-width: 2px;
+}
+
+/* Material Design specific styles */
+.md .todo-checkbox {
+  --border-width: 2px;
+  --border-radius: 4px;
+}
+
+@media (max-width: 576px) {
+  .todo-item {
+    --padding-start: 8px;
+    --padding-end: 8px;
+  }
+
+  .todo-text p {
+    font-size: 0.95rem;
+  }
+
+  .delete-button {
+    --padding-start: 4px;
+    --padding-end: 4px;
+  }
+}

@@ -1,0 +1,331 @@
+/* 基礎樣式重置 */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Alpine.js cloak - 防止載入時閃爍 */
+[x-cloak] {
+    display: none !important;
+}
+
+/* 頭部樣式 */
+.header {
+    background-color: #f44336;
+    padding: 30px 40px;
+    color: white;
+    text-align: center;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header h2 {
+    margin: 0 0 20px 0;
+    font-size: 32px;
+    font-weight: 600;
+}
+
+/* 清除浮動 */
+.header:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* 輸入框樣式 */
+input[type="text"] {
+    border: none;
+    width: 75%;
+    padding: 12px 16px;
+    float: left;
+    font-size: 16px;
+    outline: none;
+    border-radius: 4px 0 0 4px;
+    transition: box-shadow 0.3s;
+}
+
+input[type="text"]:focus {
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+/* "添加"按鈕樣式 */
+.addBtn {
+    padding: 12px 16px;
+    width: 25%;
+    background: #d9d9d9;
+    color: #555;
+    float: left;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border: none;
+    border-radius: 0 4px 4px 0;
+}
+
+.addBtn:hover {
+    background-color: #bbb;
+}
+
+.addBtn:active {
+    transform: scale(0.98);
+}
+
+/* 過濾器樣式 */
+.filters {
+    background: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    background: #f5f5f5;
+    color: #666;
+    border: 2px solid transparent;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.filter-btn:hover {
+    background: #e0e0e0;
+}
+
+.filter-btn.active {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+/* 任務列表容器 */
+ul {
+    list-style-type: none;
+    background: white;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* 滾動條樣式 */
+ul::-webkit-scrollbar {
+    width: 8px;
+}
+
+ul::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+ul::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+ul::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* 設置li樣式 */
+ul li {
+    cursor: pointer;
+    position: relative;
+    padding: 14px 50px 14px 45px;
+    background: #fafafa;
+    font-size: 16px;
+    transition: all 0.2s;
+    user-select: none;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+}
+
+/* 奇數li顏色不同 */
+ul li:nth-child(even) {
+    background: #fff;
+}
+
+/* hover時背景色改變 */
+ul li:hover {
+    background: #f0f0f0;
+    padding-left: 50px;
+}
+
+/* 當被選中，文字加橫線 */
+ul li.checked {
+    background: #e8f5e9;
+    color: #4caf50;
+    text-decoration: line-through;
+}
+
+ul li.checked:hover {
+    background: #c8e6c9;
+}
+
+/* 為被選中的li增加"對勾"圖標 */
+ul li.checked::before {
+    content: '';
+    position: absolute;
+    border-color: #4caf50;
+    border-style: solid;
+    border-width: 0 3px 3px 0;
+    top: 50%;
+    left: 18px;
+    transform: translateY(-50%) rotate(45deg);
+    height: 16px;
+    width: 8px;
+}
+
+/* 關閉按鈕樣式 */
+.close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #999;
+    transition: all 0.3s;
+}
+
+.close:hover {
+    background-color: #f44336;
+    color: white;
+}
+
+/* 空狀態樣式 */
+.empty-state {
+    background: white;
+    padding: 60px 20px;
+    text-align: center;
+    color: #999;
+    font-size: 16px;
+}
+
+.empty-state p {
+    margin: 0;
+}
+
+/* 底部操作欄 */
+.footer {
+    background: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.todo-count {
+    color: #666;
+    font-size: 14px;
+}
+
+.todo-count span {
+    font-weight: bold;
+    color: #f44336;
+}
+
+.clear-btn {
+    padding: 8px 16px;
+    background: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.clear-btn:hover {
+    background: #d32f2f;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(244, 67, 54, 0.3);
+}
+
+.clear-btn:active {
+    transform: translateY(0);
+}
+
+/* 響應式設計 */
+@media (max-width: 600px) {
+    .header {
+        padding: 20px 20px;
+    }
+
+    .header h2 {
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+
+    input[type="text"] {
+        width: 70%;
+        font-size: 14px;
+    }
+
+    .addBtn {
+        width: 30%;
+        font-size: 14px;
+    }
+
+    .filters {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .filter-btn {
+        width: 100%;
+    }
+
+    ul li {
+        font-size: 14px;
+        padding: 12px 45px 12px 40px;
+    }
+
+    .footer {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .clear-btn {
+        width: 100%;
+    }
+}
+
+/* 動畫效果 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+ul li {
+    animation: fadeIn 0.3s ease-out;
+}

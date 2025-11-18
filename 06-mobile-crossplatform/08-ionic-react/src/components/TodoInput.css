@@ -1,0 +1,26 @@
+.todo-input-card {
+  margin: 16px 0;
+}
+
+.input-item {
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-end: 0;
+}
+
+.todo-input {
+  font-size: 1rem;
+  --padding-start: 12px;
+  --padding-end: 12px;
+}
+
+ion-button[type="submit"] {
+  margin-left: 8px;
+  --border-radius: 8px;
+}
+
+@media (max-width: 576px) {
+  ion-button[type="submit"] {
+    font-size: 0.9rem;
+  }
+}

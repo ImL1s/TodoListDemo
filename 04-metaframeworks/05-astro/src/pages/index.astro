@@ -1,0 +1,70 @@
+---
+// Astro component (runs at build time, zero JS by default)
+import TodoInput from '../components/TodoInput';
+import TodoList from '../components/TodoList';
+import FrameworkBadge from '../components/FrameworkBadge.vue';
+import '../styles/global.css';
+
+// This runs at BUILD TIME (SSG)
+const buildTime = new Date().toLocaleString('zh-TW');
+
+// Page metadata (for SEO)
+const pageTitle = 'Astro Todo List';
+const pageDescription = 'Zero-JS default, partial hydration, multi-framework Todo List built with Astro';
+---
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={pageDescription} />
+    <title>{pageTitle}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <main class="container">
+      <div class="todo-app">
+        <!-- Static header (no JS, rendered at build time) -->
+        <header class="app-header">
+          <h1>Astro Todo List</h1>
+          <p class="subtitle">Zero JS Default | Partial Hydration | Multi-Framework</p>
+
+          <!-- Vue component with partial hydration (client:visible) -->
+          <!-- Only loads JS when component becomes visible -->
+          <FrameworkBadge client:visible />
+        </header>
+
+        <div class="todo-content">
+          <!--
+            React component with partial hydration (client:load)
+            Loads and hydrates immediately on page load
+
+            Other hydration strategies:
+            - client:idle - Load when browser is idle
+            - client:visible - Load when component is visible
+            - client:media - Load based on media query
+            - client:only - Only render on client (skip SSR)
+          -->
+          <TodoInput client:load />
+
+          <!-- React component with partial hydration (client:load) -->
+          <TodoList client:load />
+        </div>
+
+        <!-- Static footer (no JS, pure HTML) -->
+        <footer class="app-footer">
+          <p>
+            Built with <strong>Astro</strong> - Islands Architecture<br />
+            <span class="build-info">Built at: {buildTime}</span>
+          </p>
+          <div class="features">
+            <span class="feature-tag">🏝️ Island Architecture</span>
+            <span class="feature-tag">⚡ Zero JS Default</span>
+            <span class="feature-tag">🎨 Multi-Framework</span>
+          </div>
+        </footer>
+      </div>
+    </main>
+  </body>
+</html>

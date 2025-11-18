@@ -1,0 +1,43 @@
+.todo-list-container {
+  margin-bottom: 24px;
+}
+
+.empty-state {
+  text-align: center;
+  margin: 32px 0;
+}
+
+.empty-message {
+  padding: 0 16px 24px;
+}
+
+.empty-message p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.completed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.completed-header ion-card-title {
+  margin: 0;
+}
+
+ion-list {
+  padding: 0;
+}
+
+@media (max-width: 576px) {
+  .completed-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .completed-header ion-button {
+    width: 100%;
+  }
+}

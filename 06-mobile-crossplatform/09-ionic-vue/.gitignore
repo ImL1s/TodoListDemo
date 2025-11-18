@@ -1,0 +1,55 @@
+# Ionic
+www/
+platforms/
+plugins/
+
+# Capacitor
+ios/App/Pods
+ios/App/public
+ios/App/Podfile.lock
+android/app/src/main/assets/public
+android/.idea
+android/.gradle
+android/build
+android/gradle
+android/gradlew
+android/gradlew.bat
+android/local.properties
+android/app/build
+android/app/release
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Build
+dist/
+build/
+.vite/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Misc
+.env
+.env.local
+.env.*.local
+*.log
+
+# TypeScript
+*.tsbuildinfo
+
+# Testing
+coverage/
+.nyc_output/
+
+# Capacitor
+capacitor-config.json

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Todo Compose</string>
+    <string name="add_todo">Add Todo</string>
+    <string name="todo_hint">What needs to be done?</string>
+    <string name="clear_completed">Clear Completed</string>
+    <string name="all_tasks">All</string>
+    <string name="active_tasks">Active</string>
+    <string name="completed_tasks">Completed</string>
+    <string name="no_todos">No todos yet!</string>
+    <string name="items_left">%d items left</string>
+    <string name="delete_todo">Delete todo</string>
+    <string name="toggle_todo">Toggle todo completion</string>
+</resources>

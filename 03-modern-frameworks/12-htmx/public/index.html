@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>htmx Todo List - Hypermedia-Driven Application</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>Todo List</h1>
+      <div class="tech-badge">
+        <span class="tech-label">htmx</span>
+        <span class="tech-version">1.9+</span>
+      </div>
+      <p class="subtitle">Hypermedia-Driven • Zero JavaScript • HATEOAS</p>
+    </header>
+
+    <main class="main">
+      <!-- Add Todo Form -->
+      <form
+        class="add-todo-form"
+        hx-post="/todos"
+        hx-target="#todo-list"
+        hx-swap="afterbegin"
+        hx-on::after-request="if(event.detail.successful) this.reset()"
+      >
+        <input
+          type="text"
+          id="todo-input"
+          name="text"
+          class="todo-input"
+          placeholder="What needs to be done?"
+          autocomplete="off"
+          required
+        >
+        <button type="submit" class="add-btn">Add Todo</button>
+      </form>
+
+      <!-- Filter Tabs -->
+      <div class="filter-tabs">
+        <button
+          class="filter-tab active"
+          hx-get="/todos?filter=all"
+          hx-target="#todo-list"
+          hx-swap="innerHTML"
+          hx-trigger="click"
+          onclick="setActiveTab(this)"
+        >
+          All
+        </button>
+        <button
+          class="filter-tab"
+          hx-get="/todos?filter=active"
+          hx-target="#todo-list"
+          hx-swap="innerHTML"
+          hx-trigger="click"
+          onclick="setActiveTab(this)"
+        >
+          Active
+        </button>
+        <button
+          class="filter-tab"
+          hx-get="/todos?filter=completed"
+          hx-target="#todo-list"
+          hx-swap="innerHTML"
+          hx-trigger="click"
+          onclick="setActiveTab(this)"
+        >
+          Completed
+        </button>
+      </div>
+
+      <!-- Todo List -->
+      <ul
+        id="todo-list"
+        class="todo-list"
+        hx-get="/todos"
+        hx-trigger="load"
+        hx-swap="innerHTML"
+      >
+        <!-- Todos will be loaded here via htmx -->
+        <li class="loading">Loading todos...</li>
+      </ul>
+
+      <!-- Stats and Actions -->
+      <div class="footer">
+        <div
+          id="stats"
+          hx-get="/todos/stats"
+          hx-trigger="load, todoUpdate from:body"
+          hx-swap="innerHTML"
+        >
+          <div class="stats">
+            <span class="stat-item">Loading stats...</span>
+          </div>
+        </div>
+
+        <button
+          class="clear-completed-btn"
+          hx-post="/todos/clear-completed"
+          hx-target="#todo-list"
+          hx-swap="innerHTML"
+          hx-confirm="Clear all completed todos?"
+        >
+          Clear Completed
+        </button>
+      </div>
+    </main>
+
+    <!-- Info Section -->
+    <section class="info-section">
+      <h2>About htmx</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>🔄 Hypermedia-Driven</h3>
+          <p>Server returns HTML, not JSON. The server controls the UI.</p>
+        </div>
+        <div class="info-card">
+          <h3>⚡ Zero JavaScript</h3>
+          <p>No frontend framework needed. Pure declarative HTML attributes.</p>
+        </div>
+        <div class="info-card">
+          <h3>🎯 AJAX Anywhere</h3>
+          <p>Any element can make AJAX requests, not just forms and links.</p>
+        </div>
+        <div class="info-card">
+          <h3>🔌 Progressive Enhancement</h3>
+          <p>Works with standard forms. Gracefully degrades without JS.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it Works -->
+    <section class="how-it-works">
+      <h2>How This App Works</h2>
+      <div class="code-example">
+        <h3>1. Add Todo (hx-post)</h3>
+        <pre><code>&lt;form hx-post="/todos" hx-target="#todo-list" hx-swap="afterbegin"&gt;
+  &lt;input type="text" name="text" /&gt;
+  &lt;button type="submit"&gt;Add Todo&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+        <p class="explanation">
+          <strong>hx-post</strong>: Makes POST request to /todos<br>
+          <strong>hx-target</strong>: Targets #todo-list element<br>
+          <strong>hx-swap</strong>: Inserts response at beginning
+        </p>
+      </div>
+
+      <div class="code-example">
+        <h3>2. Toggle Complete (hx-post)</h3>
+        <pre><code>&lt;input type="checkbox"
+  hx-post="/todos/{id}/toggle"
+  hx-target="#todo-{id}"
+  hx-swap="outerHTML" /&gt;</code></pre>
+        <p class="explanation">
+          <strong>outerHTML</strong>: Replaces entire element with response<br>
+          Server returns updated todo HTML
+        </p>
+      </div>
+
+      <div class="code-example">
+        <h3>3. Delete Todo (hx-delete)</h3>
+        <pre><code>&lt;button
+  hx-delete="/todos/{id}"
+  hx-target="#todo-{id}"
+  hx-swap="outerHTML"
+  hx-confirm="Are you sure?"&gt;
+  Delete
+&lt;/button&gt;</code></pre>
+        <p class="explanation">
+          <strong>hx-delete</strong>: Makes DELETE request<br>
+          <strong>hx-confirm</strong>: Shows confirmation dialog<br>
+          Empty response removes the element
+        </p>
+      </div>
+
+      <div class="code-example">
+        <h3>4. Load on Demand (hx-trigger)</h3>
+        <pre><code>&lt;ul id="todo-list"
+  hx-get="/todos"
+  hx-trigger="load"
+  hx-swap="innerHTML"&gt;
+&lt;/ul&gt;</code></pre>
+        <p class="explanation">
+          <strong>hx-trigger="load"</strong>: Loads content when element appears<br>
+          Server returns HTML list items
+        </p>
+      </div>
+    </section>
+
+    <!-- htmx Attributes Reference -->
+    <section class="reference">
+      <h2>htmx Attributes Quick Reference</h2>
+      <table class="reference-table">
+        <thead>
+          <tr>
+            <th>Attribute</th>
+            <th>Purpose</th>
+            <th>Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>hx-get</code></td>
+            <td>Makes GET request</td>
+            <td><code>hx-get="/todos"</code></td>
+          </tr>
+          <tr>
+            <td><code>hx-post</code></td>
+            <td>Makes POST request</td>
+            <td><code>hx-post="/todos"</code></td>
+          </tr>
+          <tr>
+            <td><code>hx-delete</code></td>
+            <td>Makes DELETE request</td>
+            <td><code>hx-delete="/todos/1"</code></td>
+          </tr>
+          <tr>
+            <td><code>hx-put</code></td>
+            <td>Makes PUT request</td>
+            <td><code>hx-put="/todos/1"</code></td>
+          </tr>
+          <tr>
+            <td><code>hx-target</code></td>
+            <td>Specifies target element</td>
+            <td><code>hx-target="#todo-list"</code></td>
+          </tr>
+          <tr>
+            <td><code>hx-swap</code></td>
+            <td>How to swap response</td>
+            <td><code>hx-swap="innerHTML"</code></td>
+          </tr>
+          <tr>
+            <td><code>hx-trigger</code></td>
+            <td>What triggers request</td>
+            <td><code>hx-trigger="click"</code></td>
+          </tr>
+          <tr>
+            <td><code>hx-confirm</code></td>
+            <td>Confirmation dialog</td>
+            <td><code>hx-confirm="Are you sure?"</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer class="app-footer">
+      <p>Built with htmx • No frontend framework required</p>
+      <p>
+        <a href="https://htmx.org" target="_blank" rel="noopener">htmx.org</a> •
+        <a href="https://htmx.org/docs" target="_blank" rel="noopener">Documentation</a> •
+        <a href="https://htmx.org/examples" target="_blank" rel="noopener">Examples</a>
+      </p>
+    </footer>
+  </div>
+
+  <!-- Minimal JavaScript for UI enhancements only -->
+  <script>
+    // This is NOT application logic - just UI sugar for tab highlighting
+    function setActiveTab(clickedTab) {
+      document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      clickedTab.classList.add('active');
+    }
+
+    // Trigger stats update after todo operations
+    document.body.addEventListener('htmx:afterSwap', function(event) {
+      if (event.detail.target.id === 'todo-list' || event.detail.target.classList.contains('todo-item')) {
+        document.body.dispatchEvent(new Event('todoUpdate'));
+      }
+    });
+  </script>
+</body>
+</html>

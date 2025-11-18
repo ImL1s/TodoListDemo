@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List - Alpine.js</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Alpine.js CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body>
+    <!-- Alpine.js 應用容器 -->
+    <div x-data="todoApp()" @keydown.enter.window="addTodo" x-cloak>
+        <!-- 任務輸入框 -->
+        <div class="header">
+            <h2>任務清單</h2>
+            <input
+                type="text"
+                x-model="newTodo"
+                placeholder="請輸入任務"
+                @keydown.enter="addTodo"
+            >
+            <button @click="addTodo" class="addBtn">添加</button>
+        </div>
+
+        <!-- 過濾器選項 -->
+        <div class="filters">
+            <button
+                @click="filter = 'all'"
+                :class="{ 'active': filter === 'all' }"
+                class="filter-btn"
+            >
+                全部 (<span x-text="todos.length"></span>)
+            </button>
+            <button
+                @click="filter = 'active'"
+                :class="{ 'active': filter === 'active' }"
+                class="filter-btn"
+            >
+                進行中 (<span x-text="activeTodos.length"></span>)
+            </button>
+            <button
+                @click="filter = 'completed'"
+                :class="{ 'active': filter === 'completed' }"
+                class="filter-btn"
+            >
+                已完成 (<span x-text="completedTodos.length"></span>)
+            </button>
+        </div>
+
+        <!-- 任務列表 -->
+        <ul id="todoList">
+            <template x-for="todo in filteredTodos" :key="todo.id">
+                <li
+                    :class="{ 'checked': todo.completed }"
+                    @click="toggleTodo(todo.id)"
+                >
+                    <span x-text="todo.text"></span>
+                    <span
+                        class="close"
+                        @click.stop="deleteTodo(todo.id)"
+                    >×</span>
+                </li>
+            </template>
+        </ul>
+
+        <!-- 空狀態提示 -->
+        <div x-show="filteredTodos.length === 0" class="empty-state">
+            <p x-text="emptyMessage"></p>
+        </div>
+
+        <!-- 底部操作欄 -->
+        <div class="footer" x-show="todos.length > 0">
+            <span class="todo-count">
+                <span x-text="activeTodos.length"></span> 個任務待完成
+            </span>
+            <button
+                @click="clearCompleted"
+                x-show="completedTodos.length > 0"
+                class="clear-btn"
+            >
+                清除已完成
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Alpine.js 組件
+        function todoApp() {
+            return {
+                todos: [],
+                newTodo: '',
+                filter: 'all',
+
+                // 初始化 - 從 localStorage 讀取數據
+                init() {
+                    const savedTodos = localStorage.getItem('alpine-todos');
+                    if (savedTodos) {
+                        this.todos = JSON.parse(savedTodos);
+                    } else {
+                        // 預設任務
+                        this.todos = [
+                            { id: 1, text: '七點半起床', completed: false },
+                            { id: 2, text: '洗漱', completed: true },
+                            { id: 3, text: '去上班', completed: false },
+                            { id: 4, text: '完成報表', completed: false },
+                            { id: 5, text: '和小明吃午飯', completed: false },
+                            { id: 6, text: '去超市', completed: false }
+                        ];
+                    }
+
+                    // 監聽 todos 變化，自動保存到 localStorage
+                    this.$watch('todos', value => {
+                        localStorage.setItem('alpine-todos', JSON.stringify(value));
+                    });
+                },
+
+                // 添加任務
+                addTodo() {
+                    const text = this.newTodo.trim();
+                    if (text === '') {
+                        alert('請先輸入一個具體任務。');
+                        return;
+                    }
+
+                    this.todos.push({
+                        id: Date.now(),
+                        text: text,
+                        completed: false
+                    });
+
+                    this.newTodo = '';
+                },
+
+                // 切換任務狀態
+                toggleTodo(id) {
+                    const todo = this.todos.find(t => t.id === id);
+                    if (todo) {
+                        todo.completed = !todo.completed;
+                    }
+                },
+
+                // 刪除任務
+                deleteTodo(id) {
+                    this.todos = this.todos.filter(t => t.id !== id);
+                },
+
+                // 清除已完成任務
+                clearCompleted() {
+                    this.todos = this.todos.filter(t => !t.completed);
+                },
+
+                // 計算屬性：進行中的任務
+                get activeTodos() {
+                    return this.todos.filter(t => !t.completed);
+                },
+
+                // 計算屬性：已完成的任務
+                get completedTodos() {
+                    return this.todos.filter(t => t.completed);
+                },
+
+                // 計算屬性：根據過濾器顯示任務
+                get filteredTodos() {
+                    if (this.filter === 'active') {
+                        return this.activeTodos;
+                    } else if (this.filter === 'completed') {
+                        return this.completedTodos;
+                    }
+                    return this.todos;
+                },
+
+                // 計算屬性：空狀態提示訊息
+                get emptyMessage() {
+                    if (this.todos.length === 0) {
+                        return '還沒有任何任務，快來添加一個吧！';
+                    }
+                    if (this.filter === 'active' && this.activeTodos.length === 0) {
+                        return '太棒了！所有任務都已完成！';
+                    }
+                    if (this.filter === 'completed' && this.completedTodos.length === 0) {
+                        return '還沒有完成任何任務呢！';
+                    }
+                    return '';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
