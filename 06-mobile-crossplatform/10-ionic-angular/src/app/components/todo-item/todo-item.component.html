@@ -1,0 +1,48 @@
+<ion-item-sliding #slidingItem>
+  <ion-item [class.completed]="todo.completed" lines="inset">
+    <!-- Checkbox for toggle -->
+    <ion-checkbox
+      slot="start"
+      [checked]="todo.completed"
+      (ionChange)="onToggle()"
+      class="todo-checkbox"
+    ></ion-checkbox>
+
+    <!-- Display mode -->
+    <ion-label *ngIf="!isEditing" (dblclick)="startEdit()" class="todo-label">
+      <h2 [class.completed-text]="todo.completed">{{ todo.text }}</h2>
+      <p class="todo-date">
+        {{ todo.createdAt | date: 'short' }}
+      </p>
+    </ion-label>
+
+    <!-- Edit mode -->
+    <ion-input
+      *ngIf="isEditing"
+      [(ngModel)]="editText"
+      (keydown)="onEditKeyPress($event)"
+      (ionBlur)="saveEdit()"
+      class="edit-input"
+      autofocus
+    ></ion-input>
+
+    <!-- Delete button (visible in edit mode or on hover) -->
+    <ion-button
+      *ngIf="!isEditing"
+      slot="end"
+      fill="clear"
+      color="danger"
+      (click)="onDelete()"
+      class="delete-button"
+    >
+      <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+    </ion-button>
+  </ion-item>
+
+  <!-- Swipe to delete option -->
+  <ion-item-options side="end">
+    <ion-item-option color="danger" (click)="onDelete(); slidingItem.close()">
+      <ion-icon slot="icon-only" name="trash"></ion-icon>
+    </ion-item-option>
+  </ion-item-options>
+</ion-item-sliding>

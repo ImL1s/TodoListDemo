@@ -1,0 +1,10 @@
+<form {{on "submit" this.handleSubmit}}>
+  <input
+    class="new-todo"
+    placeholder="What needs to be done?"
+    value={{this.newTodoText}}
+    {{on "input" this.handleInput}}
+    {{on "keydown" this.handleKeyDown}}
+    autofocus
+  />
+</form>

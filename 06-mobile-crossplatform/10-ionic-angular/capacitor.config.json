@@ -1,0 +1,16 @@
+{
+  "appId": "com.example.ionic.angular.todo",
+  "appName": "Ionic Angular Todo",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    },
+    "Preferences": {
+      "group": "todoApp"
+    }
+  }
+}

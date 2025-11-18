@@ -1,0 +1,85 @@
+ion-item {
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --inner-padding-end: 8px;
+  transition: all 0.3s ease;
+
+  &.completed {
+    opacity: 0.6;
+  }
+
+  .todo-checkbox {
+    margin-right: 12px;
+    --size: 24px;
+    --border-radius: 6px;
+  }
+
+  .todo-label {
+    cursor: pointer;
+    user-select: none;
+
+    h2 {
+      margin: 0;
+      padding: 8px 0;
+      font-size: 16px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+
+      &.completed-text {
+        text-decoration: line-through;
+        color: var(--ion-color-medium);
+      }
+    }
+
+    .todo-date {
+      margin: 0;
+      padding: 0;
+      font-size: 12px;
+      color: var(--ion-color-medium);
+    }
+  }
+
+  .edit-input {
+    --padding-start: 0;
+    --padding-end: 0;
+    font-size: 16px;
+  }
+
+  .delete-button {
+    --padding-start: 8px;
+    --padding-end: 8px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  &:hover .delete-button {
+    opacity: 1;
+  }
+}
+
+// Item sliding options
+ion-item-sliding {
+  margin-bottom: 2px;
+}
+
+ion-item-option {
+  ion-icon {
+    font-size: 24px;
+  }
+}
+
+// Animation for todo items
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+ion-item {
+  animation: slideIn 0.3s ease;
+}

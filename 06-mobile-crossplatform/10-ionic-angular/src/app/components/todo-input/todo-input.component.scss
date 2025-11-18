@@ -1,0 +1,27 @@
+.todo-input-container {
+  --background: var(--ion-color-light);
+  --padding-start: 16px;
+  --padding-end: 16px;
+  margin: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .todo-input {
+    font-size: 16px;
+    --placeholder-color: var(--ion-color-medium);
+    --placeholder-opacity: 0.6;
+  }
+
+  .add-button {
+    --border-radius: 8px;
+    margin-left: 8px;
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .todo-input-container {
+    --background: var(--ion-color-step-50);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+}

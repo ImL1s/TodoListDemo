@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- 背景漸層 -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#388E3C;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- 圓角矩形背景 -->
+  <rect width="512" height="512" rx="100" fill="url(#bgGradient)"/>
+
+  <!-- 核取方塊圖標 -->
+  <g transform="translate(256, 256)">
+    <!-- 外框 -->
+    <rect x="-120" y="-120" width="240" height="240" rx="30"
+          fill="none" stroke="white" stroke-width="24"/>
+
+    <!-- 勾選符號 -->
+    <path d="M -80 -10 L -30 40 L 90 -80"
+          fill="none" stroke="white" stroke-width="28"
+          stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- PWA 標誌文字（可選） -->
+  <text x="256" y="460" font-family="Arial, sans-serif" font-size="48"
+        font-weight="bold" fill="white" text-anchor="middle">TODO</text>
+</svg>

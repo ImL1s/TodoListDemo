@@ -1,0 +1,86 @@
+{{page-title "Ember.js Todo List"}}
+
+<div class="todoapp">
+  <header class="header">
+    <h1>todos</h1>
+    <TodoInput @onSubmit={{this.addTodo}} />
+  </header>
+
+  {{#if this.hasTodos}}
+    <section class="main">
+      <input
+        id="toggle-all"
+        class="toggle-all"
+        type="checkbox"
+        checked={{this.allCompleted}}
+        {{on "change" this.toggleAll}}
+      />
+      <label for="toggle-all">Mark all as complete</label>
+
+      <TodoList
+        @todos={{this.filteredTodos}}
+        @onToggle={{this.toggleTodo}}
+        @onDelete={{this.deleteTodo}}
+        @onUpdate={{this.updateTodo}}
+      />
+    </section>
+
+    <footer class="footer">
+      <span class="todo-count">
+        <strong>{{this.activeTodosCount}}</strong>
+        {{#if (eq this.activeTodosCount 1)}}
+          item
+        {{else}}
+          items
+        {{/if}}
+        left
+      </span>
+
+      <ul class="filters">
+        <li>
+          <a
+            href="#"
+            class={{if (eq this.currentFilter "all") "selected"}}
+            {{on "click" (fn this.setFilter "all")}}
+          >
+            All
+          </a>
+        </li>
+        <li>
+          <a
+            href="#"
+            class={{if (eq this.currentFilter "active") "selected"}}
+            {{on "click" (fn this.setFilter "active")}}
+          >
+            Active
+          </a>
+        </li>
+        <li>
+          <a
+            href="#"
+            class={{if (eq this.currentFilter "completed") "selected"}}
+            {{on "click" (fn this.setFilter "completed")}}
+          >
+            Completed
+          </a>
+        </li>
+      </ul>
+
+      {{#if (gt this.completedTodosCount 0)}}
+        <button
+          class="clear-completed"
+          type="button"
+          {{on "click" this.clearCompleted}}
+        >
+          Clear completed
+        </button>
+      {{/if}}
+    </footer>
+  {{/if}}
+</div>
+
+<footer class="info">
+  <p>Double-click to edit a todo</p>
+  <p>Created with <a href="https://emberjs.com/" target="_blank" rel="noopener">Ember.js</a></p>
+  <p>Part of <a href="http://todomvc.com" target="_blank" rel="noopener">TodoMVC</a></p>
+</footer>

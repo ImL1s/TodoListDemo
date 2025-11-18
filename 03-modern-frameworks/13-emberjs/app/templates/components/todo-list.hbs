@@ -1,0 +1,10 @@
+<ul class="todo-list">
+  {{#each @todos as |todo|}}
+    <TodoItem
+      @todo={{todo}}
+      @onToggle={{this.handleToggle}}
+      @onDelete={{this.handleDelete}}
+      @onUpdate={{this.handleUpdate}}
+    />
+  {{/each}}
+</ul>
