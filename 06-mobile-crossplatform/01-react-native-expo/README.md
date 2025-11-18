@@ -1046,6 +1046,32 @@ Discord Members: 40K+
 
 ## 功能特點
 
+### 性能優化亮點 ⚡
+
+本應用已實現多項性能優化，確保流暢的用戶體驗：
+
+#### ✅ **列表虛擬化**
+- 使用 **FlatList** 替代 ScrollView
+- 支持高效渲染 1000+ 待辦事項
+- 配置優化參數提升滾動性能
+
+#### ✅ **React 優化**
+- **React.memo** 包裹 TodoItem 組件，減少不必要渲染
+- **useCallback** 優化事件處理函數
+- 穩定的引用防止子組件重渲染
+
+#### ✅ **用戶體驗優化**
+- 異步操作顯示 **加載狀態**
+- **ErrorBoundary** 捕獲運行時錯誤
+- **錯誤處理**機制，提供用戶友好的錯誤提示和重試選項
+
+#### ✅ **代碼質量**
+- 完整的 **TypeScript** 類型支持
+- 詳細的文檔和註釋
+- 遵循 React Native 最佳實踐
+
+---
+
 ### 核心功能
 
 本應用實現了完整的待辦事項管理功能：
@@ -2665,7 +2691,88 @@ return (
 );
 ```
 
-### 性能分析
+### 錯誤處理和加載狀態
+
+#### 1. **ErrorBoundary 實現**
+
+本應用使用 ErrorBoundary 捕獲運行時錯誤：
+
+```typescript
+// src/components/ErrorBoundary.tsx
+class ErrorBoundary extends Component<Props, State> {
+  static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    console.error('ErrorBoundary caught an error:', error);
+    // 可以發送到錯誤追蹤服務（如 Sentry）
+  }
+
+  render(): ReactNode {
+    if (this.state.hasError) {
+      return <ErrorFallbackUI onRetry={this.handleRetry} />;
+    }
+    return this.props.children;
+  }
+}
+```
+
+**功能**：
+- 捕獲所有子組件的運行時錯誤
+- 顯示用戶友好的錯誤界面
+- 提供重試功能
+- 防止整個應用崩潰
+
+#### 2. **AsyncStorage 錯誤處理**
+
+```typescript
+// App.tsx
+const loadTodos = async () => {
+  try {
+    setIsLoading(true);
+    setError(null);
+    const storedTodos = await AsyncStorage.getItem(StorageKeys.TODOS);
+    // ... 處理數據
+  } catch (error) {
+    console.error('Error loading todos:', error);
+    setError('Failed to load todos. Please try again.');
+    Alert.alert('Error', errorMessage, [
+      { text: 'Retry', onPress: loadTodos },
+      { text: 'Cancel' }
+    ]);
+  } finally {
+    setIsLoading(false);
+  }
+};
+```
+
+**特點**：
+- Try-catch 包裹所有異步操作
+- 用戶友好的錯誤消息
+- 提供重試選項
+- 錯誤狀態管理
+
+#### 3. **加載狀態指示器**
+
+```typescript
+// App.tsx
+if (isLoading) {
+  return (
+    <View style={styles.loadingContainer}>
+      <ActivityIndicator size="large" color="#fff" />
+      <Text style={styles.loadingText}>Loading your todos...</Text>
+    </View>
+  );
+}
+```
+
+**好處**：
+- 明確的加載反饋
+- 防止用戶在加載時操作
+- 改善用戶體驗
+
+### 性能分析工具
 
 #### 1. **使用 Flipper**
 
@@ -2702,6 +2809,36 @@ InteractionManager.runAfterInteractions(() => {
   console.log('Animations are done');
 });
 ```
+
+### 性能優化檢查清單
+
+使用本應用作為參考，以下是 React Native 性能優化的最佳實踐：
+
+- ✅ **列表優化**
+  - [x] 使用 FlatList 而不是 ScrollView
+  - [x] 實現 keyExtractor 作為 useCallback
+  - [x] 使用 removeClippedSubviews
+  - [ ] 對固定高度項目使用 getItemLayout（可選）
+
+- ✅ **組件優化**
+  - [x] 對列表項使用 React.memo
+  - [x] 對回調函數使用 useCallback
+  - [ ] 對昂貴計算使用 useMemo（按需）
+
+- ✅ **狀態管理**
+  - [x] 使用函數式 setState 更新
+  - [x] 避免不必要的狀態更新
+  - [x] 合理拆分組件狀態
+
+- ✅ **錯誤處理**
+  - [x] 實現 ErrorBoundary
+  - [x] 處理 AsyncStorage 錯誤
+  - [x] 提供用戶友好的錯誤消息
+
+- ✅ **用戶體驗**
+  - [x] 顯示加載狀態
+  - [x] 錯誤恢復機制
+  - [x] 平滑的動畫和過渡
 
 ---
 

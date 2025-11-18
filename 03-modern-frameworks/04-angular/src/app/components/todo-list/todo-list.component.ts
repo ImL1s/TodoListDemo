@@ -9,7 +9,7 @@
  * - Control flow syntax (@if, @for, @empty)
  */
 
-import { Component, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TodoService } from '../../services/todo.service';
 import { TodoItemComponent } from '../todo-item/todo-item.component';
@@ -18,22 +18,24 @@ import { FilterType } from '../../models/todo.model';
 @Component({
   selector: 'app-todo-list',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, TodoItemComponent],
   template: `
     <div class="todo-list-container">
       <!-- Filter buttons -->
       <div class="filters">
-        <button
-          *ngFor="let filter of filters"
-          (click)="setFilter(filter.value)"
-          [class.active]="todoService.filter() === filter.value"
-          class="filter-button"
-        >
-          {{ filter.label }}
-          @if (getFilterCount(filter.value) > 0) {
-            <span class="filter-badge">{{ getFilterCount(filter.value) }}</span>
-          }
-        </button>
+        @for (filter of filters; track filter.value) {
+          <button
+            (click)="setFilter(filter.value)"
+            [class.active]="todoService.filter() === filter.value"
+            class="filter-button"
+          >
+            {{ filter.label }}
+            @if (getFilterCount(filter.value) > 0) {
+              <span class="filter-badge">{{ getFilterCount(filter.value) }}</span>
+            }
+          </button>
+        }
       </div>
 
       <!-- Todo list -->

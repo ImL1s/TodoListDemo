@@ -9,7 +9,7 @@
  * - Template-driven forms
  */
 
-import { Component, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TodoService } from '../../services/todo.service';
@@ -17,6 +17,7 @@ import { TodoService } from '../../services/todo.service';
 @Component({
   selector: 'app-todo-input',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule],
   template: `
     <div class="input-container">

@@ -1,0 +1,56 @@
+{
+  "name": "stencil-todo-list",
+  "version": "1.0.0",
+  "description": "Todo List application built with Stencil - Web Components compiler with TypeScript, JSX, and Virtual DOM",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.js",
+  "es2015": "dist/esm/index.mjs",
+  "es2017": "dist/esm/index.mjs",
+  "types": "dist/types/index.d.ts",
+  "collection": "dist/collection/collection-manifest.json",
+  "collection:main": "dist/collection/index.js",
+  "unpkg": "dist/todo-app/todo-app.esm.js",
+  "files": [
+    "dist/",
+    "loader/"
+  ],
+  "scripts": {
+    "build": "stencil build --docs",
+    "start": "stencil build --dev --watch --serve",
+    "test": "stencil test --spec --e2e",
+    "test.watch": "stencil test --spec --e2e --watchAll",
+    "generate": "stencil generate",
+    "dev": "stencil build --dev --watch --serve",
+    "serve": "stencil build --dev --watch --serve --port 3333",
+    "build:prod": "stencil build --prod",
+    "clean": "rm -rf dist www .stencil",
+    "lint": "echo 'Linting disabled - configure ESLint if needed'"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@stencil/core": "^4.7.0",
+    "@types/node": "^20.10.0"
+  },
+  "license": "MIT",
+  "keywords": [
+    "stencil",
+    "web-components",
+    "todo-list",
+    "typescript",
+    "jsx",
+    "virtual-dom",
+    "compiler",
+    "custom-elements",
+    "shadow-dom",
+    "ionic"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/stencil-todo-list"
+  },
+  "author": "Your Name",
+  "bugs": {
+    "url": "https://github.com/yourusername/stencil-todo-list/issues"
+  },
+  "homepage": "https://github.com/yourusername/stencil-todo-list#readme"
+}

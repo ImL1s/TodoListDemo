@@ -58,7 +58,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
       emit(TodoLoaded(todos));
     } catch (e) {
-      emit(TodoError('載入失敗: $e'));
+      emit(TodoLoadError('載入失敗: 無法從本地存儲讀取數據', e));
     }
   }
 
@@ -72,17 +72,24 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     if (state is! TodoLoaded) return;
 
     final currentState = state as TodoLoaded;
-    final newTodo = Todo(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      title: event.title.trim(),
-      createdAt: DateTime.now(),
-    );
 
-    final updatedTodos = List<Todo>.from(currentState.todos)..add(newTodo);
-    emit(TodoLoaded(updatedTodos));
+    try {
+      final newTodo = Todo(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: event.title.trim(),
+        createdAt: DateTime.now(),
+      );
 
-    // 異步保存到本地存儲
-    await _saveTodos(updatedTodos);
+      final updatedTodos = List<Todo>.from(currentState.todos)..add(newTodo);
+      emit(TodoLoaded(updatedTodos));
+
+      // 異步保存到本地存儲
+      await _saveTodos(updatedTodos);
+    } catch (e) {
+      emit(TodoOperationError('添加待辦事項失敗', currentState.todos, e));
+      // 恢復到之前的狀態
+      emit(TodoLoaded(currentState.todos));
+    }
   }
 
   /// 處理切換 Todo 完成狀態事件
@@ -95,14 +102,21 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     if (state is! TodoLoaded) return;
 
     final currentState = state as TodoLoaded;
-    final updatedTodos = currentState.todos.map((todo) {
-      return todo.id == event.id
-          ? todo.copyWith(completed: !todo.completed)
-          : todo;
-    }).toList();
 
-    emit(TodoLoaded(updatedTodos));
-    await _saveTodos(updatedTodos);
+    try {
+      final updatedTodos = currentState.todos.map((todo) {
+        return todo.id == event.id
+            ? todo.copyWith(completed: !todo.completed)
+            : todo;
+      }).toList();
+
+      emit(TodoLoaded(updatedTodos));
+      await _saveTodos(updatedTodos);
+    } catch (e) {
+      emit(TodoOperationError('切換待辦事項狀態失敗', currentState.todos, e));
+      // 恢復到之前的狀態
+      emit(TodoLoaded(currentState.todos));
+    }
   }
 
   /// 處理刪除 Todo 事件
@@ -115,12 +129,19 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     if (state is! TodoLoaded) return;
 
     final currentState = state as TodoLoaded;
-    final updatedTodos = currentState.todos
-        .where((todo) => todo.id != event.id)
-        .toList();
 
-    emit(TodoLoaded(updatedTodos));
-    await _saveTodos(updatedTodos);
+    try {
+      final updatedTodos = currentState.todos
+          .where((todo) => todo.id != event.id)
+          .toList();
+
+      emit(TodoLoaded(updatedTodos));
+      await _saveTodos(updatedTodos);
+    } catch (e) {
+      emit(TodoOperationError('刪除待辦事項失敗', currentState.todos, e));
+      // 恢復到之前的狀態
+      emit(TodoLoaded(currentState.todos));
+    }
   }
 
   /// 處理清除已完成 Todos 事件
@@ -133,25 +154,28 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     if (state is! TodoLoaded) return;
 
     final currentState = state as TodoLoaded;
-    final updatedTodos = currentState.activeTodos;
 
-    emit(TodoLoaded(updatedTodos));
-    await _saveTodos(updatedTodos);
+    try {
+      final updatedTodos = currentState.activeTodos;
+
+      emit(TodoLoaded(updatedTodos));
+      await _saveTodos(updatedTodos);
+    } catch (e) {
+      emit(TodoOperationError('清除已完成待辦事項失敗', currentState.todos, e));
+      // 恢復到之前的狀態
+      emit(TodoLoaded(currentState.todos));
+    }
   }
 
   /// 保存 todos 到 SharedPreferences
   ///
   /// 將 todos 列表序列化為 JSON 並存儲
+  /// 如果保存失敗，會拋出異常
   Future<void> _saveTodos(List<Todo> todos) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final todosJson = jsonEncode(
-        todos.map((todo) => todo.toJson()).toList(),
-      );
-      await prefs.setString(_storageKey, todosJson);
-    } catch (e) {
-      // 在生產環境中，這裡應該有適當的錯誤處理
-      print('保存失敗: $e');
-    }
+    final prefs = await SharedPreferences.getInstance();
+    final todosJson = jsonEncode(
+      todos.map((todo) => todo.toJson()).toList(),
+    );
+    await prefs.setString(_storageKey, todosJson);
   }
 }

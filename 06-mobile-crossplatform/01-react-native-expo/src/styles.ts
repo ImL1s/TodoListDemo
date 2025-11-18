@@ -184,6 +184,30 @@ export const appStyles = StyleSheet.create({
     opacity: 0.8,
     marginTop: spacing.xs,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: typography.body,
+    color: colors.cardBackground,
+    marginTop: spacing.md,
+    opacity: 0.9,
+  },
+  errorBanner: {
+    backgroundColor: 'rgba(214, 48, 49, 0.9)',
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.sm,
+    borderRadius: borderRadius.md,
+  },
+  errorText: {
+    color: colors.cardBackground,
+    fontSize: typography.small,
+    textAlign: 'center',
+  },
 });
 
 /**

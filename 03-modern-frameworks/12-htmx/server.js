@@ -58,6 +58,41 @@ function escapeHtml(text) {
   return text.replace(/[&<>"']/g, m => map[m]);
 }
 
+// Helper function to generate filter tabs HTML with active state
+function generateFilterTabsHTML(activeFilter) {
+  return `
+    <div id="filter-tabs" class="filter-tabs" hx-swap-oob="true">
+      <button
+        class="filter-tab ${activeFilter === 'all' ? 'active' : ''}"
+        hx-get="/todos?filter=all"
+        hx-target="#todo-list"
+        hx-swap="innerHTML"
+        hx-trigger="click"
+      >
+        All
+      </button>
+      <button
+        class="filter-tab ${activeFilter === 'active' ? 'active' : ''}"
+        hx-get="/todos?filter=active"
+        hx-target="#todo-list"
+        hx-swap="innerHTML"
+        hx-trigger="click"
+      >
+        Active
+      </button>
+      <button
+        class="filter-tab ${activeFilter === 'completed' ? 'active' : ''}"
+        hx-get="/todos?filter=completed"
+        hx-target="#todo-list"
+        hx-swap="innerHTML"
+        hx-trigger="click"
+      >
+        Completed
+      </button>
+    </div>
+  `;
+}
+
 // Routes
 
 // Get all todos (returns HTML list items)
@@ -71,8 +106,13 @@ app.get('/todos', (req, res) => {
     filteredTodos = todos.filter(t => t.completed);
   }
 
-  const html = filteredTodos.map(todo => generateTodoHTML(todo)).join('');
-  res.send(html);
+  const todosHtml = filteredTodos.map(todo => generateTodoHTML(todo)).join('');
+
+  // Include filter tabs with out-of-band swap to update active state
+  // This demonstrates server-driven UI state management
+  const filterTabsHtml = generateFilterTabsHTML(filter);
+
+  res.send(todosHtml + filterTabsHtml);
 });
 
 // Create a new todo
@@ -93,11 +133,10 @@ app.post('/todos', (req, res) => {
 
   todos.unshift(newTodo);
 
-  // Return the new todo item HTML + clear the input field
-  res.send(`
-    ${generateTodoHTML(newTodo)}
-    <script>document.getElementById('todo-input').value = '';</script>
-  `);
+  // Return the new todo item HTML
+  // Note: Form reset is handled by hx-on::after-request in the HTML
+  res.setHeader('HX-Trigger', 'todoUpdate');
+  res.send(generateTodoHTML(newTodo));
 });
 
 // Toggle todo completion
@@ -110,6 +149,9 @@ app.post('/todos/:id/toggle', (req, res) => {
   }
 
   todo.completed = !todo.completed;
+
+  // Trigger stats update via HX-Trigger header
+  res.setHeader('HX-Trigger', 'todoUpdate');
   res.send(generateTodoHTML(todo));
 });
 
@@ -124,7 +166,9 @@ app.delete('/todos/:id', (req, res) => {
 
   todos.splice(index, 1);
 
+  // Trigger stats update via HX-Trigger header
   // Return empty response - htmx will swap out the element
+  res.setHeader('HX-Trigger', 'todoUpdate');
   res.send('');
 });
 
@@ -132,7 +176,9 @@ app.delete('/todos/:id', (req, res) => {
 app.post('/todos/clear-completed', (req, res) => {
   todos = todos.filter(t => !t.completed);
 
+  // Trigger stats update via HX-Trigger header
   // Return all remaining todos
+  res.setHeader('HX-Trigger', 'todoUpdate');
   const html = todos.map(todo => generateTodoHTML(todo)).join('');
   res.send(html);
 });

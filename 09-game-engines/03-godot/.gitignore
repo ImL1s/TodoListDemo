@@ -1,0 +1,18 @@
+# Godot 4+ specific ignores
+.godot/
+
+# Godot-specific ignores
+import_presets.cfg
+export_presets.cfg
+.mono/
+data_*/
+
+# Build artifacts
+builds/
+*.exe
+*.pck
+*.app/
+
+# OS specific
+.DS_Store
+Thumbs.db

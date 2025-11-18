@@ -9,7 +9,7 @@
  * - CSS animations
  */
 
-import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Todo } from '../../models/todo.model';
@@ -17,6 +17,7 @@ import { Todo } from '../../models/todo.model';
 @Component({
   selector: 'app-todo-item',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule],
   template: `
     <div class="todo-item" [class.completed]="todo.completed">

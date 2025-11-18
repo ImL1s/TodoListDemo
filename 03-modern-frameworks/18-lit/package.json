@@ -1,0 +1,29 @@
+{
+  "name": "lit-todo-app",
+  "version": "1.0.0",
+  "description": "A complete Todo List application built with Lit Web Components",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "lit",
+    "web-components",
+    "todo",
+    "typescript",
+    "vite"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "lit": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.8"
+  }
+}

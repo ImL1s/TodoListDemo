@@ -48,10 +48,13 @@ This project is a fully functional Todo List application that demonstrates the *
 - ✅ **Zero Frontend Framework**: No React, Vue, or Angular needed
 - ✅ **Zero Build Step**: No webpack, Vite, or bundlers required
 - ✅ **Zero Client-Side State Management**: Server owns the state
+- ✅ **Zero Inline Scripts**: Pure HATEOAS - no `<script>` tags in responses
 - ✅ **Minimal JavaScript**: Only htmx library (~14KB gzipped)
 - ✅ **Progressive Enhancement**: Works without JavaScript
 - ✅ **HATEOAS Compliant**: Hypermedia As The Engine Of Application State
 - ✅ **Simple Architecture**: HTML from the server, straight to the browser
+- ✅ **Server-Driven Events**: Uses HX-Trigger headers instead of client-side listeners
+- ✅ **Pure Hypermedia**: All state transitions driven by server responses
 
 ---
 
@@ -273,9 +276,11 @@ This Todo List application includes:
 - ✅ `hx-delete`: Remove todos
 - ✅ `hx-target`: Specify where to insert responses
 - ✅ `hx-swap`: Control how content is swapped
-- ✅ `hx-trigger`: Customize when requests fire
+- ✅ `hx-trigger`: Customize when requests fire (including custom events)
 - ✅ `hx-confirm`: Add confirmation dialogs
-- ✅ Custom events: Trigger stats updates
+- ✅ `hx-swap-oob`: Out-of-band swaps for multiple UI updates
+- ✅ `HX-Trigger` response header: Server-driven client events
+- ✅ Pure HATEOAS: No inline scripts or client-side logic
 
 ### Technical Features
 - ✅ Express.js backend
@@ -286,6 +291,64 @@ This Todo List application includes:
 - ✅ Responsive design
 - ✅ Modern CSS styling
 - ✅ No build step required
+- ✅ **Pure htmx implementation** (see below)
+
+### 🎖️ Pure htmx Implementation
+
+This implementation follows **strict HATEOAS principles** with **zero inline scripts**:
+
+#### HX-Trigger Response Headers
+Instead of using client-side JavaScript event listeners, this app uses **server-driven events** via the `HX-Trigger` response header:
+
+```javascript
+// Server triggers client-side events via HTTP headers
+res.setHeader('HX-Trigger', 'todoUpdate');
+res.send(generateTodoHTML(newTodo));
+```
+
+This triggers the stats component to refresh automatically:
+```html
+<div hx-get="/todos/stats" hx-trigger="load, todoUpdate from:body">
+```
+
+**Benefits:**
+- ✅ Server controls when events fire
+- ✅ No client-side event listeners needed
+- ✅ Consistent with hypermedia philosophy
+- ✅ Easier to reason about and debug
+
+#### Out-of-Band Swaps
+Filter tab highlighting is handled **entirely server-side** using `hx-swap-oob`:
+
+```javascript
+// Server returns BOTH filtered todos AND updated tabs
+function generateFilterTabsHTML(activeFilter) {
+  return `
+    <div id="filter-tabs" class="filter-tabs" hx-swap-oob="true">
+      <button class="filter-tab ${activeFilter === 'all' ? 'active' : ''}">
+        All
+      </button>
+      <!-- ... -->
+    </div>
+  `;
+}
+```
+
+**Benefits:**
+- ✅ Server owns UI state completely
+- ✅ No client-side DOM manipulation
+- ✅ Single source of truth on server
+- ✅ Testable server-side logic
+
+#### No Inline Scripts
+Unlike many htmx examples that include `<script>` tags in responses, this implementation is **100% script-free**:
+
+- ❌ No inline `<script>` tags in HTML responses
+- ❌ No `onclick` handlers
+- ❌ No client-side event listeners (except htmx itself)
+- ✅ Pure declarative HTML with htmx attributes
+- ✅ All logic on the server
+- ✅ True HATEOAS compliance
 
 ---
 
@@ -1237,7 +1300,7 @@ app.get('/todos', (req, res) => {
 
 ---
 
-### Example 6: Real-Time Stats
+### Example 6: Real-Time Stats (Pure htmx)
 
 **HTML:**
 ```html
@@ -1247,19 +1310,20 @@ app.get('/todos', (req, res) => {
   hx-trigger="load, todoUpdate from:body">
   Loading stats...
 </div>
-
-<script>
-// After any todo operation, dispatch custom event
-document.body.addEventListener('htmx:afterSwap', function(e) {
-  if (e.detail.target.id === 'todo-list') {
-    document.body.dispatchEvent(new Event('todoUpdate'));
-  }
-});
-</script>
 ```
 
-**Server:**
+**Server (with HX-Trigger header):**
 ```javascript
+// Any endpoint that modifies todos triggers stats update
+app.post('/todos', (req, res) => {
+  const newTodo = createTodo(req.body.text);
+  todos.unshift(newTodo);
+
+  // Server tells client to fire 'todoUpdate' event
+  res.setHeader('HX-Trigger', 'todoUpdate');
+  res.send(generateTodoHTML(newTodo));
+});
+
 app.get('/todos/stats', (req, res) => {
   const total = todos.length;
   const active = todos.filter(t => !t.completed).length;
@@ -1277,10 +1341,99 @@ app.get('/todos/stats', (req, res) => {
 
 **What happens:**
 1. Stats load on page load
-2. When todo list changes, `todoUpdate` event fires
-3. Stats div listens for this event
-4. Automatically refreshes stats
-5. User sees current counts
+2. When a todo is created/toggled/deleted, server includes `HX-Trigger: todoUpdate` header
+3. htmx fires the `todoUpdate` event on the body
+4. Stats div listens for this event (via `hx-trigger="todoUpdate from:body"`)
+5. Automatically fetches and displays updated stats
+6. **No client-side JavaScript needed!**
+
+**Why this is better:**
+- ✅ Server controls when stats update (not client)
+- ✅ No inline `<script>` tags
+- ✅ No manual event dispatching
+- ✅ Pure HATEOAS architecture
+- ✅ Server is single source of truth
+
+---
+
+### Example 7: Server-Driven Tab Highlighting (Out-of-Band Swaps)
+
+**HTML:**
+```html
+<div id="filter-tabs" class="filter-tabs">
+  <button
+    class="filter-tab active"
+    hx-get="/todos?filter=all"
+    hx-target="#todo-list">
+    All
+  </button>
+  <button
+    class="filter-tab"
+    hx-get="/todos?filter=active"
+    hx-target="#todo-list">
+    Active
+  </button>
+  <button
+    class="filter-tab"
+    hx-get="/todos?filter=completed"
+    hx-target="#todo-list">
+    Completed
+  </button>
+</div>
+
+<ul id="todo-list"></ul>
+```
+
+**Server (with out-of-band swap):**
+```javascript
+app.get('/todos', (req, res) => {
+  const filter = req.query.filter || 'all';
+  const filteredTodos = filterTodos(filter);
+
+  // Generate filtered todos HTML
+  const todosHtml = filteredTodos.map(generateTodoHTML).join('');
+
+  // Generate updated filter tabs with correct active state
+  const filterTabsHtml = `
+    <div id="filter-tabs" class="filter-tabs" hx-swap-oob="true">
+      <button class="filter-tab ${filter === 'all' ? 'active' : ''}"
+              hx-get="/todos?filter=all" hx-target="#todo-list">
+        All
+      </button>
+      <button class="filter-tab ${filter === 'active' ? 'active' : ''}"
+              hx-get="/todos?filter=active" hx-target="#todo-list">
+        Active
+      </button>
+      <button class="filter-tab ${filter === 'completed' ? 'active' : ''}"
+              hx-get="/todos?filter=completed" hx-target="#todo-list">
+        Completed
+      </button>
+    </div>
+  `;
+
+  // Return both: filtered todos go to #todo-list, tabs swap themselves
+  res.send(todosHtml + filterTabsHtml);
+});
+```
+
+**What happens:**
+1. User clicks "Active" tab
+2. GET request to `/todos?filter=active`
+3. Server generates:
+   - Filtered todos HTML → targets `#todo-list` (normal swap)
+   - Updated tabs HTML with `hx-swap-oob="true"` → swaps itself at `#filter-tabs`
+4. htmx performs **two swaps** from one response:
+   - Todos list updates with filtered items
+   - Filter tabs update with new active state
+5. **No onclick handlers or client-side state management!**
+
+**Why this is powerful:**
+- ✅ One request updates multiple parts of the page
+- ✅ Server controls which tab is active
+- ✅ No client-side DOM manipulation
+- ✅ No JavaScript functions for UI state
+- ✅ Testable server-side rendering
+- ✅ True hypermedia-driven UI
 
 ---
 
@@ -1882,7 +2035,70 @@ htmx uses HTTP efficiently:
 
 ## 🏆 Best Practices
 
-### 1. Return Minimal HTML
+### 1. Avoid Inline Scripts - Use HX-Trigger Headers
+
+**❌ Bad: Inline script in response**
+```javascript
+app.post('/todos', (req, res) => {
+  const todo = createTodo(req.body.text);
+  res.send(`
+    ${generateTodoHTML(todo)}
+    <script>document.getElementById('input').value = '';</script>
+  `);
+});
+```
+
+**✅ Good: Use htmx events and HX-Trigger header**
+```javascript
+app.post('/todos', (req, res) => {
+  const todo = createTodo(req.body.text);
+  res.setHeader('HX-Trigger', 'todoUpdate');  // Server-driven event
+  res.send(generateTodoHTML(todo));
+});
+```
+
+```html
+<!-- Form auto-resets on successful request -->
+<form hx-post="/todos" hx-on::after-request="if(event.detail.successful) this.reset()">
+```
+
+**Why:**
+- ✅ Maintains pure HATEOAS architecture
+- ✅ Server controls event triggers
+- ✅ No script execution in responses
+- ✅ Easier to test and debug
+
+### 2. Use Out-of-Band Swaps for Multiple Updates
+
+**❌ Bad: Client-side DOM manipulation**
+```javascript
+// Client-side JavaScript to update multiple elements
+res.send(todoHtml + `
+  <script>
+    document.querySelector('.active-tab').classList.remove('active');
+    document.querySelector('[data-filter="${filter}"]').classList.add('active');
+  </script>
+`);
+```
+
+**✅ Good: Server-side out-of-band swap**
+```javascript
+app.get('/todos', (req, res) => {
+  const filter = req.query.filter || 'all';
+  const todosHtml = generateFilteredTodos(filter);
+  const tabsHtml = generateFilterTabs(filter); // With hx-swap-oob="true"
+
+  res.send(todosHtml + tabsHtml);  // htmx handles both swaps
+});
+```
+
+**Why:**
+- ✅ One response updates multiple page sections
+- ✅ Server owns all UI state
+- ✅ No client-side manipulation
+- ✅ Clean separation of concerns
+
+### 3. Return Minimal HTML
 
 Don't return entire pages, return fragments:
 
@@ -1899,7 +2115,7 @@ app.get('/todos', (req, res) => {
 });
 ```
 
-### 2. Use Semantic HTML
+### 4. Use Semantic HTML
 
 htmx works best with proper HTML:
 
@@ -1919,7 +2135,7 @@ htmx works best with proper HTML:
 </div>
 ```
 
-### 3. Keep htmx Attributes in HTML
+### 5. Keep htmx Attributes in HTML
 
 Don't add htmx attributes via JavaScript:
 
@@ -1932,7 +2148,7 @@ htmx.process(document.querySelector('.btn'));
 <button hx-get="/data">Load</button>
 ```
 
-### 4. Use Target IDs Wisely
+### 6. Use Target IDs Wisely
 
 Give targets unique IDs:
 
@@ -1952,7 +2168,7 @@ Give targets unique IDs:
 </li>
 ```
 
-### 5. Leverage HTTP Methods
+### 7. Leverage HTTP Methods
 
 Use proper REST verbs:
 
@@ -1970,7 +2186,7 @@ Use proper REST verbs:
 <button hx-delete="/todos/123">
 ```
 
-### 6. Handle Errors
+### 8. Handle Errors
 
 Return appropriate status codes:
 
@@ -1998,7 +2214,7 @@ app.post('/todos', (req, res) => {
 </form>
 ```
 
-### 7. Use Loading States
+### 9. Use Loading States
 
 Show feedback during requests:
 
@@ -2014,7 +2230,7 @@ Show feedback during requests:
 }
 ```
 
-### 8. Validate on Server
+### 10. Validate on Server
 
 Always validate server-side:
 
@@ -2035,7 +2251,7 @@ app.post('/todos', (req, res) => {
 });
 ```
 
-### 9. Escape User Input
+### 11. Escape User Input
 
 Prevent XSS attacks:
 
@@ -2057,7 +2273,7 @@ app.post('/todos', (req, res) => {
 });
 ```
 
-### 10. Use Template Engines
+### 12. Use Template Engines
 
 For complex HTML, use template engines:
 

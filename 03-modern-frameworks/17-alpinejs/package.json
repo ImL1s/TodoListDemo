@@ -1,0 +1,34 @@
+{
+  "name": "alpinejs-todo-list",
+  "version": "1.0.0",
+  "description": "A complete Todo List application built with Alpine.js demonstrating reactive state management and declarative behavior",
+  "main": "src/app.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve": "npx serve ."
+  },
+  "keywords": [
+    "alpine",
+    "alpinejs",
+    "todo",
+    "javascript",
+    "reactive",
+    "declarative",
+    "lightweight"
+  ],
+  "author": "TodoListDemo",
+  "license": "MIT",
+  "dependencies": {
+    "alpinejs": "^3.13.3"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}

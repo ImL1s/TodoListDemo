@@ -9,6 +9,10 @@ import { todoItemStyles } from '../styles';
  * Displays a single todo item with checkbox, text, timestamp, and delete button.
  * Provides visual feedback for touch interactions.
  *
+ * Performance optimizations:
+ * - Wrapped with React.memo to prevent unnecessary re-renders
+ * - Only re-renders when todo, onToggle, or onDelete props change
+ *
  * @component
  * @example
  * ```tsx
@@ -19,7 +23,7 @@ import { todoItemStyles } from '../styles';
  * />
  * ```
  */
-const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onDelete }) => {
+const TodoItem: React.FC<TodoItemProps> = React.memo(({ todo, onToggle, onDelete }) => {
   /**
    * Format timestamp to readable date string
    */
@@ -95,6 +99,9 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onDelete }) => {
       </TouchableOpacity>
     </View>
   );
-};
+});
+
+// Display name for debugging
+TodoItem.displayName = 'TodoItem';
 
 export default TodoItem;

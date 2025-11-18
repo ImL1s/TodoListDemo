@@ -9,7 +9,7 @@
  * - Dependency injection
  */
 
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TodoInputComponent } from './components/todo-input/todo-input.component';
 import { TodoListComponent } from './components/todo-list/todo-list.component';
@@ -18,6 +18,7 @@ import { TodoService } from './services/todo.service';
 @Component({
   selector: 'app-root',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     TodoInputComponent,

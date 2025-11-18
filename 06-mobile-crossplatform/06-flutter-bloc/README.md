@@ -1257,6 +1257,8 @@ void main() {
 
 ### 運行測試
 
+#### 基本測試命令
+
 ```bash
 # 運行所有測試
 flutter test
@@ -1264,12 +1266,131 @@ flutter test
 # 運行特定測試文件
 flutter test test/bloc/todo_bloc_test.dart
 
-# 運行測試並生成覆蓋率報告
+# 運行特定測試套件
+flutter test test/models/
+flutter test test/widgets/
+
+# 以詳細模式運行測試
+flutter test --reporter expanded
+```
+
+#### 測試覆蓋率
+
+```bash
+# 方法 1: 使用自動化腳本（推薦）
+./test_coverage.sh
+
+# 方法 2: 手動運行
+# 1. 運行測試並生成覆蓋率
 flutter test --coverage
 
-# 查看覆蓋率報告
-genhtml coverage/lcov.info -o coverage/html
-open coverage/html/index.html
+# 2. 生成 HTML 報告（需要安裝 lcov）
+genhtml coverage/lcov.info -o coverage/html --no-function-coverage
+
+# 3. 查看報告
+open coverage/html/index.html  # macOS
+xdg-open coverage/html/index.html  # Linux
+start coverage/html/index.html  # Windows
+```
+
+#### 安裝 lcov
+
+```bash
+# macOS
+brew install lcov
+
+# Ubuntu/Debian
+sudo apt-get install lcov
+
+# Fedora
+sudo dnf install lcov
+```
+
+#### 測試結構
+
+```
+test/
+├── bloc/
+│   └── todo_bloc_test.dart      # BLoC 單元測試
+├── models/
+│   └── todo_test.dart            # 數據模型測試
+└── widgets/
+    └── widget_test.dart          # UI 組件測試
+```
+
+#### 測試覆蓋範圍
+
+我們的測試套件涵蓋：
+
+1. **BLoC 測試** (test/bloc/todo_bloc_test.dart)
+   - 初始狀態測試
+   - LoadTodosEvent: 載入、空數據、錯誤處理
+   - AddTodoEvent: 添加、修剪空白、多個 todo
+   - ToggleTodoEvent: 切換狀態、多個 todo
+   - DeleteTodoEvent: 刪除、不存在的 todo
+   - ClearCompletedEvent: 清除已完成
+   - 持久化測試
+
+2. **模型測試** (test/models/todo_test.dart)
+   - 構造函數測試
+   - JSON 序列化/反序列化
+   - copyWith 功能
+   - Equatable 相等性測試
+   - JSON 往返測試
+
+3. **Widget 測試** (test/widgets/widget_test.dart)
+   - TodoListScreen: UI 渲染、狀態顯示、統計
+   - TodoItem: 顯示、交互、刪除
+   - TodoList: 空狀態、列表渲染
+   - 時間格式化測試
+
+#### 測試最佳實踐
+
+```dart
+// 1. 使用 setUp 和 tearDown
+setUp(() {
+  SharedPreferences.setMockInitialValues({});
+  todoBloc = TodoBloc();
+});
+
+tearDown(() {
+  todoBloc.close();
+});
+
+// 2. 使用 blocTest 測試 BLoC
+blocTest<TodoBloc, TodoState>(
+  '描述測試的行為',
+  build: () => TodoBloc(),
+  act: (bloc) => bloc.add(SomeEvent()),
+  expect: () => [ExpectedState()],
+);
+
+// 3. 使用 testWidgets 測試 UI
+testWidgets('描述 UI 行為', (WidgetTester tester) async {
+  await tester.pumpWidget(MyWidget());
+  expect(find.text('Expected Text'), findsOneWidget);
+});
+```
+
+#### 持續集成配置
+
+在 CI/CD 流程中運行測試：
+
+```yaml
+# .github/workflows/test.yml
+name: Test
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v2
+      - run: flutter pub get
+      - run: flutter test --coverage
+      - uses: codecov/codecov-action@v2
 ```
 
 ---

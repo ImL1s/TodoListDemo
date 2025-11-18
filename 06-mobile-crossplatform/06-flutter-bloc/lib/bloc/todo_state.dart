@@ -61,17 +61,58 @@ class TodoLoaded extends TodoState {
   String toString() => 'TodoLoaded { todos: ${todos.length} }';
 }
 
-/// 錯誤狀態
+/// 錯誤狀態基類
 ///
-/// 當操作失敗時（例如：存儲失敗）的狀態
-class TodoError extends TodoState {
+/// 當操作失敗時的狀態
+abstract class TodoError extends TodoState {
   final String message;
+  final dynamic error;
 
-  const TodoError(this.message);
-
-  @override
-  List<Object?> get props => [message];
+  const TodoError(this.message, [this.error]);
 
   @override
-  String toString() => 'TodoError { message: $message }';
+  List<Object?> get props => [message, error];
+}
+
+/// 載入錯誤狀態
+///
+/// 從本地存儲載入數據失敗時的狀態
+class TodoLoadError extends TodoError {
+  const TodoLoadError(String message, [dynamic error])
+      : super(message, error);
+
+  @override
+  String toString() => 'TodoLoadError { message: $message }';
+}
+
+/// 保存錯誤狀態
+///
+/// 保存數據到本地存儲失敗時的狀態
+class TodoSaveError extends TodoError {
+  final List<Todo> todos; // 保留當前的 todos 列表
+
+  const TodoSaveError(String message, this.todos, [dynamic error])
+      : super(message, error);
+
+  @override
+  List<Object?> get props => [message, todos, error];
+
+  @override
+  String toString() => 'TodoSaveError { message: $message, todos: ${todos.length} }';
+}
+
+/// 操作錯誤狀態
+///
+/// Todo 操作失敗時的狀態（添加、刪除、切換等）
+class TodoOperationError extends TodoError {
+  final List<Todo> todos; // 保留當前的 todos 列表
+
+  const TodoOperationError(String message, this.todos, [dynamic error])
+      : super(message, error);
+
+  @override
+  List<Object?> get props => [message, todos, error];
+
+  @override
+  String toString() => 'TodoOperationError { message: $message, todos: ${todos.length} }';
 }

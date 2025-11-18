@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpine.js Todo List (NPM Version)</title>
+    <link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <h1>Alpine.js Todos</h1>
+            <p class="subtitle">NPM Version - Lightweight JavaScript framework</p>
+        </header>
+
+        <!-- Main Todo App -->
+        <div class="todo-app" x-data="todoApp">
+            <!-- Input Section -->
+            <div class="todo-input-section">
+                <button
+                    class="toggle-all-btn"
+                    @click="toggleAll"
+                    x-show="$store.todos.totalCount > 0"
+                    :class="{ 'active': $store.todos.allCompleted }"
+                    title="Toggle all todos"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </button>
+
+                <input
+                    type="text"
+                    class="todo-input"
+                    placeholder="What needs to be done?"
+                    x-model="newTodo"
+                    @keyup.enter="addTodo"
+                    x-ref="input"
+                    autofocus
+                >
+
+                <button
+                    class="add-btn"
+                    @click="addTodo"
+                    :disabled="!newTodo.trim()"
+                >
+                    Add
+                </button>
+            </div>
+
+            <!-- Todo List -->
+            <ul class="todo-list" x-show="$store.todos.totalCount > 0">
+                <template x-for="todo in $store.todos.filteredItems" :key="todo.id">
+                    <li
+                        class="todo-item"
+                        :class="{
+                            'completed': todo.completed,
+                            'editing': editingId === todo.id
+                        }"
+                    >
+                        <!-- View Mode -->
+                        <div class="todo-view" x-show="editingId !== todo.id">
+                            <input
+                                type="checkbox"
+                                class="todo-checkbox"
+                                :checked="todo.completed"
+                                @change="$store.todos.toggle(todo.id)"
+                                :id="'todo-' + todo.id"
+                            >
+
+                            <label
+                                :for="'todo-' + todo.id"
+                                class="todo-label"
+                                @dblclick="startEdit(todo.id, todo.text)"
+                            >
+                                <span x-text="todo.text"></span>
+                            </label>
+
+                            <button
+                                class="delete-btn"
+                                @click="deleteTodo(todo.id)"
+                                title="Delete todo"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Edit Mode -->
+                        <div class="todo-edit" x-show="editingId === todo.id">
+                            <input
+                                type="text"
+                                class="edit-input"
+                                :value="editingText"
+                                @keyup.enter="saveEdit(todo.id)"
+                                @keyup.escape="cancelEdit"
+                                @blur="saveEdit(todo.id)"
+                                x-ref="'edit-' + todo.id"
+                            >
+                        </div>
+                    </li>
+                </template>
+            </ul>
+
+            <!-- Empty State -->
+            <div class="empty-state" x-show="$store.todos.totalCount === 0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M9 11l3 3L22 4"></path>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+                <h2>No todos yet</h2>
+                <p>Add a new todo to get started!</p>
+            </div>
+
+            <!-- Footer with filters and counts -->
+            <div class="todo-footer" x-show="$store.todos.totalCount > 0">
+                <div class="todo-count">
+                    <strong x-text="$store.todos.activeCount"></strong>
+                    <span x-text="$store.todos.activeCount === 1 ? ' item' : ' items'"></span>
+                    <span> left</span>
+                </div>
+
+                <div class="todo-filters">
+                    <button
+                        class="filter-btn"
+                        :class="{ 'active': $store.todos.filter === 'all' }"
+                        @click="$store.todos.setFilter('all')"
+                    >
+                        All
+                    </button>
+                    <button
+                        class="filter-btn"
+                        :class="{ 'active': $store.todos.filter === 'active' }"
+                        @click="$store.todos.setFilter('active')"
+                    >
+                        Active
+                    </button>
+                    <button
+                        class="filter-btn"
+                        :class="{ 'active': $store.todos.filter === 'completed' }"
+                        @click="$store.todos.setFilter('completed')"
+                    >
+                        Completed
+                    </button>
+                </div>
+
+                <button
+                    class="clear-completed-btn"
+                    @click="$store.todos.clearCompleted()"
+                    x-show="$store.todos.completedCount > 0"
+                >
+                    Clear completed
+                </button>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="stats-section" x-show="$store.todos.totalCount > 0">
+                <div class="stat-card">
+                    <div class="stat-value" x-text="$store.todos.totalCount"></div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" x-text="$store.todos.activeCount"></div>
+                    <div class="stat-label">Active</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" x-text="$store.todos.completedCount"></div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" x-text="completionPercentage"></div>
+                    <div class="stat-label">Progress</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Section -->
+        <div class="info-section">
+            <p><strong>NPM Version Features:</strong></p>
+            <ul>
+                <li>Alpine.js installed via npm</li>
+                <li>Modular component structure</li>
+                <li>Vite for development and build</li>
+                <li>ES6 modules support</li>
+                <li>Hot Module Replacement (HMR)</li>
+            </ul>
+            <p class="tip">💡 <strong>Tip:</strong> Run <code>npm run dev</code> to start development server</p>
+        </div>
+    </div>
+
+    <!-- Import Alpine.js and initialize -->
+    <script type="module">
+        import Alpine from 'alpinejs';
+        import { initializeApp } from './src/app.js';
+
+        // Make Alpine available globally for debugging
+        window.Alpine = Alpine;
+
+        // Initialize app (registers stores and components)
+        initializeApp();
+
+        // Start Alpine
+        Alpine.start();
+    </script>
+</body>
+</html>

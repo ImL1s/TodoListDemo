@@ -7,6 +7,8 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -14,6 +16,7 @@ import { Todo, StorageKeys } from './src/types';
 import { appStyles, colors } from './src/styles';
 import TodoInput from './src/components/TodoInput';
 import TodoList from './src/components/TodoList';
+import ErrorBoundary from './src/components/ErrorBoundary';
 
 /**
  * Main Application Component
@@ -28,12 +31,16 @@ import TodoList from './src/components/TodoList';
  * - iOS and Android optimized
  * - TypeScript for type safety
  * - Keyboard handling
+ * - Loading states for async operations
+ * - Error handling with user feedback
+ * - Error boundary to catch runtime errors
  *
  * @component
  */
-export default function App() {
+function TodoApp() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   /**
    * Load todos from AsyncStorage on mount
@@ -56,6 +63,8 @@ export default function App() {
    */
   const loadTodos = async () => {
     try {
+      setIsLoading(true);
+      setError(null);
       const storedTodos = await AsyncStorage.getItem(StorageKeys.TODOS);
       if (storedTodos !== null) {
         const parsedTodos = JSON.parse(storedTodos);
@@ -63,6 +72,13 @@ export default function App() {
       }
     } catch (error) {
       console.error('Error loading todos:', error);
+      const errorMessage = 'Failed to load todos. Please try again.';
+      setError(errorMessage);
+      Alert.alert(
+        'Error',
+        errorMessage,
+        [{ text: 'Retry', onPress: loadTodos }, { text: 'Cancel' }]
+      );
     } finally {
       setIsLoading(false);
     }
@@ -74,8 +90,12 @@ export default function App() {
   const saveTodos = async () => {
     try {
       await AsyncStorage.setItem(StorageKeys.TODOS, JSON.stringify(todos));
+      setError(null);
     } catch (error) {
       console.error('Error saving todos:', error);
+      const errorMessage = 'Failed to save todos. Your changes may not be saved.';
+      setError(errorMessage);
+      Alert.alert('Error', errorMessage);
     }
   };
 
@@ -125,6 +145,34 @@ export default function App() {
     Keyboard.dismiss();
   };
 
+  /**
+   * Render loading state
+   */
+  if (isLoading) {
+    return (
+      <View style={appStyles.container}>
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor={colors.primary}
+          translucent={Platform.OS === 'android'}
+        />
+        <LinearGradient
+          colors={[colors.primary, colors.secondary]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={appStyles.gradient}
+        >
+          <SafeAreaView style={appStyles.safeArea}>
+            <View style={appStyles.loadingContainer}>
+              <ActivityIndicator size="large" color="#fff" />
+              <Text style={appStyles.loadingText}>Loading your todos...</Text>
+            </View>
+          </SafeAreaView>
+        </LinearGradient>
+      </View>
+    );
+  }
+
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={appStyles.container}>
@@ -151,6 +199,13 @@ export default function App() {
                 <Text style={appStyles.badgeText}>React Native + Expo</Text>
               </View>
             </View>
+
+            {/* Error Banner */}
+            {error && (
+              <View style={appStyles.errorBanner}>
+                <Text style={appStyles.errorText}>⚠️ {error}</Text>
+              </View>
+            )}
 
             {/* Statistics */}
             {totalTodos > 0 && (
@@ -186,5 +241,17 @@ export default function App() {
         </LinearGradient>
       </View>
     </TouchableWithoutFeedback>
+  );
+}
+
+/**
+ * App component wrapped with ErrorBoundary
+ * This ensures that any runtime errors are caught and displayed gracefully
+ */
+export default function App() {
+  return (
+    <ErrorBoundary>
+      <TodoApp />
+    </ErrorBoundary>
   );
 }

@@ -1,14 +1,20 @@
-import React from 'react';
-import { View, ScrollView, Text, KeyboardAvoidingView, Platform } from 'react-native';
-import { TodoListProps } from '../types';
+import React, { useCallback } from 'react';
+import { View, FlatList, Text, KeyboardAvoidingView, Platform } from 'react-native';
+import { TodoListProps, Todo } from '../types';
 import { todoListStyles } from '../styles';
 import TodoItem from './TodoItem';
 
 /**
  * TodoList Component
  *
- * Displays a scrollable list of todo items. Shows an empty state when no todos exist.
+ * Displays a virtualized list of todo items using FlatList for optimal performance.
+ * Shows an empty state when no todos exist.
  * Uses KeyboardAvoidingView to handle keyboard appearance on iOS.
+ *
+ * Performance optimizations:
+ * - FlatList virtualizes items for efficient rendering of large lists
+ * - Memoized keyExtractor and renderItem callbacks
+ * - removeClippedSubviews for better performance
  *
  * @component
  * @example
@@ -38,24 +44,24 @@ const TodoList: React.FC<TodoListProps> = ({
   );
 
   /**
-   * Render the list of todos
+   * Extract unique key for each todo item
+   * Memoized to prevent recreation on every render
    */
-  const renderTodoList = () => (
-    <ScrollView
-      style={todoListStyles.scrollView}
-      contentContainerStyle={todoListStyles.scrollContent}
-      showsVerticalScrollIndicator={false}
-      keyboardShouldPersistTaps="handled"
-    >
-      {todos.map((todo) => (
-        <TodoItem
-          key={todo.id}
-          todo={todo}
-          onToggle={() => onToggleTodo(todo.id)}
-          onDelete={() => onDeleteTodo(todo.id)}
-        />
-      ))}
-    </ScrollView>
+  const keyExtractor = useCallback((item: Todo) => item.id, []);
+
+  /**
+   * Render individual todo item
+   * Memoized to prevent recreation on every render
+   */
+  const renderItem = useCallback(
+    ({ item }: { item: Todo }) => (
+      <TodoItem
+        todo={item}
+        onToggle={() => onToggleTodo(item.id)}
+        onDelete={() => onDeleteTodo(item.id)}
+      />
+    ),
+    [onToggleTodo, onDeleteTodo]
   );
 
   return (
@@ -64,7 +70,21 @@ const TodoList: React.FC<TodoListProps> = ({
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
     >
-      {todos.length === 0 ? renderEmptyState() : renderTodoList()}
+      <FlatList
+        data={todos}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        ListEmptyComponent={renderEmptyState}
+        style={todoListStyles.scrollView}
+        contentContainerStyle={todoListStyles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={10}
+        updateCellsBatchingPeriod={50}
+        initialNumToRender={10}
+        windowSize={5}
+      />
     </KeyboardAvoidingView>
   );
 };

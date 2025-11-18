@@ -40,14 +40,13 @@
       </form>
 
       <!-- Filter Tabs -->
-      <div class="filter-tabs">
+      <div id="filter-tabs" class="filter-tabs">
         <button
           class="filter-tab active"
           hx-get="/todos?filter=all"
           hx-target="#todo-list"
           hx-swap="innerHTML"
           hx-trigger="click"
-          onclick="setActiveTab(this)"
         >
           All
         </button>
@@ -57,7 +56,6 @@
           hx-target="#todo-list"
           hx-swap="innerHTML"
           hx-trigger="click"
-          onclick="setActiveTab(this)"
         >
           Active
         </button>
@@ -67,7 +65,6 @@
           hx-target="#todo-list"
           hx-swap="innerHTML"
           hx-trigger="click"
-          onclick="setActiveTab(this)"
         >
           Completed
         </button>
@@ -257,22 +254,8 @@
     </footer>
   </div>
 
-  <!-- Minimal JavaScript for UI enhancements only -->
-  <script>
-    // This is NOT application logic - just UI sugar for tab highlighting
-    function setActiveTab(clickedTab) {
-      document.querySelectorAll('.filter-tab').forEach(tab => {
-        tab.classList.remove('active');
-      });
-      clickedTab.classList.add('active');
-    }
-
-    // Trigger stats update after todo operations
-    document.body.addEventListener('htmx:afterSwap', function(event) {
-      if (event.detail.target.id === 'todo-list' || event.detail.target.classList.contains('todo-item')) {
-        document.body.dispatchEvent(new Event('todoUpdate'));
-      }
-    });
-  </script>
+  <!-- No inline JavaScript needed! Pure htmx + HATEOAS -->
+  <!-- Stats updates are triggered via HX-Trigger response headers from the server -->
+  <!-- Tab highlighting is handled server-side via out-of-band swaps -->
 </body>
 </html>
