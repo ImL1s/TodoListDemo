@@ -59,7 +59,7 @@
 
 ```
 📂 Utils/
-   📄 DataPersistence.cs (387 行)
+   📄 DataPersistence.cs (403 行)
       - 數據持久化
       - JSON 序列化/反序列化
       - PlayerPrefs 支持
@@ -67,13 +67,76 @@
       - 導出/導入功能
       - 備份管理
       - 跨平台路徑處理
+
+   📄 TodoAnimationController.cs (450+ 行)
+      - 動畫控制系統
+      - Fade In/Out 動畫
+      - Slide In/Out 動畫
+      - Scale In/Out 動畫
+      - 彈跳、震動、脈衝動畫
+      - 顏色過渡動畫
+      - 組合動畫支持
+
+   📄 AudioManager.cs (200+ 行)
+      - 單例音頻管理器
+      - 音效播放系統
+      - 音量控制
+      - 多種音效類型支持
+      - 音效開關管理
+```
+
+#### UI 組件（續）
+
+```
+📂 UI/
+   📄 ToastNotification.cs (350+ 行)
+      - Toast 通知系統
+      - 多種通知類型（Info、Success、Warning、Error）
+      - 動畫效果
+      - 隊列管理
+      - 自動消失
+```
+
+#### ScriptableObjects
+
+```
+📂 ScriptableObjects/
+   📄 TodoListSettings.cs (250+ 行)
+      - 應用程式設置
+      - 持久化配置
+      - UI 設置
+      - 視覺設置
+      - 音效設置
+      - 通知設置
+      - 可在 Inspector 中配置
+```
+
+#### 事件系統
+
+```
+📂 Events/
+   📄 GameEvent.cs (80+ 行)
+      - 基於 ScriptableObject 的事件系統
+      - 泛型事件支持
+      - 解耦組件通信
+
+   📄 GameEventListener.cs (50+ 行)
+      - 事件監聽器組件
+      - 連接 ScriptableObject 事件和 UnityEvent
+
+   📄 TodoEvents.cs (40+ 行)
+      - Todo 專用事件定義
+      - TodoStringEvent
+      - TodoIntEvent
+      - TodoObjectEvent
+      - TodoBoolEvent
 ```
 
 #### Editor 工具
 
 ```
 📂 Editor/
-   📄 TodoListMenuItems.cs (201 行)
+   📄 TodoListMenuItems.cs (202 行)
       - Unity Editor 菜單項
       - 清除數據
       - 添加示例數據
@@ -104,7 +167,7 @@
 ### 文檔
 
 ```
-📄 README.md (950+ 行)
+📄 README.md (4000+ 行)
    - 完整的項目文檔
    - Unity 作為應用開發工具介紹
    - 為什麼用遊戲引擎做 Todo List
@@ -120,42 +183,66 @@
    - 項目結構概覽
    - 文件清單
    - 代碼統計
+
+📄 SETUP_GUIDE.md (600+ 行)
+   - 詳細的設置步驟
+   - 場景配置指南
+   - UI 組件創建步驟
+   - Prefab 創建教程
+   - 腳本配置說明
+   - 打包發布步驟
 ```
 
 ## 代碼統計
 
 ### 總行數
 ```
-C# 腳本：約 2,560 行
-README：約 950 行
+C# 腳本：約 4,500+ 行
+README：約 4,000+ 行
+SETUP_GUIDE：約 600+ 行
 其他配置：約 100 行
 ────────────────────
-總計：約 3,610 行
+總計：約 9,200+ 行
 ```
 
 ### 分類統計
 ```
 數據層 (Data):
-  - Todo.cs: 231 行
+  - Todo.cs: 287 行
 
 邏輯層 (Core):
-  - TodoManager.cs: 458 行
+  - TodoManager.cs: 483 行
 
 UI 層 (UI):
-  - TodoInputUI.cs: 347 行
-  - TodoItemUI.cs: 415 行
-  - TodoListUI.cs: 521 行
-  小計: 1,283 行
+  - TodoInputUI.cs: 415 行
+  - TodoItemUI.cs: 478 行
+  - TodoListUI.cs: 599 行
+  - ToastNotification.cs: 350+ 行
+  小計: 1,842+ 行
 
 工具層 (Utils):
-  - DataPersistence.cs: 387 行
+  - DataPersistence.cs: 403 行
+  - TodoAnimationController.cs: 450+ 行
+  - AudioManager.cs: 200+ 行
+  小計: 1,053+ 行
+
+事件系統 (Events):
+  - GameEvent.cs: 80+ 行
+  - GameEventListener.cs: 50+ 行
+  - TodoEvents.cs: 40+ 行
+  小計: 170+ 行
+
+ScriptableObjects:
+  - TodoListSettings.cs: 250+ 行
 
 Editor 工具:
-  - TodoListMenuItems.cs: 201 行
+  - TodoListMenuItems.cs: 202 行
 
 文檔:
-  - README.md: 950+ 行
-  - PROJECT_STRUCTURE.md: 200+ 行
+  - README.md: 4,000+ 行
+  - PROJECT_STRUCTURE.md: 600+ 行
+  - SETUP_GUIDE.md: 600+ 行
+  小計: 5,200+ 行
 ```
 
 ## 功能矩陣

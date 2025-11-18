@@ -580,38 +580,75 @@ const TodoFilters = () => {
 };
 ```
 
-## 🎨 Zustand Middleware
+## 🎨 Zustand Middleware 詳解
 
-### 1. Persist（持久化）
+本專案展示了所有主要的 Zustand middleware 的實際應用。
+
+### 1. Persist（持久化）- 自動保存狀態
+
+**作用：** 自動將狀態保存到 localStorage，頁面刷新後自動恢復。
 
 ```typescript
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 const useStore = create(
   persist(
-    (set) => ({ /* ... */ }),
+    (set) => ({
+      count: 0,
+      increment: () => set((state) => ({ count: state.count + 1 }))
+    }),
     {
-      name: 'storage-key',
-      storage: createJSONStorage(() => localStorage),
+      name: 'storage-key',              // localStorage 的 key
+      storage: createJSONStorage(() => localStorage), // 存儲引擎
+      // 可選配置：
+      // partialize: (state) => ({ count: state.count }), // 只持久化部分狀態
+      // onRehydrateStorage: () => (state) => { /* 恢復後的回調 */ }
     }
   )
 );
 ```
 
-### 2. DevTools（開發工具）
+**使用場景：**
+- 用戶偏好設置（主題、語言等）
+- 購物車數據
+- 表單草稿
+- 用戶登錄狀態
+
+### 2. DevTools（Redux DevTools 支持）
+
+**作用：** 在瀏覽器的 Redux DevTools 擴展中查看和調試狀態變化。
 
 ```typescript
 import { devtools } from 'zustand/middleware';
 
 const useStore = create(
   devtools(
-    (set) => ({ /* ... */ }),
-    { name: 'MyStore' }
+    (set) => ({
+      count: 0,
+      increment: () => set((state) => ({ count: state.count + 1 }))
+    }),
+    {
+      name: 'MyStore',        // DevTools 中顯示的名稱
+      enabled: true,          // 是否啟用（可以在生產環境禁用）
+    }
   )
 );
 ```
 
-### 3. Immer（不可變數據）
+**功能：**
+- 查看所有狀態變化歷史
+- 時間旅行調試（回到之前的狀態）
+- 查看每次狀態更新的 diff
+- 跟踪 action 調用
+
+**使用步驟：**
+1. 安裝 Redux DevTools 瀏覽器擴展
+2. 在 store 中添加 devtools middleware
+3. 打開瀏覽器開發者工具的 Redux 標籤
+
+### 3. Immer（不可變數據簡化）
+
+**作用：** 允許你直接修改狀態，Immer 自動處理不可變性。
 
 ```typescript
 import { immer } from 'zustand/middleware/immer';
@@ -619,20 +656,174 @@ import { immer } from 'zustand/middleware/immer';
 const useStore = create(
   immer((set) => ({
     todos: [],
+
+    // ❌ 傳統方式：複雜的不可變更新
+    // addTodo: (text) => set((state) => ({
+    //   todos: [...state.todos, newTodo]
+    // })),
+
+    // ✅ Immer 方式：直接修改
     addTodo: (text) => set((state) => {
-      state.todos.push(newTodo); // 直接修改，immer 處理不可變性
+      state.todos.push(newTodo); // 看起來在修改，實際是不可變的
+    }),
+
+    // ✅ 更複雜的例子
+    toggleTodo: (id) => set((state) => {
+      const todo = state.todos.find(t => t.id === id);
+      if (todo) {
+        todo.completed = !todo.completed; // 直接修改深層嵌套的屬性
+      }
     })
   }))
 );
 ```
 
-### 4. 組合 Middleware
+**優勢對比：**
 
 ```typescript
-const useStore = create(
+// 不使用 Immer（Redux 風格）
+set((state) => ({
+  todos: state.todos.map((todo) =>
+    todo.id === id
+      ? { ...todo, completed: !todo.completed, updatedAt: Date.now() }
+      : todo
+  )
+}));
+
+// 使用 Immer（更簡潔）
+set((state) => {
+  const todo = state.todos.find((t) => t.id === id);
+  if (todo) {
+    todo.completed = !todo.completed;
+    todo.updatedAt = Date.now();
+  }
+});
+```
+
+**適用場景：**
+- 深層嵌套的狀態更新
+- 複雜的數組/對象操作
+- 想要更簡潔的代碼
+
+### 4. 組合 Middleware - 正確的順序
+
+**重要：** Middleware 的組合順序很重要！
+
+```typescript
+const useStore = create<StoreType>()(
+  // 順序：devtools → persist → immer
+  devtools(           // 最外層：DevTools 監控
+    persist(          // 中間層：持久化
+      immer(          // 最內層：Immer 簡化
+        (set, get) => ({
+          // 你的狀態和方法
+        })
+      ),
+      { name: 'storage-key' }
+    ),
+    { name: 'StoreName' }
+  )
+);
+```
+
+**順序說明：**
+1. **devtools** 在最外層：可以監控所有狀態變化
+2. **persist** 在中間：可以持久化處理後的狀態
+3. **immer** 在最內層：處理狀態更新邏輯
+
+**錯誤示例：**
+```typescript
+// ❌ 錯誤：immer 在外層會導致問題
+create()(
+  immer(
+    persist(
+      devtools((set) => ({ /* ... */ }))
+    )
+  )
+);
+```
+
+### 5. 條件性使用 Middleware
+
+在生產環境可能想禁用某些 middleware：
+
+```typescript
+const middlewares = (f: any) => {
+  let store = immer(f);
+
+  // 只在開發環境啟用 devtools
+  if (process.env.NODE_ENV === 'development') {
+    store = devtools(store, { name: 'TodoStore' });
+  }
+
+  // 總是啟用 persist
+  store = persist(store, { name: 'todos' });
+
+  return store;
+};
+
+const useStore = create<StoreType>()(middlewares((set, get) => ({
+  // 你的狀態
+})));
+```
+
+## 🧩 Slice Pattern（切片模式）- 大型應用最佳實踐
+
+Slice Pattern 是 Zustand 推薦的大型應用組織方式，將 store 拆分成多個小的、可管理的部分。
+
+### 何時使用 Slice Pattern？
+
+**✅ 適合使用：**
+- 大型應用，有很多狀態和方法
+- 多人協作開發
+- 需要清晰的代碼組織
+- 不同功能模塊之間邏輯獨立
+
+**❌ 不需要使用：**
+- 小型應用（如本 Todo 示例）
+- 狀態簡單，方法較少
+- 單人開發小項目
+
+### 實現示例
+
+本專案提供了完整的 Slice Pattern 示例：`src/store/useTodoStoreWithSlices.ts`
+
+```typescript
+// 定義 Slice 1：Todos 管理
+interface TodosSlice {
+  todos: Todo[];
+  addTodo: (text: string) => void;
+  toggleTodo: (id: string) => void;
+  // ...
+}
+
+const createTodosSlice = (set, get): TodosSlice => ({
+  todos: [],
+  addTodo: (text) => { /* ... */ },
+  toggleTodo: (id) => { /* ... */ },
+});
+
+// 定義 Slice 2：Filter 管理
+interface FilterSlice {
+  filter: FilterType;
+  setFilter: (filter: FilterType) => void;
+}
+
+const createFilterSlice = (set, get): FilterSlice => ({
+  filter: 'all',
+  setFilter: (filter) => { /* ... */ },
+});
+
+// 組合所有 Slices
+type TodoStore = TodosSlice & FilterSlice;
+
+const useTodoStore = create<TodoStore>()(
   devtools(
     persist(
-      immer((set) => ({ /* ... */ })),
+      immer((set, get) => ({
+        ...createTodosSlice(set, get),
+        ...createFilterSlice(set, get),
+      })),
       { name: 'todos' }
     ),
     { name: 'TodoStore' }
@@ -640,15 +831,61 @@ const useStore = create(
 );
 ```
 
+### Slice Pattern 優勢
+
+1. **代碼組織清晰**
+   - 每個 slice 負責特定功能
+   - 易於查找和修改
+
+2. **易於測試**
+   - 可以單獨測試每個 slice
+   - 減少測試複雜度
+
+3. **協作友好**
+   - 不同開發者可以負責不同 slice
+   - 減少代碼衝突
+
+4. **易於維護**
+   - 新增功能只需添加新 slice
+   - 修改功能只需關注對應 slice
+
+### Slice 之間通信
+
+```typescript
+const createUISlice = (set, get) => ({
+  darkMode: false,
+
+  toggleDarkMode: () => {
+    set((state) => {
+      state.darkMode = !state.darkMode;
+    });
+
+    // 通過 get() 訪問其他 slice
+    const filter = get().filter;
+    console.log('Current filter:', filter);
+
+    // 調用其他 slice 的方法
+    get().setFilter('all');
+  }
+});
+```
+
+### 完整示例文件
+
+查看 `src/store/useTodoStoreWithSlices.ts` 了解完整的 Slice Pattern 實現。
+
 ## 📚 學習資源
 
 ### 官方文檔
 - [Zustand 官方文檔](https://github.com/pmndrs/zustand)
 - [Zustand TypeScript 指南](https://github.com/pmndrs/zustand/blob/main/docs/guides/typescript.md)
+- [Zustand Middleware 指南](https://github.com/pmndrs/zustand/blob/main/docs/guides/middleware.md)
+- [Zustand Slice Pattern](https://github.com/pmndrs/zustand/blob/main/docs/guides/slices-pattern.md)
 
 ### 推薦文章
 - [Why Zustand is the Best State Management Library](https://tkdodo.eu/blog/zustand-and-react-context)
 - [Zustand vs Redux: A Comparison](https://blog.logrocket.com/zustand-vs-redux/)
+- [Mastering Zustand](https://tkdodo.eu/blog/working-with-zustand)
 
 ## 🎯 最佳實踐
 

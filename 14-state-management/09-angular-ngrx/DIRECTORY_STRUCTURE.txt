@@ -1,0 +1,187 @@
+NgRx Todo List - 完整目錄結構
+=====================================
+
+09-angular-ngrx/
+│
+├── 📋 專案文檔 (41KB)
+│   ├── README.md                    (14KB)  - 完整專案說明
+│   ├── QUICKSTART.md               (8.8KB)  - 快速開始指南
+│   ├── ARCHITECTURE.md              (18KB)  - 架構詳細說明
+│   ├── PROJECT_SUMMARY.md          (本檔)  - 專案總覽
+│   └── DIRECTORY_STRUCTURE.txt              - 目錄結構
+│
+├── ⚙️ 配置檔案
+│   ├── package.json                         - NPM 依賴和腳本
+│   ├── tsconfig.json                        - TypeScript 基礎配置
+│   ├── tsconfig.app.json                    - 應用 TS 配置
+│   ├── angular.json                         - Angular CLI 配置
+│   └── .gitignore                           - Git 忽略規則
+│
+└── src/                                     - 原始碼目錄
+    │
+    ├── 🌐 應用入口
+    │   ├── index.html                       - HTML 入口點
+    │   ├── main.ts                          - 應用啟動
+    │   └── styles.css                       - 全局樣式
+    │
+    └── app/                                 - Angular 應用
+        │
+        ├── 🎯 核心配置
+        │   ├── app.component.ts             - 根組件
+        │   └── app.config.ts                - 應用配置
+        │
+        ├── 📦 資料模型
+        │   └── models/
+        │       └── todo.model.ts            - Todo 介面
+        │                                      (Todo, FilterType, TodoState)
+        │
+        ├── 🎨 UI 組件 (3 個組件)
+        │   └── components/
+        │       ├── todo-list.component.ts   - 主容器 (Smart Component)
+        │       │                              • 連接 Store
+        │       │                              • 管理狀態訂閱
+        │       │                              • Dispatch Actions
+        │       │
+        │       ├── todo-item.component.ts   - 待辦項目 (Presentational)
+        │       │                              • 顯示單個 Todo
+        │       │                              • 編輯功能
+        │       │                              • 事件發射
+        │       │
+        │       └── todo-filter.component.ts - 篩選器 (Presentational)
+        │                                      • 篩選按鈕
+        │                                      • 統計顯示
+        │                                      • 清除功能
+        │
+        └── 🏪 NgRx Store (狀態管理核心)
+            └── store/
+                │
+                ├── 📤 Actions (17 個 Actions)
+                │   └── todo.actions.ts
+                │       ├── CRUD Actions (8 個)
+                │       │   • addTodo / addTodoSuccess
+                │       │   • updateTodo / updateTodoSuccess
+                │       │   • deleteTodo / deleteTodoSuccess
+                │       │   • toggleTodo / toggleTodoSuccess
+                │       │
+                │       ├── Filter Actions (1 個)
+                │       │   • setFilter
+                │       │
+                │       ├── Bulk Actions (2 個)
+                │       │   • clearCompleted
+                │       │   • clearCompletedSuccess
+                │       │
+                │       └── Storage Actions (3 個)
+                │           • loadTodos
+                │           • loadTodosSuccess
+                │           • loadTodosFailure
+                │
+                ├── 🔄 Reducers (Entity Adapter)
+                │   └── todo.reducer.ts
+                │       ├── Entity Adapter 配置
+                │       │   • selectId: todo.id
+                │       │   • sortComparer: 按創建時間
+                │       │
+                │       ├── State 定義
+                │       │   • TodoEntityState
+                │       │   • ids: string[]
+                │       │   • entities: { [id]: Todo }
+                │       │   • filter: FilterType
+                │       │   • loading: boolean
+                │       │   • error: string | null
+                │       │
+                │       └── Reducer 函數
+                │           • 處理所有 Actions
+                │           • 純函數設計
+                │           • Immutable 更新
+                │
+                ├── 🔍 Selectors (12 個 Selectors)
+                │   └── todo.selectors.ts
+                │       ├── Feature Selector (1 個)
+                │       │   • selectTodoState
+                │       │
+                │       ├── Entity Selectors (4 個)
+                │       │   • selectAllTodos
+                │       │   • selectTodoEntities
+                │       │   • selectTodoById
+                │       │   • selectFilter
+                │       │
+                │       ├── Filtered Selectors (1 個)
+                │       │   • selectFilteredTodos
+                │       │
+                │       ├── Statistics Selectors (5 個)
+                │       │   • selectTotalTodos
+                │       │   • selectActiveTodos
+                │       │   • selectActiveTodosCount
+                │       │   • selectCompletedTodos
+                │       │   • selectCompletedTodosCount
+                │       │   • selectHasCompletedTodos
+                │       │
+                │       └── UI State Selectors (2 個)
+                │           • selectLoading
+                │           • selectError
+                │
+                └── ⚡ Effects (6 個 Effects)
+                    └── todo.effects.ts
+                        ├── Business Logic Effects (5 個)
+                        │   • addTodo$       - 創建 Todo
+                        │   • updateTodo$    - 更新 Todo
+                        │   • deleteTodo$    - 刪除 Todo
+                        │   • toggleTodo$    - 切換狀態
+                        │   • clearCompleted$ - 清除完成
+                        │
+                        └── Side Effect Effects (2 個)
+                            • loadTodos$     - 載入資料
+                            • saveTodos$     - 儲存資料
+
+
+═══════════════════════════════════════════════════════════════
+
+📊 專案統計
+
+總檔案數:        22 個
+TypeScript:      11 個
+文檔:            4 個 (41KB)
+配置:            4 個
+
+NgRx 元件統計:
+  Actions:       17 個
+  Reducers:      1 個 (with Entity Adapter)
+  Selectors:     12 個
+  Effects:       6 個
+
+Angular 組件:
+  Smart:         1 個 (TodoListComponent)
+  Presentational: 2 個 (TodoItemComponent, TodoFilterComponent)
+
+═══════════════════════════════════════════════════════════════
+
+🔑 關鍵技術
+
+✅ Angular 17+ Standalone Components
+✅ NgRx Store (狀態管理)
+✅ NgRx Effects (副作用處理)
+✅ NgRx Entity Adapter (集合管理)
+✅ NgRx DevTools (開發工具)
+✅ TypeScript Strict Mode (嚴格模式)
+✅ RxJS Observables (響應式編程)
+✅ LocalStorage Persistence (資料持久化)
+
+═══════════════════════════════════════════════════════════════
+
+🎯 核心特色
+
+1. ✨ 完整的 CRUD 操作
+2. 🔍 強大的篩選功能
+3. 💾 自動資料持久化
+4. 📊 即時統計資訊
+5. 🎨 現代化 UI 設計
+6. 🚀 性能優化 (Memoization)
+7. 🧪 易於測試
+8. 📱 響應式設計
+
+═══════════════════════════════════════════════════════════════
+
+建立時間: 2025-11-18
+專案版本: 1.0.0
+授權: MIT
+

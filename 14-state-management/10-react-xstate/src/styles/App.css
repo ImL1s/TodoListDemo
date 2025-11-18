@@ -1,0 +1,366 @@
+/* 全局樣式 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* 應用容器 */
+.app {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.container {
+  width: 100%;
+  max-width: 600px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+/* 頭部 */
+.app-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px;
+  text-align: center;
+}
+
+.app-header h1 {
+  font-size: 3.5rem;
+  font-weight: 200;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.state-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.state-badge {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.xstate-logo {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+/* 主要內容區 */
+.app-main {
+  padding: 0;
+}
+
+/* 加載狀態 */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 新增 Todo */
+.add-todo {
+  display: flex;
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  background: #fafafa;
+}
+
+.add-todo-input {
+  flex: 1;
+  padding: 12px 16px;
+  font-size: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px 0 0 6px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.add-todo-input:focus {
+  border-color: #667eea;
+}
+
+.add-todo-button {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 0 6px 6px 0;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.add-todo-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.add-todo-button:active {
+  transform: translateY(0);
+}
+
+/* Todo 列表 */
+.todo-list {
+  list-style: none;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.empty-state {
+  padding: 60px 20px;
+  text-align: center;
+  color: #999;
+}
+
+.empty-state p {
+  font-size: 1.1rem;
+}
+
+/* Todo 項目 */
+.todo-item {
+  border-bottom: 1px solid #e0e0e0;
+  transition: background-color 0.2s;
+}
+
+.todo-item:hover {
+  background-color: #fafafa;
+}
+
+.todo-item-content {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  gap: 12px;
+}
+
+.todo-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #667eea;
+}
+
+.todo-text {
+  flex: 1;
+  font-size: 1rem;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+.todo-item.completed .todo-text {
+  color: #999;
+  text-decoration: line-through;
+}
+
+.delete-button {
+  width: 30px;
+  height: 30px;
+  font-size: 1.5rem;
+  color: #ff6b6b;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s, background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.todo-item:hover .delete-button {
+  opacity: 1;
+}
+
+.delete-button:hover {
+  background-color: #ffe0e0;
+}
+
+/* 編輯輸入框 */
+.todo-item.editing {
+  padding: 0;
+}
+
+.edit-input {
+  width: 100%;
+  padding: 16px 20px;
+  font-size: 1rem;
+  border: 2px solid #667eea;
+  outline: none;
+}
+
+/* 篩選器 */
+.todo-filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #fafafa;
+  border-top: 1px solid #e0e0e0;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.todo-count {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.filter-button {
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  color: #666;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-button:hover {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.filter-button.active {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.clear-completed {
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  color: #ff6b6b;
+  background: white;
+  border: 1px solid #ff6b6b;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.clear-completed:hover {
+  background: #ff6b6b;
+  color: white;
+}
+
+/* 底部 */
+.app-footer {
+  padding: 20px;
+  text-align: center;
+  color: #999;
+  font-size: 0.85rem;
+  background: #fafafa;
+  border-top: 1px solid #e0e0e0;
+}
+
+.app-footer p {
+  margin: 8px 0;
+}
+
+.machine-info {
+  color: #667eea;
+  font-weight: 500;
+}
+
+.context-debug {
+  margin-top: 16px;
+  text-align: left;
+}
+
+.context-debug summary {
+  cursor: pointer;
+  color: #666;
+  font-weight: 500;
+  padding: 8px;
+  background: white;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+}
+
+.context-debug summary:hover {
+  background: #f5f5f5;
+}
+
+.context-debug pre {
+  margin-top: 12px;
+  padding: 16px;
+  background: #2d2d2d;
+  color: #f8f8f2;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+/* 響應式設計 */
+@media (max-width: 600px) {
+  .app-header h1 {
+    font-size: 2.5rem;
+  }
+
+  .todo-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-buttons {
+    justify-content: center;
+  }
+
+  .clear-completed {
+    width: 100%;
+  }
+}

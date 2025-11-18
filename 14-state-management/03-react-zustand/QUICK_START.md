@@ -69,7 +69,7 @@ function Counter() {
 
 ## 常用 Patterns
 
-### 1. 持久化
+### 1. 持久化（Persist）
 ```typescript
 import { persist } from 'zustand/middleware';
 
@@ -81,7 +81,48 @@ const useStore = create(
 );
 ```
 
-### 2. 選擇器
+### 2. DevTools 支持
+```typescript
+import { devtools } from 'zustand/middleware';
+
+const useStore = create(
+  devtools(
+    (set) => ({ /* ... */ }),
+    { name: 'MyStore' }
+  )
+);
+```
+
+### 3. Immer（簡化狀態更新）
+```typescript
+import { immer } from 'zustand/middleware/immer';
+
+const useStore = create(
+  immer((set) => ({
+    todos: [],
+
+    // 直接修改，Immer 處理不可變性
+    addTodo: (todo) => set((state) => {
+      state.todos.push(todo);
+    })
+  }))
+);
+```
+
+### 4. 組合所有 Middleware
+```typescript
+const useStore = create(
+  devtools(
+    persist(
+      immer((set) => ({ /* ... */ })),
+      { name: 'storage' }
+    ),
+    { name: 'Store' }
+  )
+);
+```
+
+### 5. 選擇器
 ```typescript
 const useStore = create((set, get) => ({
   todos: [],
@@ -92,14 +133,16 @@ const useStore = create((set, get) => ({
 }));
 ```
 
-### 3. 異步操作
+### 6. 異步操作
 ```typescript
 const useStore = create((set) => ({
   data: null,
+  loading: false,
 
   fetchData: async () => {
+    set({ loading: true });
     const data = await api.fetch();
-    set({ data });
+    set({ data, loading: false });
   }
 }));
 ```

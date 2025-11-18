@@ -1,0 +1,201 @@
+02-electron-vue/
+├── electron/                           # Electron 主進程
+│   ├── main.ts                        # 主進程入口，視窗管理，IPC 處理器 (200 行)
+│   ├── preload.ts                     # Preload 腳本，contextBridge 安全橋接 (60 行)
+│   ├── menu.ts                        # 應用程式選單配置 (150 行)
+│   └── tray.ts                        # 系統托盤圖標和菜單 (100 行)
+│
+├── src/                               # Vue 應用（渲染進程）
+│   ├── components/                    # Vue 組件
+│   │   ├── TitleBar.vue              # 自定義標題欄（Windows/Linux）(100 行)
+│   │   ├── TodoInput.vue             # 輸入框組件，支持 Enter 提交 (100 行)
+│   │   ├── TodoItem.vue              # 單個待辦項，雙擊編輯功能 (150 行)
+│   │   ├── TodoList.vue              # 列表容器，Transition 動畫 (100 行)
+│   │   └── TodoFilter.vue            # 篩選器，統計顯示 (100 行)
+│   │
+│   ├── composables/                   # 組合式函數（Composables）
+│   │   ├── useTodos.ts               # 待辦事項業務邏輯，CRUD 操作 (150 行)
+│   │   └── useShortcuts.ts           # 快捷鍵處理，事件監聽 (30 行)
+│   │
+│   ├── types/                         # TypeScript 類型定義
+│   │   └── index.ts                  # Todo, FilterType, TodoStats 類型 (20 行)
+│   │
+│   ├── App.vue                        # 根組件，應用佈局 (250 行)
+│   ├── main.ts                        # Vue 應用入口 (5 行)
+│   ├── style.css                      # 全局樣式 (30 行)
+│   └── vite-env.d.ts                 # Vite 環境類型定義 (8 行)
+│
+├── public/                            # 靜態資源
+│   └── ICONS.md                      # 圖標使用說明
+│
+├── .vscode/                           # VSCode 配置
+│   └── extensions.json               # 推薦擴展列表
+│
+├── docs/                              # 文檔（邏輯分組）
+│   ├── README.md                     # 主文檔：特色、安裝、比較、學習資源 (500+ 行)
+│   ├── FEATURES.md                   # 功能詳解：所有特性的深入說明 (300+ 行)
+│   ├── QUICKSTART.md                 # 快速入門：5 分鐘上手指南 (150+ 行)
+│   ├── ARCHITECTURE.md               # 架構文檔：系統設計、數據流 (400+ 行)
+│   ├── PROJECT_SUMMARY.md            # 專案總結：統計、對比、擴展 (300+ 行)
+│   └── COMPLETION_REPORT.md          # 完成報告：需求檢查、評估 (400+ 行)
+│
+├── config/                            # 配置文件（邏輯分組）
+│   ├── package.json                  # 項目配置，依賴，構建腳本
+│   ├── tsconfig.json                 # TypeScript 主配置
+│   ├── tsconfig.node.json            # TypeScript Node.js 配置
+│   ├── vite.config.ts                # Vite 配置，Electron 插件
+│   └── .gitignore                    # Git 忽略規則
+│
+├── index.html                         # HTML 入口，CSP 設置
+├── STRUCTURE.txt                      # 本文件：專案結構說明
+│
+└── [生成目錄]                          # 運行時生成
+    ├── node_modules/                 # npm 依賴（不提交）
+    ├── dist/                         # Vite 構建輸出（渲染進程）
+    ├── dist-electron/                # Electron 構建輸出（主進程）
+    └── release/                      # 打包產物（Windows/macOS/Linux）
+
+═══════════════════════════════════════════════════════════════════
+
+📊 專案統計
+
+代碼文件:
+  - TypeScript: 8 files (~510 lines)
+  - Vue: 5 files (~550 lines)
+  - 配置: 5 files (~125 lines)
+  - 文檔: 7 files (~2000+ lines)
+  ────────────────────────────────
+  總計: 25 files, ~3185 lines
+
+功能模組:
+  - Electron 主進程: 4 modules
+  - Vue 組件: 5 components
+  - Composables: 2 composables
+  - Types: 1 module
+
+═══════════════════════════════════════════════════════════════════
+
+🎯 關鍵文件說明
+
+【主進程 - Electron】
+  electron/main.ts
+    - 應用生命週期管理
+    - BrowserWindow 創建和配置
+    - IPC 處理器註冊
+    - 系統托盤和選單初始化
+    - 全局快捷鍵註冊
+
+  electron/preload.ts
+    - contextBridge API 暴露
+    - 類型定義和接口聲明
+    - 安全的 IPC 通訊橋接
+
+  electron/menu.ts
+    - 跨平台選單配置
+    - File/Edit/View/Window/Help 選單
+    - 選單事件處理
+
+  electron/tray.ts
+    - 系統托盤圖標
+    - 托盤上下文選單
+    - 快速操作入口
+
+【渲染進程 - Vue】
+  src/App.vue
+    - 應用根組件
+    - 佈局和組件組合
+    - 快捷鍵監聽設置
+
+  src/composables/useTodos.ts
+    - 核心業務邏輯
+    - CRUD 操作實現
+    - 檔案讀寫（通過 IPC）
+    - 自動保存機制
+
+  src/composables/useShortcuts.ts
+    - 全局快捷鍵監聽
+    - 事件註冊和清理
+
+  src/components/*.vue
+    - TodoInput: 輸入和提交
+    - TodoItem: 顯示和編輯
+    - TodoList: 列表渲染和動畫
+    - TodoFilter: 篩選和統計
+    - TitleBar: 自定義視窗控制
+
+【配置文件】
+  vite.config.ts
+    - Vue 插件配置
+    - Electron 插件配置
+    - 路徑別名設置
+
+  package.json
+    - 依賴管理
+    - 構建腳本
+    - electron-builder 配置
+
+  tsconfig.json
+    - TypeScript 編譯選項
+    - 嚴格模式啟用
+    - 路徑映射
+
+【文檔文件】
+  README.md           → 從這裡開始，完整介紹
+  QUICKSTART.md       → 5 分鐘快速上手
+  FEATURES.md         → 深入了解所有功能
+  ARCHITECTURE.md     → 理解系統架構
+  PROJECT_SUMMARY.md  → 專案總覽
+  COMPLETION_REPORT.md → 完成度檢查
+
+═══════════════════════════════════════════════════════════════════
+
+🔄 數據流示意
+
+用戶操作 → Vue 組件 → Composable → IPC 調用 → 主進程 → 文件系統
+    ↑                                                           ↓
+    └─────────── 響應式更新 ←─── Vue 狀態 ←─── IPC 返回 ←────────┘
+
+═══════════════════════════════════════════════════════════════════
+
+📦 構建產物
+
+開發模式 (npm run dev):
+  - Vite Dev Server: http://localhost:5173
+  - Electron 加載開發 URL
+  - 熱模組替換（HMR）啟用
+
+生產構建 (npm run build):
+  dist/                    # Vite 構建的 Web 資源
+  ├── index.html
+  ├── assets/
+  │   ├── index-[hash].js
+  │   └── index-[hash].css
+
+  dist-electron/           # 編譯的主進程代碼
+  ├── main.js
+  ├── preload.js
+  ├── menu.js
+  └── tray.js
+
+  release/                 # electron-builder 打包產物
+  ├── 1.0.0/
+  │   ├── win-unpacked/   # Windows 應用
+  │   ├── mac/            # macOS 應用
+  │   └── linux-unpacked/ # Linux 應用
+
+═══════════════════════════════════════════════════════════════════
+
+🚀 快速導航
+
+開始使用:
+  1. cd 08-desktop/02-electron-vue
+  2. npm install
+  3. npm run dev
+
+了解更多:
+  - 快速上手: QUICKSTART.md
+  - 功能介紹: FEATURES.md
+  - 架構設計: ARCHITECTURE.md
+  - 完整文檔: README.md
+
+═══════════════════════════════════════════════════════════════════
