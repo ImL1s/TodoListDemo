@@ -1,0 +1,66 @@
+# Qt-specific
+*.pro.user
+*.pro.user.*
+*.qmlproject.user
+*.qmlproject.user.*
+*.moc
+moc_*.cpp
+qrc_*.cpp
+ui_*.h
+*.qm
+.qmake.cache
+.qmake.stash
+
+# CMake
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+
+# Build directories
+build/
+build-*/
+debug/
+release/
+Debug/
+Release/
+x64/
+x86/
+
+# Qt Creator
+*.autosave
+*.user
+*.cbp
+
+# C++ compiled files
+*.o
+*.obj
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+*.app
+
+# Platform-specific
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Qt deployment
+windeployqt/
+macdeployqt/
+
+# Application data (optional - uncomment if you don't want to track)
+# *.ini
+# *.conf

@@ -1,0 +1,23 @@
+<Application x:Class="TodoListWPF.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:TodoListWPF.Converters"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- Default to Light Theme -->
+                <ResourceDictionary x:Name="ThemeDictionary" Source="Styles/LightTheme.xaml"/>
+                <ResourceDictionary Source="Styles/CommonStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Global Converters -->
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
+            <converters:PriorityToColorConverter x:Key="PriorityToColorConverter"/>
+            <converters:DateTimeToStringConverter x:Key="DateTimeToStringConverter"/>
+            <converters:BoolToTextDecorationConverter x:Key="BoolToTextDecorationConverter"/>
+            <converters:CountToVisibilityConverter x:Key="CountToVisibilityConverter"/>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

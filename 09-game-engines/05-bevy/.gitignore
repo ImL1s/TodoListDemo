@@ -1,0 +1,36 @@
+# Rust / Cargo
+/target/
+Cargo.lock
+**/*.rs.bk
+*.pdb
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Bevy
+# Assets are committed, but generated assets are not
+/assets/generated/
+
+# Todo data
+todos.json
+
+# Build artifacts
+*.wasm
+*.wasm.d.ts
+pkg/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# WASM build
+/wasm/
+/dist/

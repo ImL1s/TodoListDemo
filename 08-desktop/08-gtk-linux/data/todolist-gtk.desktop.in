@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Todo List
+GenericName=Task Manager
+Comment=Manage your todo items
+Exec=todolist-gtk
+Icon=@APP_ID@
+Terminal=false
+Type=Application
+Categories=GTK;Utility;Office;
+Keywords=todo;task;list;productivity;
+StartupNotify=true
