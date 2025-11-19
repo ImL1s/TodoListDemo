@@ -29,8 +29,15 @@ enum class ETodoPriority : uint8
 };
 
 /**
- * Structure representing a single Todo item
- * This is the core data structure for managing individual todos
+ * @struct FTodoItem
+ * @brief Structure representing a single Todo item
+ *
+ * This is the core data structure for managing individual todos.
+ * Each todo has a unique ID, title, completion status, priority level,
+ * timestamps, and optional metadata (notes and tags).
+ *
+ * @note This struct is Blueprint-exposed and can be used in both C++ and Blueprint.
+ * @see UTodoManager for todo management operations
  */
 USTRUCT(BlueprintType)
 struct FTodoItem
@@ -38,39 +45,67 @@ struct FTodoItem
 	GENERATED_BODY()
 
 public:
-	/** Unique identifier for this todo item */
+	/**
+	 * Unique identifier for this todo item
+	 * @note Auto-generated on construction
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Todo")
 	FGuid Id;
 
-	/** Title/description of the todo task */
+	/**
+	 * Title/description of the todo task
+	 * @note Should not be empty for valid todos
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Todo")
 	FString Title;
 
-	/** Whether this todo is marked as completed */
+	/**
+	 * Whether this todo is marked as completed
+	 * @note Updated automatically when ToggleCompleted() is called
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Todo")
 	bool bCompleted;
 
-	/** Priority level of this todo */
+	/**
+	 * Priority level of this todo
+	 * @see ETodoPriority for available priority levels
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Todo")
 	ETodoPriority Priority;
 
-	/** Timestamp when this todo was created */
+	/**
+	 * Timestamp when this todo was created
+	 * @note Auto-set to current time on construction
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Todo")
 	FDateTime CreatedAt;
 
-	/** Timestamp when this todo was completed (if completed) */
+	/**
+	 * Timestamp when this todo was completed
+	 * @note Only valid if bCompleted is true; MinValue if not completed
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Todo")
 	FDateTime CompletedAt;
 
-	/** Optional notes or additional details */
+	/**
+	 * Optional notes or additional details
+	 * @note Can be empty; used for extended descriptions
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Todo")
 	FString Notes;
 
-	/** Tags for categorization */
+	/**
+	 * Tags for categorization and filtering
+	 * @note Array can be empty; useful for custom filtering
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Todo")
 	TArray<FString> Tags;
 
-	// Default constructor
+	/**
+	 * Default constructor
+	 * @brief Initializes a todo with default values
+	 * @note Generates a new unique ID and sets CreatedAt to current time
+	 */
 	FTodoItem()
 		: Id(FGuid::NewGuid())
 		, Title(TEXT(""))
@@ -82,7 +117,11 @@ public:
 	{
 	}
 
-	// Constructor with title
+	/**
+	 * Constructor with title
+	 * @param InTitle The title/description of the todo
+	 * @note Priority defaults to Normal
+	 */
 	FTodoItem(const FString& InTitle)
 		: Id(FGuid::NewGuid())
 		, Title(InTitle)
@@ -94,7 +133,11 @@ public:
 	{
 	}
 
-	// Constructor with title and priority
+	/**
+	 * Constructor with title and priority
+	 * @param InTitle The title/description of the todo
+	 * @param InPriority The initial priority level
+	 */
 	FTodoItem(const FString& InTitle, ETodoPriority InPriority)
 		: Id(FGuid::NewGuid())
 		, Title(InTitle)
@@ -106,7 +149,11 @@ public:
 	{
 	}
 
-	/** Toggle the completion status */
+	/**
+	 * Toggle the completion status
+	 * @brief Switches bCompleted state and updates CompletedAt timestamp
+	 * @note If completing, sets CompletedAt to now; if un-completing, resets to MinValue
+	 */
 	void ToggleCompleted()
 	{
 		bCompleted = !bCompleted;
@@ -120,7 +167,12 @@ public:
 		}
 	}
 
-	/** Check if this todo matches the given filter */
+	/**
+	 * Check if this todo matches the given filter
+	 * @param Filter The filter type to check against
+	 * @return true if this todo should be shown with the given filter
+	 * @see ETodoFilter
+	 */
 	bool MatchesFilter(ETodoFilter Filter) const
 	{
 		switch (Filter)
@@ -135,7 +187,11 @@ public:
 		}
 	}
 
-	/** Get a formatted string representation of this todo */
+	/**
+	 * Get a formatted string representation of this todo
+	 * @return Human-readable string with completion status, title, and priority
+	 * @note Format: "[X] Title (Priority: N)" where X = checked/unchecked
+	 */
 	FString ToString() const
 	{
 		return FString::Printf(TEXT("[%s] %s (Priority: %d)"),
@@ -144,7 +200,12 @@ public:
 			static_cast<int32>(Priority));
 	}
 
-	/** Equality operator for comparing todo items */
+	/**
+	 * Equality operator for comparing todo items
+	 * @param Other The todo item to compare with
+	 * @return true if both todos have the same ID
+	 * @note Comparison is based solely on ID, not content
+	 */
 	bool operator==(const FTodoItem& Other) const
 	{
 		return Id == Other.Id;

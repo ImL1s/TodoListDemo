@@ -28,8 +28,12 @@
 int main(int argc, char *argv[])
 {
     // Enable High DPI support for modern displays
-    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    // Note: Qt 6 enables high DPI by default, these attributes are deprecated
+    // For Qt 5 compatibility, you can use:
+    // #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    //     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    //     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    // #endif
 
     // Create the application instance
     QApplication app(argc, argv);

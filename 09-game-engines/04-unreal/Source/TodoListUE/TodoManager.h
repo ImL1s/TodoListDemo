@@ -21,9 +21,33 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTodoUpdated, const FTodoItem&, Up
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFilterChanged, ETodoFilter, NewFilter);
 
 /**
- * UTodoManager
- * Core business logic class for managing todo items
- * Handles CRUD operations, filtering, persistence, and statistics
+ * @class UTodoManager
+ * @brief Core business logic class for managing todo items
+ *
+ * UTodoManager is the central manager for all todo operations in the application.
+ * It provides:
+ * - CRUD operations (Create, Read, Update, Delete)
+ * - Filtering and searching capabilities
+ * - Statistics and analytics
+ * - Event broadcasting for UI updates
+ * - Auto-save functionality
+ * - Integration with SaveGame system
+ *
+ * @note This class is designed as a singleton (one instance per game session)
+ * @note All modifications trigger event broadcasts for reactive UI updates
+ * @note Thread-safe for single-threaded game loop usage
+ *
+ * @see FTodoItem for todo data structure
+ * @see UTodoSaveGame for persistence layer
+ * @see ATodoListUEGameMode for lifecycle management
+ *
+ * Example Usage:
+ * @code
+ * UTodoManager* Manager = GetTodoManager();
+ * FTodoItem NewTodo = Manager->AddTodo(TEXT("Buy groceries"));
+ * Manager->ToggleTodoCompletion(NewTodo.Id);
+ * Manager->SaveTodos();
+ * @endcode
  */
 UCLASS(Blueprintable, BlueprintType)
 class TODOLISTUE_API UTodoManager : public UObject
@@ -31,6 +55,10 @@ class TODOLISTUE_API UTodoManager : public UObject
 	GENERATED_BODY()
 
 public:
+	/**
+	 * Default constructor
+	 * @brief Initializes manager with default settings (All filter, auto-save enabled)
+	 */
 	UTodoManager();
 
 	// ==================== Todo Operations ====================

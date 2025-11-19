@@ -127,6 +127,34 @@ class MainViewController: NSViewController {
             name: TodoManager.todosDidChangeNotification,
             object: nil
         )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleNewTodoRequest),
+            name: NSNotification.Name("NewTodoRequested"),
+            object: nil
+        )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleImportTodosRequest),
+            name: NSNotification.Name("ImportTodosRequested"),
+            object: nil
+        )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleExportTodosRequest),
+            name: NSNotification.Name("ExportTodosRequested"),
+            object: nil
+        )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleShowSearchRequest),
+            name: NSNotification.Name("ShowSearchRequested"),
+            object: nil
+        )
     }
 
     private func setupKeyboardShortcuts() {
@@ -253,6 +281,22 @@ class MainViewController: NSViewController {
     @objc private func todosDidChange(_ notification: Notification) {
         refreshDisplayedTodos()
         updateStatusLabel()
+    }
+
+    @objc private func handleNewTodoRequest(_ notification: Notification) {
+        view.window?.makeFirstResponder(inputField)
+    }
+
+    @objc private func handleImportTodosRequest(_ notification: Notification) {
+        importTodos(self)
+    }
+
+    @objc private func handleExportTodosRequest(_ notification: Notification) {
+        exportTodos(self)
+    }
+
+    @objc private func handleShowSearchRequest(_ notification: Notification) {
+        view.window?.makeFirstResponder(searchField)
     }
 
     // MARK: - Keyboard Handling

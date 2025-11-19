@@ -26,7 +26,7 @@ public partial class MainViewModel : ObservableObject
     /// Collection of all todo items (source collection).
     /// </summary>
     [ObservableProperty]
-    private ObservableCollection<TodoItem> _allTodos = new();
+    private ObservableCollection<TodoItem> allTodos = new();
 
     /// <summary>
     /// Filtered view of todos based on current filter.
@@ -38,55 +38,55 @@ public partial class MainViewModel : ObservableObject
     /// </summary>
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(AddTodoCommand))]
-    private string _newTodoTitle = string.Empty;
+    private string newTodoTitle = string.Empty;
 
     /// <summary>
     /// Description for new todo being created.
     /// </summary>
     [ObservableProperty]
-    private string _newTodoDescription = string.Empty;
+    private string newTodoDescription = string.Empty;
 
     /// <summary>
     /// Priority for new todo being created.
     /// </summary>
     [ObservableProperty]
-    private TodoPriority _newTodoPriority = TodoPriority.Normal;
+    private TodoPriority newTodoPriority = TodoPriority.Normal;
 
     /// <summary>
     /// Current filter selection (All/Active/Completed).
     /// </summary>
     [ObservableProperty]
-    private TodoFilter _currentFilter = TodoFilter.All;
+    private TodoFilter currentFilter = TodoFilter.All;
 
     /// <summary>
     /// Current sort option.
     /// </summary>
     [ObservableProperty]
-    private TodoSortOption _currentSortOption = TodoSortOption.CreatedDateDesc;
+    private TodoSortOption currentSortOption = TodoSortOption.CreatedDateDesc;
 
     /// <summary>
     /// Whether dark theme is enabled.
     /// </summary>
     [ObservableProperty]
-    private bool _isDarkTheme;
+    private bool isDarkTheme;
 
     /// <summary>
     /// Search/filter text.
     /// </summary>
     [ObservableProperty]
-    private string _searchText = string.Empty;
+    private string searchText = string.Empty;
 
     /// <summary>
     /// Application settings.
     /// </summary>
     [ObservableProperty]
-    private AppSettings _settings = new();
+    private AppSettings settings = new();
 
     /// <summary>
     /// Loading state indicator.
     /// </summary>
     [ObservableProperty]
-    private bool _isLoading;
+    private bool isLoading;
 
     #endregion
 

@@ -57,7 +57,7 @@
                                    Foreground="{DynamicResource TextSecondaryBrush}"
                                    Margin="0,4,0,0"
                                    TextWrapping="Wrap"
-                                   Visibility="{Binding Description, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                   Visibility="{Binding Description, Converter={StaticResource StringToVisibilityConverter}}"/>
 
                         <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
                             <!-- Priority Badge -->
@@ -268,14 +268,11 @@
             <!-- Filter Buttons -->
             <StackPanel Grid.Column="0" Orientation="Horizontal">
                 <RadioButton Content="All"
-                             IsChecked="{Binding CurrentFilter, Converter={StaticResource InverseBoolConverter}, ConverterParameter={x:Static models:TodoFilter.All}}"
-                             Style="{StaticResource FilterRadioButton}"
-                             Command="{Binding UpdateFilterCommand}"
-                             CommandParameter="{x:Static models:TodoFilter.All}">
+                             Style="{StaticResource FilterRadioButton}">
                     <RadioButton.IsChecked>
                         <Binding Path="CurrentFilter" Mode="TwoWay">
                             <Binding.Converter>
-                                <local:EnumToBoolConverter/>
+                                <StaticResource ResourceKey="EnumToBoolConverter"/>
                             </Binding.Converter>
                             <Binding.ConverterParameter>
                                 <models:TodoFilter>All</models:TodoFilter>
@@ -289,7 +286,7 @@
                     <RadioButton.IsChecked>
                         <Binding Path="CurrentFilter" Mode="TwoWay">
                             <Binding.Converter>
-                                <local:EnumToBoolConverter/>
+                                <StaticResource ResourceKey="EnumToBoolConverter"/>
                             </Binding.Converter>
                             <Binding.ConverterParameter>
                                 <models:TodoFilter>Active</models:TodoFilter>
@@ -303,7 +300,7 @@
                     <RadioButton.IsChecked>
                         <Binding Path="CurrentFilter" Mode="TwoWay">
                             <Binding.Converter>
-                                <local:EnumToBoolConverter/>
+                                <StaticResource ResourceKey="EnumToBoolConverter"/>
                             </Binding.Converter>
                             <Binding.ConverterParameter>
                                 <models:TodoFilter>Completed</models:TodoFilter>

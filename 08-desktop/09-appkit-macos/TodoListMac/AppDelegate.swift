@@ -37,6 +37,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Save any pending changes
         saveApplicationState()
 
+        // Remove observers
+        DistributedNotificationCenter.default.removeObserver(self)
+
         print("TodoListMac application terminating")
     }
 

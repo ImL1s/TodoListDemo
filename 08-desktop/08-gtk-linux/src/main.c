@@ -10,6 +10,15 @@
 #include <glib/gi18n.h>
 #include "todo_window.h"
 
+/* Configuration */
+#ifndef GETTEXT_PACKAGE
+#define GETTEXT_PACKAGE "todolist-gtk"
+#endif
+
+#ifndef LOCALEDIR
+#define LOCALEDIR "/usr/local/share/locale"
+#endif
+
 /* Application ID */
 #define APP_ID "com.example.TodoListGTK"
 

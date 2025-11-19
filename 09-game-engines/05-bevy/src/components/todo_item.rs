@@ -67,3 +67,44 @@ pub struct TodoTitleText {
     /// The ID of the todo this text represents
     pub todo_id: u64,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_new_todo_item() {
+        let todo = TodoItem::new(1, "Test Todo".to_string());
+
+        assert_eq!(todo.id, 1);
+        assert_eq!(todo.title, "Test Todo");
+        assert!(!todo.completed);
+        assert!(todo.created_at > 0);
+    }
+
+    #[test]
+    fn test_toggle_todo_item() {
+        let mut todo = TodoItem::new(1, "Test".to_string());
+
+        assert!(!todo.completed);
+        todo.toggle();
+        assert!(todo.completed);
+        todo.toggle();
+        assert!(!todo.completed);
+    }
+
+    #[test]
+    fn test_todo_serialization() {
+        let todo = TodoItem::new(1, "Test".to_string());
+
+        // Test that it can be serialized
+        let json = serde_json::to_string(&todo).unwrap();
+        assert!(json.contains("Test"));
+
+        // Test that it can be deserialized
+        let deserialized: TodoItem = serde_json::from_str(&json).unwrap();
+        assert_eq!(deserialized.id, todo.id);
+        assert_eq!(deserialized.title, todo.title);
+        assert_eq!(deserialized.completed, todo.completed);
+    }
+}

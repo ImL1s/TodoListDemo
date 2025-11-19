@@ -7,6 +7,30 @@
 - C++ compiler (MSVC/MinGW/GCC/Clang)
 - CMake 3.16+ (optional but recommended)
 
+### Easy Installation (NEW!)
+
+Use our automated installation scripts:
+
+**Ubuntu/Debian:**
+```bash
+cd scripts
+./install-deps-ubuntu.sh
+```
+
+**Fedora/RHEL:**
+```bash
+cd scripts
+./install-deps-fedora.sh
+```
+
+**macOS:**
+```bash
+cd scripts
+./install-deps-macos.sh
+```
+
+These scripts install all required dependencies automatically. See [scripts/README.md](scripts/README.md) for details.
+
 ### Option 1: Qt Creator (Easiest)
 
 1. **Open Project**
@@ -64,6 +88,19 @@ release\QtTodoList.exe # Windows
 ```
 
 ## First Use
+
+### Try Sample Data (NEW!)
+
+Import pre-made sample todos to see the app in action:
+
+1. Run the application
+2. Go to File → Import
+3. Navigate to `examples/sample_todos.json`
+4. Click "Yes" to import 5 sample todos
+
+This will load todos with different priorities and categories to demonstrate all features.
+
+### Manual Usage
 
 1. **Add a Todo**
    - Type in the input field

@@ -1,0 +1,27 @@
+# Clippy configuration for Bevy Todo List
+#
+# This file configures Clippy (Rust's linting tool) to enforce
+# best practices and maintain code quality.
+
+# Enforce documentation for public items
+# (Currently disabled for example code, enable for production)
+# missing-docs-in-crate-items = true
+
+# Cognitive complexity threshold
+# Functions with higher complexity should be refactored
+cognitive-complexity-threshold = 30
+
+# Complexity thresholds
+type-complexity-threshold = 500
+too-many-arguments-threshold = 8
+
+# Allow some common patterns in Bevy code
+# Bevy systems often have many parameters
+
+# Deny certain lints that indicate serious issues
+# These will cause compilation to fail
+warn-on-all-wildcard-imports = false
+
+# Maximum lines in a function
+# Longer functions should be split up
+max-fn-params-bools = 3

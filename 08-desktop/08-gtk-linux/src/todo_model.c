@@ -7,6 +7,7 @@
  */
 
 #include "todo_model.h"
+#include <gtk/gtk.h>
 #include <json-glib/json-glib.h>
 
 struct _TodoModel

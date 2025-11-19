@@ -488,14 +488,17 @@ void MainWindow::onExport()
     if (filePath.isEmpty())
         return;
 
+    // Save current filter mode and switch to All to get all todos
+    auto oldFilter = m_model->getFilterMode();
+    m_model->setFilterMode(TodoModel::FilterMode::All);
+
     QVector<TodoItem> allTodos;
-    for (int i = 0; i < m_model->totalCount(); ++i) {
-        // Temporarily switch to All filter to get all todos
-        auto oldFilter = m_model->getFilterMode();
-        m_model->setFilterMode(TodoModel::FilterMode::All);
+    for (int i = 0; i < m_model->rowCount(); ++i) {
         allTodos.append(m_model->getTodoItem(i));
-        m_model->setFilterMode(oldFilter);
     }
+
+    // Restore original filter mode
+    m_model->setFilterMode(oldFilter);
 
     if (StorageManager::exportToJson(filePath, allTodos)) {
         showInfo(tr("Successfully exported %1 todo(s) to:\n%2")

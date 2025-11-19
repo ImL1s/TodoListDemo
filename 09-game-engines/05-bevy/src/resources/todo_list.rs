@@ -40,10 +40,10 @@ impl TodoList {
         let id = self.next_id;
         self.next_id += 1;
 
-        let todo = TodoItem::new(id, title);
+        let todo = TodoItem::new(id, title.clone());
         self.items.push(todo);
 
-        info!("Added todo #{} with title: {}", id, self.items.last().unwrap().title);
+        info!("Added todo #{} with title: {}", id, title);
         id
     }
 
@@ -157,5 +157,143 @@ impl TodoList {
     /// Returns true if there are any completed todos
     pub fn has_completed(&self) -> bool {
         self.items.iter().any(|item| item.completed)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_new_todo_list() {
+        let list = TodoList::new();
+        assert_eq!(list.items.len(), 0);
+        assert_eq!(list.next_id, 1);
+        assert_eq!(list.filter, FilterType::All);
+    }
+
+    #[test]
+    fn test_add_todo() {
+        let mut list = TodoList::new();
+        let id = list.add_todo("Test todo".to_string());
+
+        assert_eq!(id, 1);
+        assert_eq!(list.items.len(), 1);
+        assert_eq!(list.items[0].title, "Test todo");
+        assert!(!list.items[0].completed);
+    }
+
+    #[test]
+    fn test_add_empty_todo() {
+        let mut list = TodoList::new();
+        let id = list.add_todo("".to_string());
+
+        assert_eq!(id, 0); // Should return 0 for invalid ID
+        assert_eq!(list.items.len(), 0);
+    }
+
+    #[test]
+    fn test_remove_todo() {
+        let mut list = TodoList::new();
+        let id = list.add_todo("Test".to_string());
+
+        assert!(list.remove_todo(id));
+        assert_eq!(list.items.len(), 0);
+    }
+
+    #[test]
+    fn test_remove_nonexistent_todo() {
+        let mut list = TodoList::new();
+        assert!(!list.remove_todo(999));
+    }
+
+    #[test]
+    fn test_toggle_todo() {
+        let mut list = TodoList::new();
+        let id = list.add_todo("Test".to_string());
+
+        assert!(!list.items[0].completed);
+        assert!(list.toggle_todo(id));
+        assert!(list.items[0].completed);
+        assert!(list.toggle_todo(id));
+        assert!(!list.items[0].completed);
+    }
+
+    #[test]
+    fn test_update_todo() {
+        let mut list = TodoList::new();
+        let id = list.add_todo("Original".to_string());
+
+        assert!(list.update_todo(id, "Updated".to_string()));
+        assert_eq!(list.items[0].title, "Updated");
+    }
+
+    #[test]
+    fn test_clear_completed() {
+        let mut list = TodoList::new();
+        let id1 = list.add_todo("Todo 1".to_string());
+        let id2 = list.add_todo("Todo 2".to_string());
+        let id3 = list.add_todo("Todo 3".to_string());
+
+        list.toggle_todo(id1);
+        list.toggle_todo(id3);
+
+        let removed = list.clear_completed();
+        assert_eq!(removed, 2);
+        assert_eq!(list.items.len(), 1);
+        assert_eq!(list.items[0].id, id2);
+    }
+
+    #[test]
+    fn test_filtered_items() {
+        let mut list = TodoList::new();
+        let id1 = list.add_todo("Todo 1".to_string());
+        let _id2 = list.add_todo("Todo 2".to_string());
+        let id3 = list.add_todo("Todo 3".to_string());
+
+        list.toggle_todo(id1);
+        list.toggle_todo(id3);
+
+        // Test All filter
+        list.set_filter(FilterType::All);
+        assert_eq!(list.filtered_items().len(), 3);
+
+        // Test Active filter
+        list.set_filter(FilterType::Active);
+        assert_eq!(list.filtered_items().len(), 1);
+
+        // Test Completed filter
+        list.set_filter(FilterType::Completed);
+        assert_eq!(list.filtered_items().len(), 2);
+    }
+
+    #[test]
+    fn test_counters() {
+        let mut list = TodoList::new();
+        let id1 = list.add_todo("Todo 1".to_string());
+        let _id2 = list.add_todo("Todo 2".to_string());
+        let id3 = list.add_todo("Todo 3".to_string());
+
+        list.toggle_todo(id1);
+        list.toggle_todo(id3);
+
+        assert_eq!(list.total_count(), 3);
+        assert_eq!(list.active_count(), 1);
+        assert_eq!(list.completed_count(), 2);
+    }
+
+    #[test]
+    fn test_has_todos_and_has_completed() {
+        let mut list = TodoList::new();
+
+        assert!(!list.has_todos());
+        assert!(!list.has_completed());
+
+        let id = list.add_todo("Test".to_string());
+        assert!(list.has_todos());
+        assert!(!list.has_completed());
+
+        list.toggle_todo(id);
+        assert!(list.has_completed());
     }
 }

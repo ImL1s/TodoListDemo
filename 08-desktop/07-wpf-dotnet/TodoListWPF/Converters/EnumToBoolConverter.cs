@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace TodoListWPF;
+namespace TodoListWPF.Converters;
 
 /// <summary>
 /// Converts an enum value to boolean for RadioButton binding.

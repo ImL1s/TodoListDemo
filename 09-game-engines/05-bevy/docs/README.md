@@ -471,9 +471,15 @@ This project is licensed under the MIT License. See LICENSE file for details.
 - [Official Bevy Book](https://bevyengine.org/learn/book/introduction/)
 - [Bevy Examples](https://github.com/bevyengine/bevy/tree/main/examples)
 - [Bevy Cheat Book](https://bevy-cheatbook.github.io/)
+
+### Project Documentation
+- [ARCHITECTURE.md](ARCHITECTURE.md) - This application's architecture
 - [ECS_GUIDE.md](ECS_GUIDE.md) - Deep dive into ECS architecture
 - [BEVY_CONCEPTS.md](BEVY_CONCEPTS.md) - Bevy-specific concepts
-- [ARCHITECTURE.md](ARCHITECTURE.md) - This application's architecture
+- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Common issues and solutions
+- [WASM_GUIDE.md](WASM_GUIDE.md) - WebAssembly deployment guide
+- [TESTING.md](TESTING.md) - Testing guide and best practices
+- [CODE_REVIEW_REPORT.md](../CODE_REVIEW_REPORT.md) - Comprehensive code review
 
 ### Learn More About Rust
 - [The Rust Book](https://doc.rust-lang.org/book/)

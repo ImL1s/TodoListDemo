@@ -133,3 +133,80 @@ impl Default for ButtonColors {
         Self::new()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_filter_type_display_name() {
+        assert_eq!(FilterType::All.display_name(), "All");
+        assert_eq!(FilterType::Active.display_name(), "Active");
+        assert_eq!(FilterType::Completed.display_name(), "Completed");
+    }
+
+    #[test]
+    fn test_input_text_new() {
+        let input = InputText::new();
+        assert!(input.is_empty());
+        assert_eq!(input.value, "");
+    }
+
+    #[test]
+    fn test_input_text_push() {
+        let mut input = InputText::new();
+        input.push('a');
+        input.push('b');
+        input.push('c');
+        assert_eq!(input.value, "abc");
+        assert!(!input.is_empty());
+    }
+
+    #[test]
+    fn test_input_text_pop() {
+        let mut input = InputText::new();
+        input.push('a');
+        input.push('b');
+        input.pop();
+        assert_eq!(input.value, "a");
+    }
+
+    #[test]
+    fn test_input_text_clear() {
+        let mut input = InputText::new();
+        input.push('a');
+        input.push('b');
+        input.clear();
+        assert!(input.is_empty());
+        assert_eq!(input.value, "");
+    }
+
+    #[test]
+    fn test_button_colors_new() {
+        let colors = ButtonColors::new();
+        assert_eq!(colors.normal, Color::rgb(0.15, 0.15, 0.15));
+        assert_eq!(colors.hovered, Color::rgb(0.25, 0.25, 0.25));
+        assert_eq!(colors.pressed, Color::rgb(0.35, 0.75, 0.35));
+    }
+
+    #[test]
+    fn test_button_colors_with_colors() {
+        let normal = Color::rgb(1.0, 0.0, 0.0);
+        let hovered = Color::rgb(0.0, 1.0, 0.0);
+        let pressed = Color::rgb(0.0, 0.0, 1.0);
+
+        let colors = ButtonColors::with_colors(normal, hovered, pressed);
+        assert_eq!(colors.normal, normal);
+        assert_eq!(colors.hovered, hovered);
+        assert_eq!(colors.pressed, pressed);
+    }
+
+    #[test]
+    fn test_button_colors_default() {
+        let colors = ButtonColors::default();
+        let new_colors = ButtonColors::new();
+        assert_eq!(colors.normal, new_colors.normal);
+        assert_eq!(colors.hovered, new_colors.hovered);
+        assert_eq!(colors.pressed, new_colors.pressed);
+    }
+}

@@ -99,6 +99,7 @@ dotnet test TodoListWPF.sln
 │   │   ├── DateTimeToStringConverter.cs
 │   │   ├── BoolToTextDecorationConverter.cs
 │   │   ├── CountToVisibilityConverter.cs
+│   │   ├── StringToVisibilityConverter.cs
 │   │   └── EnumToBoolConverter.cs
 │   ├── Styles/                    # XAML 樣式和主題
 │   │   ├── LightTheme.xaml
@@ -156,7 +157,7 @@ dotnet test TodoListWPF.sln
 
 ### 6. 值轉換器（Converters）
 - **IValueConverter**：單值轉換
-- **自定義 Converters**：7 種不同的轉換器
+- **自定義 Converters**：8 種不同的轉換器
 - **ConverterParameter**：參數化轉換
 
 ## 架構設計
@@ -254,10 +255,14 @@ public partial class MainViewModel : ObservableObject
 
 ## NuGet 包依賴
 
-- **CommunityToolkit.Mvvm** 8.2.2 - MVVM 工具包
-- **Microsoft.EntityFrameworkCore.Sqlite** 8.0.0 - SQLite 支持（可選）
-- **System.Text.Json** 8.0.0 - JSON 序列化
+### 主項目
+- **CommunityToolkit.Mvvm** 8.2.2 - MVVM 工具包，提供源代碼生成器
+- **System.Text.Json** 8.0.0 - JSON 序列化和反序列化
+
+### 測試項目
+- **Microsoft.NET.Test.Sdk** 17.8.0 - 測試 SDK
 - **xUnit** 2.6.2 - 測試框架
+- **xunit.runner.visualstudio** 2.5.4 - Visual Studio 測試運行器
 - **Moq** 4.20.70 - Mock 框架
 
 ## 項目統計
