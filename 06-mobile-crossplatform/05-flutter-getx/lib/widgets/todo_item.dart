@@ -101,40 +101,40 @@ class TodoItem extends StatelessWidget {
   }
 
   /// 顯示編輯對話框
+  /// 改用 Get.dialog 代替 showDialog（GetX 最佳實踐）
   void _showEditDialog(BuildContext context) {
     final textController = TextEditingController(text: todo.title);
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('編輯待辦事項'),
+    Get.dialog(
+      AlertDialog(
+        title: Text('edit_todo_title'.tr),
         content: TextField(
           controller: textController,
           autofocus: true,
-          decoration: const InputDecoration(
-            hintText: '輸入新內容...',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            hintText: 'input_new_content'.tr,
+            border: const OutlineInputBorder(),
           ),
           onSubmitted: (value) {
             if (value.trim().isNotEmpty) {
               onEdit(value);
-              Navigator.pop(context);
+              Get.back();
             }
           },
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('取消'),
+            onPressed: () => Get.back(),
+            child: Text('cancel'.tr),
           ),
           ElevatedButton(
             onPressed: () {
               if (textController.text.trim().isNotEmpty) {
                 onEdit(textController.text);
-                Navigator.pop(context);
+                Get.back();
               }
             },
-            child: const Text('儲存'),
+            child: Text('save'.tr),
           ),
         ],
       ),
@@ -142,24 +142,24 @@ class TodoItem extends StatelessWidget {
   }
 
   /// 顯示刪除確認對話框
-  Future<bool?> _showDeleteConfirmDialog(BuildContext context) {
-    return showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('確認刪除'),
-        content: Text('確定要刪除「${todo.title}」嗎？'),
+  /// 改用 Get.dialog 代替 showDialog（GetX 最佳實踐）
+  Future<bool?> _showDeleteConfirmDialog(BuildContext context) async {
+    return await Get.dialog<bool>(
+      AlertDialog(
+        title: Text('confirm_delete'.tr),
+        content: Text('confirm_delete_message'.trParams({'title': todo.title})),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('取消'),
+            onPressed: () => Get.back(result: false),
+            child: Text('cancel'.tr),
           ),
           ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
+            onPressed: () => Get.back(result: true),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
               foregroundColor: Colors.white,
             ),
-            child: const Text('刪除'),
+            child: Text('delete'.tr),
           ),
         ],
       ),

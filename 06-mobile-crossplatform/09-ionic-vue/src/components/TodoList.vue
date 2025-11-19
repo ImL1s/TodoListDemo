@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import { IonList } from '@ionic/vue'
 import TodoItem from './TodoItem.vue'
-import type { Todo } from '../views/Home.vue'
+import type { Todo } from '@/types'
 
 // Props
 defineProps<{

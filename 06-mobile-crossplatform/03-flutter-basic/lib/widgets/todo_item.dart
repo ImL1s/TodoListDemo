@@ -28,10 +28,13 @@ class TodoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      elevation: 2,
-      child: ListTile(
+      child: Card(
+        elevation: 2,
+        child: ListTile(
         /// 左側的複選框
         leading: Checkbox(
           value: todo.isCompleted,
@@ -85,6 +88,7 @@ class TodoItem extends StatelessWidget {
 
         /// 點擊整個項目也可以切換完成狀態
         onTap: onToggle,
+      ),
       ),
     );
   }

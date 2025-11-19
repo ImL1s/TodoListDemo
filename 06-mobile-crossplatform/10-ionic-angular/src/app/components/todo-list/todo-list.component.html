@@ -1,6 +1,16 @@
+<!-- Pull to refresh -->
+<ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+  <ion-refresher-content
+    pullingIcon="arrow-down"
+    pullingText="Pull to refresh"
+    refreshingSpinner="circles"
+    refreshingText="Refreshing...">
+  </ion-refresher-content>
+</ion-refresher>
+
 <!-- Filter Segment -->
 <ion-segment
-  [value]="currentFilter"
+  [value]="currentFilter()"
   (ionChange)="setFilter($any($event.detail.value))"
   class="filter-segment"
 >
@@ -15,53 +25,57 @@
   </ion-segment-button>
 </ion-segment>
 
-<!-- Todo List -->
-<ion-list class="todo-list">
-  <ng-container *ngIf="todos$ | async as todos">
-    <!-- Empty state -->
-    <div *ngIf="todos.length === 0" class="empty-state">
-      <ion-icon name="checkmark-circle-outline" class="empty-icon"></ion-icon>
-      <h2>{{ getEmptyMessage() }}</h2>
-      <p>{{ getEmptySubMessage() }}</p>
-    </div>
+<!-- Loading indicator -->
+<div *ngIf="isLoading()" class="loading-container">
+  <ion-spinner name="crescent"></ion-spinner>
+  <p>Loading todos...</p>
+</div>
 
-    <!-- Todo items -->
-    <app-todo-item
-      *ngFor="let todo of todos; trackBy: trackByTodoId"
-      [todo]="todo"
-      (toggle)="onToggleTodo($event)"
-      (delete)="onDeleteTodo($event)"
-      (update)="onUpdateTodo($event)"
-    ></app-todo-item>
-  </ng-container>
+<!-- Todo List -->
+<ion-list class="todo-list" *ngIf="!isLoading()">
+  <!-- Empty state -->
+  <div *ngIf="todos().length === 0" class="empty-state">
+    <ion-icon name="checkmark-circle-outline" class="empty-icon"></ion-icon>
+    <h2>{{ getEmptyMessage() }}</h2>
+    <p>{{ getEmptySubMessage() }}</p>
+  </div>
+
+  <!-- Todo items using Signals -->
+  <app-todo-item
+    *ngFor="let todo of todos(); trackBy: trackByTodoId"
+    [todo]="todo"
+    (toggle)="onToggleTodo($event)"
+    (delete)="onDeleteTodo($event)"
+    (update)="onUpdateTodo($event)"
+  ></app-todo-item>
 </ion-list>
 
-<!-- Footer with stats and actions -->
-<div *ngIf="stats$ | async as stats" class="todo-footer">
+<!-- Footer with stats and actions using Signals -->
+<div *ngIf="!isLoading()" class="todo-footer">
   <div class="stats">
     <ion-chip color="primary" outline="true">
       <ion-icon name="list-outline"></ion-icon>
-      <ion-label>{{ stats.total }} total</ion-label>
+      <ion-label>{{ stats().total }} total</ion-label>
     </ion-chip>
     <ion-chip color="success" outline="true">
       <ion-icon name="checkmark-circle-outline"></ion-icon>
-      <ion-label>{{ stats.active }} active</ion-label>
+      <ion-label>{{ stats().active }} active</ion-label>
     </ion-chip>
   </div>
 
   <div class="actions">
     <ion-button
-      *ngIf="stats.total > 0"
+      *ngIf="stats().total > 0"
       size="small"
       fill="outline"
-      (click)="toggleAll(stats)"
+      (click)="toggleAll(stats())"
     >
       <ion-icon slot="start" name="checkbox-outline"></ion-icon>
-      {{ stats.active > 0 ? 'Complete All' : 'Clear All' }}
+      {{ stats().active > 0 ? 'Complete All' : 'Clear All' }}
     </ion-button>
 
     <ion-button
-      *ngIf="stats.completed > 0"
+      *ngIf="stats().completed > 0"
       size="small"
       fill="outline"
       color="danger"

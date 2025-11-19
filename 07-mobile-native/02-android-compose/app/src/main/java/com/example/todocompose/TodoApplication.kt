@@ -1,46 +1,50 @@
 package com.example.todocompose
 
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
 /**
- * TodoApplication - Custom Application class for the Todo Compose app
+ * TodoApplication - Application class for the Todo app
  *
- * This class serves as the entry point for the entire application lifecycle.
- * It can be used for:
- * - Initializing libraries that need application context
- * - Setting up dependency injection (e.g., Hilt, Koin)
- * - Configuring crash reporting
- * - Initializing analytics
+ * The @HiltAndroidApp annotation triggers Hilt's code generation,
+ * including a base class for the application that serves as the
+ * application-level dependency container.
  *
- * Currently, this is a minimal implementation, but it's ready for future
- * enhancements like:
- * - Dependency injection setup
- * - WorkManager initialization
- * - Firebase configuration
- * - Custom font loading
+ * This annotation must be placed on the Application class, and it:
+ * 1. Generates a Hilt component attached to the Application lifecycle
+ * 2. Provides dependencies that live as long as the application
+ * 3. Enables dependency injection throughout the app
  *
- * Note: This class must be declared in AndroidManifest.xml with:
- * android:name=".TodoApplication"
+ * AndroidManifest.xml must reference this class:
+ * ```xml
+ * <application
+ *     android:name=".TodoApplication"
+ *     ...
+ * ```
+ *
+ * Hilt Component Hierarchy:
+ * ```
+ * ApplicationComponent (Singleton)
+ *     ↓
+ * ActivityComponent
+ *     ↓
+ * FragmentComponent / ViewModelComponent
+ * ```
+ *
+ * Example DI usage:
+ * ```kotlin
+ * @AndroidEntryPoint
+ * class MainActivity : ComponentActivity() {
+ *     @Inject lateinit var repository: TodoRepository
+ * }
+ * ```
  */
+@HiltAndroidApp
 class TodoApplication : Application() {
 
-    /**
-     * Called when the application is starting, before any activity, service,
-     * or receiver objects have been created.
-     *
-     * This is the perfect place to initialize singletons and application-wide
-     * resources.
-     */
     override fun onCreate() {
         super.onCreate()
-
-        // Future: Initialize dependency injection
-        // Example: initKoin()
-
-        // Future: Initialize analytics
-        // Example: Firebase.initialize(this)
-
-        // Future: Setup crash reporting
-        // Example: Crashlytics.setup(this)
+        // Hilt initialization happens automatically
+        // Add any additional app-level initialization here
     }
 }

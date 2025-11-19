@@ -3,11 +3,37 @@
   --background: var(--ion-color-light);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
 }
 
 .todo-list {
   background: transparent;
   padding: 0 8px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+
+  ion-spinner {
+    margin-bottom: 16px;
+    --color: var(--ion-color-primary);
+  }
+
+  p {
+    color: var(--ion-color-medium);
+    font-size: 14px;
+    margin: 0;
+  }
 }
 
 .empty-state {
@@ -17,12 +43,14 @@
   justify-content: center;
   padding: 60px 20px;
   text-align: center;
+  animation: fadeIn 0.4s ease-in;
 
   .empty-icon {
     font-size: 80px;
     color: var(--ion-color-medium);
     margin-bottom: 16px;
     opacity: 0.5;
+    animation: bounce 2s infinite;
   }
 
   h2 {
@@ -76,15 +104,118 @@
   }
 }
 
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Responsive design
+@media (min-width: 768px) {
+  .filter-segment {
+    margin: 24px auto;
+    max-width: 500px;
+  }
+
+  .todo-list {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  .todo-footer {
+    max-width: 800px;
+    margin: 0 auto;
+    border-radius: 12px 12px 0 0;
+
+    .actions {
+      ion-button {
+        min-width: 160px;
+      }
+    }
+  }
+
+  .empty-state {
+    padding: 100px 20px;
+
+    .empty-icon {
+      font-size: 120px;
+    }
+
+    h2 {
+      font-size: 24px;
+    }
+
+    p {
+      font-size: 16px;
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .todo-list {
+    max-width: 1000px;
+  }
+
+  .todo-footer {
+    max-width: 1000px;
+  }
+}
+
 // Dark mode support
 @media (prefers-color-scheme: dark) {
   .filter-segment {
     --background: var(--ion-color-step-50);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
   }
 
   .todo-footer {
     border-top-color: var(--ion-color-step-150);
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .loading-container {
+    ion-spinner {
+      --color: var(--ion-color-primary-tint);
+    }
+  }
+}
+
+// Accessibility improvements
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

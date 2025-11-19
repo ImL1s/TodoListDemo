@@ -6,13 +6,13 @@ import 'todo_item.dart';
 
 /// TodoList Widget
 ///
-/// Displays the list of todos with different filter views.
-/// Uses Consumer<TodoProvider> to rebuild only when todos change.
+/// Displays the list of todos with search, filter, and sort functionality.
+/// Uses Selector for optimal performance.
 ///
 /// Provider Consumption Pattern:
-/// - Consumer<T>: Rebuilds only this widget when provider changes
 /// - Selector<T, R>: Rebuilds only when selected value changes (more granular)
-/// - context.watch<T>(): Alternative to Consumer for simpler cases
+/// - Consumer<T>: Rebuilds only this widget when provider changes
+/// - context.read<T>(): One-time operations without rebuilding
 class TodoList extends StatefulWidget {
   const TodoList({super.key});
 
@@ -23,35 +23,47 @@ class TodoList extends StatefulWidget {
 class _TodoListState extends State<TodoList> {
   // Filter states: 'all', 'active', 'completed'
   String _filter = 'all';
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Filter Tabs
-        _buildFilterTabs(),
+        // Search Bar
+        _buildSearchBar(),
 
-        // Todo List with Consumer
+        // Filter and Sort Row
+        _buildFilterAndSort(),
+
+        // Todo List with Selector for better performance
         Expanded(
-          child: Consumer<TodoProvider>(
-            // Consumer rebuilds only this widget when TodoProvider changes
-            // builder: (context, provider, child)
-            // - context: BuildContext
-            // - provider: The TodoProvider instance
-            // - child: Optional static child (not rebuilt)
-            builder: (context, todoProvider, child) {
-              // Get filtered todos based on current filter
-              final todos = _getFilteredTodos(todoProvider);
+          child: Selector<TodoProvider, ({bool isLoading, List<Todo> todos, String? error})>(
+            selector: (_, provider) => (
+              isLoading: provider.isLoading,
+              todos: _getFilteredTodos(provider),
+              error: provider.error,
+            ),
+            builder: (context, data, child) {
+              // Error State
+              if (data.error != null) {
+                return _buildErrorState(data.error!);
+              }
 
               // Loading State
-              if (todoProvider.isLoading) {
+              if (data.isLoading) {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
               }
 
               // Empty State
-              if (todos.isEmpty) {
+              if (data.todos.isEmpty) {
                 return _buildEmptyState();
               }
 
@@ -61,9 +73,9 @@ class _TodoListState extends State<TodoList> {
                   top: 12,
                   bottom: 100, // Space for input
                 ),
-                itemCount: todos.length,
+                itemCount: data.todos.length,
                 itemBuilder: (context, index) {
-                  final todo = todos[index];
+                  final todo = data.todos[index];
                   return TodoItem(
                     key: ValueKey(todo.id),
                     todo: todo,
@@ -80,11 +92,11 @@ class _TodoListState extends State<TodoList> {
     );
   }
 
-  /// Filter Tabs
-  Widget _buildFilterTabs() {
+  /// Search Bar
+  Widget _buildSearchBar() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      padding: const EdgeInsets.all(4),
+      margin: const EdgeInsets.fromLTRB(20, 12, 20, 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -98,11 +110,128 @@ class _TodoListState extends State<TodoList> {
       ),
       child: Row(
         children: [
-          _buildFilterTab('All', 'all'),
-          _buildFilterTab('Active', 'active'),
-          _buildFilterTab('Completed', 'completed'),
+          const Icon(Icons.search, color: Colors.grey, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: TextField(
+              controller: _searchController,
+              decoration: const InputDecoration(
+                hintText: 'Search todos...',
+                border: InputBorder.none,
+                hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+              ),
+              onChanged: (query) {
+                context.read<TodoProvider>().setSearchQuery(query);
+              },
+            ),
+          ),
+          if (_searchController.text.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.clear, size: 20),
+              onPressed: () {
+                _searchController.clear();
+                context.read<TodoProvider>().clearSearch();
+              },
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+            ),
         ],
       ),
+    );
+  }
+
+  /// Filter and Sort Row
+  Widget _buildFilterAndSort() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: Row(
+        children: [
+          // Filter Tabs
+          Expanded(child: _buildFilterTabs()),
+          const SizedBox(width: 12),
+          // Sort Button
+          _buildSortButton(),
+        ],
+      ),
+    );
+  }
+
+  /// Filter Tabs
+  Widget _buildFilterTabs() {
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          _buildFilterTab('All', 'all'),
+          _buildFilterTab('Active', 'active'),
+          _buildFilterTab('Done', 'completed'),
+        ],
+      ),
+    );
+  }
+
+  /// Sort Button
+  Widget _buildSortButton() {
+    return Selector<TodoProvider, TodoSortOption>(
+      selector: (_, provider) => provider.sortOption,
+      builder: (context, sortOption, _) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: PopupMenuButton<TodoSortOption>(
+            icon: const Icon(Icons.sort, size: 20),
+            tooltip: 'Sort',
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            onSelected: (option) {
+              context.read<TodoProvider>().setSortOption(option);
+            },
+            itemBuilder: (context) => TodoSortOption.values.map((option) {
+              return PopupMenuItem(
+                value: option,
+                child: Row(
+                  children: [
+                    if (option == sortOption)
+                      const Icon(Icons.check, size: 18, color: Colors.blue)
+                    else
+                      const SizedBox(width: 18),
+                    const SizedBox(width: 12),
+                    Text(
+                      option.label,
+                      style: TextStyle(
+                        color: option == sortOption ? Colors.blue : null,
+                        fontWeight:
+                            option == sortOption ? FontWeight.w600 : null,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+        );
+      },
     );
   }
 
@@ -145,14 +274,95 @@ class _TodoListState extends State<TodoList> {
     }
   }
 
+  /// Error State
+  Widget _buildErrorState(String error) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: Colors.red[300],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Oops! Something went wrong',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[800],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              error,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: () {
+                context.read<TodoProvider>().clearError();
+                context.read<TodoProvider>().reload();
+              },
+              icon: const Icon(Icons.refresh),
+              label: const Text('Try Again'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   /// Empty State
   Widget _buildEmptyState() {
+    final provider = context.read<TodoProvider>();
+    final hasSearch = provider.searchQuery.isNotEmpty;
+
+    if (hasSearch) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.search_off,
+              size: 80,
+              color: Colors.grey[300],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No results found',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[400],
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Try a different search term',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[400],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     String message;
     IconData icon;
 
     switch (_filter) {
       case 'active':
-        message = 'No active todos!\nAll tasks completed 🎉';
+        message = 'No active todos!\nAll tasks completed';
         icon = Icons.check_circle_outline;
         break;
       case 'completed':

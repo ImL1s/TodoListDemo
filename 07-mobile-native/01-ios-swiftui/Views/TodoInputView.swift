@@ -122,6 +122,8 @@ struct TodoInputView: View {
                         .fill(priorityColor.opacity(0.2))
                 )
         }
+        .accessibilityLabel("\(selectedPriority.rawValue) priority")
+        .accessibilityHint("Double tap to change priority")
     }
 
     /// Priority color based on selection
@@ -142,7 +144,7 @@ struct TodoInputView: View {
     private var textField: some View {
         TextField("Add a new todo...", text: $inputText)
             .focused($isInputFocused)
-            .font(.system(size: 16, weight: .medium))
+            .font(.body)  // Dynamic Type support
             .foregroundColor(colorScheme == .dark ? .white : .primary)
             .submitLabel(.done)
             .onChange(of: inputText) { oldValue, newValue in
@@ -154,6 +156,8 @@ struct TodoInputView: View {
             .onSubmit {
                 addTodo()
             }
+            .accessibilityLabel("Todo title input")
+            .accessibilityHint("Enter a new todo item and press done to add")
     }
 
     /// Submit button
@@ -166,6 +170,8 @@ struct TodoInputView: View {
         .disabled(!canSubmit)
         .scaleEffect(canSubmit ? 1.0 : 0.9)
         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: canSubmit)
+        .accessibilityLabel("Add todo")
+        .accessibilityHint(canSubmit ? "Double tap to add todo" : "Enter a title to add todo")
     }
 
     /// Whether the input can be submitted

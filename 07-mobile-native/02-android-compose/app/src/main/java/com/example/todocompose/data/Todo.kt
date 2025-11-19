@@ -1,20 +1,26 @@
 package com.example.todocompose.data
 
+import androidx.compose.runtime.Immutable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
 
 /**
  * Todo - Data class representing a single todo item
  *
  * This immutable data class follows Kotlin best practices and serves as the
- * core domain model for the application. It uses kotlinx.serialization for
- * JSON serialization when persisting to DataStore.
+ * core domain model for the application. It uses:
+ * - Room annotations for database persistence
+ * - kotlinx.serialization for JSON serialization
+ * - @Immutable for Compose optimization
  *
  * Key Design Decisions:
- * 1. Immutable (val properties): Ensures thread safety and predictable state
+ * 1. Immutable (val properties + @Immutable): Ensures thread safety and Compose optimization
  * 2. Data class: Automatically provides equals(), hashCode(), copy(), toString()
- * 3. Serializable: Enables JSON conversion for persistence
- * 4. UUID for IDs: Ensures globally unique identifiers
- * 5. Timestamp: Tracks creation time for sorting/filtering
+ * 3. Room Entity: Database table representation
+ * 4. Serializable: Enables JSON conversion for DataStore/backup
+ * 5. UUID for IDs: Ensures globally unique identifiers
+ * 6. Timestamp: Tracks creation time for sorting/filtering
  *
  * @property id Unique identifier for the todo item (UUID string)
  * @property text The todo description/title
@@ -34,8 +40,11 @@ import kotlinx.serialization.Serializable
  * val completedTodo = todo.copy(completed = true)
  * ```
  */
+@Entity(tableName = "todos")
 @Serializable
+@Immutable
 data class Todo(
+    @PrimaryKey
     val id: String,
     val text: String,
     val completed: Boolean = false,

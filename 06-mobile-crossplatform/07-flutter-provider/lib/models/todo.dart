@@ -1,8 +1,11 @@
+import 'package:equatable/equatable.dart';
+
 /// Todo Model
 ///
 /// Represents a single todo item with immutable properties.
 /// Uses copyWith pattern for creating modified copies.
-class Todo {
+/// Extends Equatable for value-based equality comparisons.
+class Todo extends Equatable {
   final String id;
   final String title;
   final bool completed;
@@ -50,23 +53,12 @@ class Todo {
     );
   }
 
+  /// Equatable properties for value-based equality
+  /// This allows Selector to correctly detect changes
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is Todo &&
-        other.id == id &&
-        other.title == title &&
-        other.completed == completed &&
-        other.createdAt == createdAt;
-  }
+  List<Object?> get props => [id, title, completed, createdAt];
 
+  /// Enable toString override for debugging
   @override
-  int get hashCode {
-    return Object.hash(id, title, completed, createdAt);
-  }
-
-  @override
-  String toString() {
-    return 'Todo(id: $id, title: $title, completed: $completed, createdAt: $createdAt)';
-  }
+  bool get stringify => true;
 }

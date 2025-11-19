@@ -1,52 +1,63 @@
-/// Todo Model
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'todo.freezed.dart';
+part 'todo.g.dart';
+
+/// Todo Model with Freezed
 ///
-/// Represents a single todo item with immutable properties.
-/// Uses a simple class structure for easy state management with Riverpod.
+/// Uses Freezed for:
+/// - Immutable data classes
+/// - Generated copyWith, ==, hashCode, toString
+/// - JSON serialization/deserialization
+/// - Union types and sealed classes
+///
+/// Freezed automatically generates:
+/// - copyWith() method for creating modified copies
+/// - == operator and hashCode for value equality
+/// - toString() for debugging
+/// - fromJson() and toJson() for persistence
 
-class Todo {
-  final String id;
-  final String title;
-  final bool completed;
-  final DateTime createdAt;
+@freezed
+class Todo with _$Todo {
+  const factory Todo({
+    required String id,
+    required String title,
+    @Default(false) bool completed,
+    required DateTime createdAt,
+    @Default(TodoPriority.medium) TodoPriority priority,
+  }) = _Todo;
 
-  const Todo({
-    required this.id,
-    required this.title,
-    this.completed = false,
-    required this.createdAt,
-  });
+  // Custom methods must be in a separate extension
+  // because Freezed classes are redirecting factories
+  factory Todo.fromJson(Map<String, dynamic> json) => _$TodoFromJson(json);
+}
 
-  /// Creates a copy of this Todo with the given fields replaced
-  Todo copyWith({
-    String? id,
-    String? title,
-    bool? completed,
-    DateTime? createdAt,
-  }) {
-    return Todo(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      completed: completed ?? this.completed,
-      createdAt: createdAt ?? this.createdAt,
-    );
-  }
-
+/// Extension for custom methods
+extension TodoX on Todo {
   /// Toggle the completed status
-  Todo toggle() {
-    return copyWith(completed: !completed);
-  }
+  Todo toggle() => copyWith(completed: !completed);
 
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is Todo && other.id == id;
-  }
+  /// Check if todo is overdue (for future priority feature)
+  bool get isActive => !completed;
+}
 
-  @override
-  int get hashCode => id.hashCode;
+/// Todo Priority Enum
+enum TodoPriority {
+  low,
+  medium,
+  high,
+  urgent;
 
-  @override
-  String toString() {
-    return 'Todo(id: $id, title: $title, completed: $completed, createdAt: $createdAt)';
+  String get displayName {
+    switch (this) {
+      case TodoPriority.low:
+        return 'Low';
+      case TodoPriority.medium:
+        return 'Medium';
+      case TodoPriority.high:
+        return 'High';
+      case TodoPriority.urgent:
+        return 'Urgent';
+    }
   }
 }

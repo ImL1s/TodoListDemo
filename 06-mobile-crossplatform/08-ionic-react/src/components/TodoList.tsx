@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   IonList,
   IonCard,
@@ -7,10 +7,13 @@ import {
   IonButton,
   IonIcon,
   IonText,
+  IonReorderGroup,
+  IonReorder,
+  ItemReorderEventDetail,
 } from '@ionic/react';
-import { trashBin } from 'ionicons/icons';
+import { trashBin, reorderFour } from 'ionicons/icons';
 import TodoItem from './TodoItem';
-import { Todo } from '../pages/Home';
+import { Todo } from '../hooks';
 import './TodoList.css';
 
 interface TodoListProps {
@@ -18,6 +21,7 @@ interface TodoListProps {
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
   onClearCompleted: () => void;
+  onReorder?: (from: number, to: number) => void;
 }
 
 const TodoList: React.FC<TodoListProps> = ({
@@ -25,10 +29,22 @@ const TodoList: React.FC<TodoListProps> = ({
   onToggle,
   onDelete,
   onClearCompleted,
+  onReorder,
 }) => {
-  const activeTodos = todos.filter((todo) => !todo.completed);
-  const completedTodos = todos.filter((todo) => todo.completed);
-  const hasCompleted = completedTodos.length > 0;
+  // 使用 useMemo 优化列表过滤
+  const { activeTodos, completedTodos } = useMemo(() => {
+    const active = todos.filter((todo) => !todo.completed);
+    const completed = todos.filter((todo) => todo.completed);
+    return { activeTodos: active, completedTodos: completed };
+  }, [todos]);
+
+  // 处理拖拽排序
+  const handleReorder = (event: CustomEvent<ItemReorderEventDetail>) => {
+    if (onReorder) {
+      onReorder(event.detail.from, event.detail.to);
+    }
+    event.detail.complete();
+  };
 
   if (todos.length === 0) {
     return (
@@ -43,6 +59,9 @@ const TodoList: React.FC<TodoListProps> = ({
         <div className="empty-message">
           <IonText color="medium">
             <p>Add your first todo to get started!</p>
+            <p className="empty-hint">
+              Try adding something like "Buy groceries" or "Review pull request"
+            </p>
           </IonText>
         </div>
       </IonCard>
@@ -54,20 +73,27 @@ const TodoList: React.FC<TodoListProps> = ({
       {/* Active Todos */}
       {activeTodos.length > 0 && (
         <IonCard>
-          <IonCardHeader>
+          <IonCardHeader className="active-header">
             <IonCardTitle>
-              Active Tasks ({activeTodos.length})
+              <div className="card-title-with-icon">
+                <span>Active Tasks ({activeTodos.length})</span>
+                <IonIcon icon={reorderFour} color="medium" />
+              </div>
             </IonCardTitle>
           </IonCardHeader>
           <IonList>
-            {activeTodos.map((todo) => (
-              <TodoItem
-                key={todo.id}
-                todo={todo}
-                onToggle={onToggle}
-                onDelete={onDelete}
-              />
-            ))}
+            <IonReorderGroup disabled={false} onIonItemReorder={handleReorder}>
+              {activeTodos.map((todo) => (
+                <TodoItem
+                  key={todo.id}
+                  todo={todo}
+                  onToggle={onToggle}
+                  onDelete={onDelete}
+                >
+                  <IonReorder slot="end" />
+                </TodoItem>
+              ))}
+            </IonReorderGroup>
           </IonList>
         </IonCard>
       )}
@@ -76,14 +102,13 @@ const TodoList: React.FC<TodoListProps> = ({
       {completedTodos.length > 0 && (
         <IonCard>
           <IonCardHeader className="completed-header">
-            <IonCardTitle>
-              Completed Tasks ({completedTodos.length})
-            </IonCardTitle>
+            <IonCardTitle>Completed Tasks ({completedTodos.length})</IonCardTitle>
             <IonButton
               size="small"
               color="danger"
               fill="outline"
               onClick={onClearCompleted}
+              className="clear-button"
             >
               <IonIcon slot="start" icon={trashBin} />
               Clear All
@@ -101,8 +126,32 @@ const TodoList: React.FC<TodoListProps> = ({
           </IonList>
         </IonCard>
       )}
+
+      {/* 提示信息 */}
+      {activeTodos.length === 0 && completedTodos.length > 0 && (
+        <IonCard color="success" className="all-done-card">
+          <IonCardHeader>
+            <IonCardTitle>
+              <div className="all-done-message">
+                <span>🎉</span>
+                <span>All tasks completed!</span>
+              </div>
+            </IonCardTitle>
+          </IonCardHeader>
+        </IonCard>
+      )}
     </div>
   );
 };
 
-export default TodoList;
+// 使用 React.memo 优化重渲染
+export default React.memo(TodoList, (prevProps, nextProps) => {
+  // 只有当 todos 数组引用改变时才重新渲染
+  return (
+    prevProps.todos === nextProps.todos &&
+    prevProps.onToggle === nextProps.onToggle &&
+    prevProps.onDelete === nextProps.onDelete &&
+    prevProps.onClearCompleted === nextProps.onClearCompleted &&
+    prevProps.onReorder === nextProps.onReorder
+  );
+});

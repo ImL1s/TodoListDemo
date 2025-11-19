@@ -1,20 +1,24 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, map } from 'rxjs';
+import { Injectable, signal, computed } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { BehaviorSubject, Observable, map, combineLatest } from 'rxjs';
 import { Preferences } from '@capacitor/preferences';
+import { ToastController } from '@ionic/angular';
 import { Todo, TodoFilter, TodoStats } from '../models/todo.interface';
 
 /**
  * TodoService
  *
- * Central service for managing todo items using Angular services
+ * Central service for managing todo items using Angular Signals (Angular 17+)
  * and Capacitor Preferences API for persistent storage.
  *
  * Features:
  * - CRUD operations for todos
- * - RxJS observables for reactive state management
+ * - Angular Signals for reactive state management
+ * - RxJS observables for backward compatibility
  * - Persistent storage using Capacitor Preferences
  * - Filter support (all, active, completed)
  * - Statistics computation
+ * - Error handling with user feedback
  */
 @Injectable({
   providedIn: 'root'
@@ -22,56 +26,119 @@ import { Todo, TodoFilter, TodoStats } from '../models/todo.interface';
 export class TodoService {
   private readonly STORAGE_KEY = 'ionic-angular-todos';
 
-  // BehaviorSubject to maintain the current state of todos
+  // Angular Signals (Modern approach - Angular 17+)
+  private todosSignal = signal<Todo[]>([]);
+  private filterSignal = signal<TodoFilter>('all');
+  private isLoadingSignal = signal<boolean>(false);
+  private errorSignal = signal<string | null>(null);
+
+  // Public signals for components
+  public readonly todos = this.todosSignal.asReadonly();
+  public readonly filter = this.filterSignal.asReadonly();
+  public readonly isLoading = this.isLoadingSignal.asReadonly();
+  public readonly error = this.errorSignal.asReadonly();
+
+  // Computed signals (automatically update when dependencies change)
+  public readonly filteredTodos = computed(() => {
+    const todos = this.todosSignal();
+    const filter = this.filterSignal();
+    return this.applyFilter(todos, filter);
+  });
+
+  public readonly stats = computed(() => {
+    const todos = this.todosSignal();
+    return this.calculateStats(todos);
+  });
+
+  // BehaviorSubject for RxJS compatibility (if needed)
   private todosSubject = new BehaviorSubject<Todo[]>([]);
-
-  // Observable stream of todos for components to subscribe to
-  public todos$: Observable<Todo[]> = this.todosSubject.asObservable();
-
-  // Current filter state
   private filterSubject = new BehaviorSubject<TodoFilter>('all');
+
+  // Observable streams for components that prefer RxJS
+  public todos$: Observable<Todo[]> = this.todosSubject.asObservable();
   public filter$: Observable<TodoFilter> = this.filterSubject.asObservable();
 
-  // Filtered todos based on current filter
-  public filteredTodos$: Observable<Todo[]> = this.todos$.pipe(
-    map(todos => this.applyFilter(todos, this.filterSubject.value))
+  public filteredTodos$: Observable<Todo[]> = combineLatest([
+    this.todos$,
+    this.filter$
+  ]).pipe(
+    map(([todos, filter]) => this.applyFilter(todos, filter))
   );
 
-  // Statistics observable
   public stats$: Observable<TodoStats> = this.todos$.pipe(
     map(todos => this.calculateStats(todos))
   );
 
-  constructor() {
+  constructor(private toastController: ToastController) {
     this.loadTodos();
+  }
+
+  /**
+   * Show toast message
+   */
+  private async showToast(message: string, color: 'success' | 'danger' | 'warning' = 'success'): Promise<void> {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2000,
+      position: 'bottom',
+      color,
+      buttons: [
+        {
+          text: 'Dismiss',
+          role: 'cancel'
+        }
+      ]
+    });
+    await toast.present();
+  }
+
+  /**
+   * Update both Signals and BehaviorSubjects
+   */
+  private updateTodos(todos: Todo[]): void {
+    this.todosSignal.set(todos);
+    this.todosSubject.next(todos);
   }
 
   /**
    * Load todos from persistent storage
    */
   private async loadTodos(): Promise<void> {
+    this.isLoadingSignal.set(true);
+    this.errorSignal.set(null);
+
     try {
       const { value } = await Preferences.get({ key: this.STORAGE_KEY });
       if (value) {
         const todos: Todo[] = JSON.parse(value);
-        this.todosSubject.next(todos);
+        this.updateTodos(todos);
       }
     } catch (error) {
-      console.error('Error loading todos:', error);
+      const errorMessage = 'Failed to load todos from storage';
+      console.error(errorMessage, error);
+      this.errorSignal.set(errorMessage);
+      await this.showToast(errorMessage, 'danger');
+    } finally {
+      this.isLoadingSignal.set(false);
     }
   }
 
   /**
    * Save todos to persistent storage
    */
-  private async saveTodos(todos: Todo[]): Promise<void> {
+  private async saveTodos(todos: Todo[]): Promise<boolean> {
     try {
       await Preferences.set({
         key: this.STORAGE_KEY,
         value: JSON.stringify(todos)
       });
+      return true;
     } catch (error) {
-      console.error('Error saving todos:', error);
+      const errorMessage = 'Failed to save todos';
+      console.error(errorMessage, error);
+      this.errorSignal.set(errorMessage);
+      await this.showToast(errorMessage, 'danger');
+      return false;
     }
   }
 
@@ -79,7 +146,7 @@ export class TodoService {
    * Get current todos value (synchronous)
    */
   private getCurrentTodos(): Todo[] {
-    return this.todosSubject.value;
+    return this.todosSignal();
   }
 
   /**
@@ -88,6 +155,7 @@ export class TodoService {
   async addTodo(text: string): Promise<void> {
     const trimmedText = text.trim();
     if (!trimmedText) {
+      await this.showToast('Please enter a todo text', 'warning');
       return;
     }
 
@@ -99,8 +167,12 @@ export class TodoService {
     };
 
     const updatedTodos = [...this.getCurrentTodos(), newTodo];
-    this.todosSubject.next(updatedTodos);
-    await this.saveTodos(updatedTodos);
+    this.updateTodos(updatedTodos);
+
+    const saved = await this.saveTodos(updatedTodos);
+    if (saved) {
+      await this.showToast('Todo added successfully');
+    }
   }
 
   /**
@@ -117,7 +189,7 @@ export class TodoService {
         : todo
     );
 
-    this.todosSubject.next(updatedTodos);
+    this.updateTodos(updatedTodos);
     await this.saveTodos(updatedTodos);
   }
 
@@ -126,8 +198,12 @@ export class TodoService {
    */
   async deleteTodo(id: string): Promise<void> {
     const updatedTodos = this.getCurrentTodos().filter(todo => todo.id !== id);
-    this.todosSubject.next(updatedTodos);
-    await this.saveTodos(updatedTodos);
+    this.updateTodos(updatedTodos);
+
+    const saved = await this.saveTodos(updatedTodos);
+    if (saved) {
+      await this.showToast('Todo deleted');
+    }
   }
 
   /**
@@ -136,6 +212,7 @@ export class TodoService {
   async updateTodo(id: string, text: string): Promise<void> {
     const trimmedText = text.trim();
     if (!trimmedText) {
+      await this.showToast('Todo text cannot be empty', 'warning');
       return;
     }
 
@@ -149,17 +226,31 @@ export class TodoService {
         : todo
     );
 
-    this.todosSubject.next(updatedTodos);
-    await this.saveTodos(updatedTodos);
+    this.updateTodos(updatedTodos);
+
+    const saved = await this.saveTodos(updatedTodos);
+    if (saved) {
+      await this.showToast('Todo updated');
+    }
   }
 
   /**
    * Clear all completed todos
    */
   async clearCompleted(): Promise<void> {
+    const completedCount = this.getCurrentTodos().filter(todo => todo.completed).length;
+    if (completedCount === 0) {
+      await this.showToast('No completed todos to clear', 'warning');
+      return;
+    }
+
     const updatedTodos = this.getCurrentTodos().filter(todo => !todo.completed);
-    this.todosSubject.next(updatedTodos);
-    await this.saveTodos(updatedTodos);
+    this.updateTodos(updatedTodos);
+
+    const saved = await this.saveTodos(updatedTodos);
+    if (saved) {
+      await this.showToast(`Cleared ${completedCount} completed todo${completedCount > 1 ? 's' : ''}`);
+    }
   }
 
   /**
@@ -172,14 +263,20 @@ export class TodoService {
       updatedAt: Date.now()
     }));
 
-    this.todosSubject.next(updatedTodos);
-    await this.saveTodos(updatedTodos);
+    this.updateTodos(updatedTodos);
+
+    const saved = await this.saveTodos(updatedTodos);
+    if (saved) {
+      const action = completed ? 'completed' : 'activated';
+      await this.showToast(`All todos ${action}`);
+    }
   }
 
   /**
    * Set the current filter
    */
   setFilter(filter: TodoFilter): void {
+    this.filterSignal.set(filter);
     this.filterSubject.next(filter);
   }
 
@@ -219,7 +316,39 @@ export class TodoService {
    * Clear all todos
    */
   async clearAll(): Promise<void> {
-    this.todosSubject.next([]);
-    await this.saveTodos([]);
+    this.updateTodos([]);
+
+    const saved = await this.saveTodos([]);
+    if (saved) {
+      await this.showToast('All todos cleared');
+    }
+  }
+
+  /**
+   * Refresh todos from storage (useful for pull-to-refresh)
+   */
+  async refresh(): Promise<void> {
+    await this.loadTodos();
+  }
+
+  /**
+   * Get loading state (for signals)
+   */
+  public getLoadingState(): boolean {
+    return this.isLoadingSignal();
+  }
+
+  /**
+   * Get error state (for signals)
+   */
+  public getError(): string | null {
+    return this.errorSignal();
+  }
+
+  /**
+   * Clear error state
+   */
+  public clearError(): void {
+    this.errorSignal.set(null);
   }
 }

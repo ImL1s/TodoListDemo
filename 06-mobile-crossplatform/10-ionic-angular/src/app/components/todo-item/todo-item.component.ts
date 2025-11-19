@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -17,13 +17,15 @@ import { Haptics, ImpactStyle } from '@capacitor/haptics';
  * - Swipe-to-delete gesture (Ionic ItemSliding)
  * - Haptic feedback on interactions
  * - Completed state styling
+ * - OnPush change detection for performance
  */
 @Component({
   selector: 'app-todo-item',
   templateUrl: './todo-item.component.html',
   styleUrls: ['./todo-item.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule]
+  imports: [CommonModule, FormsModule, IonicModule],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TodoItemComponent {
   @Input() todo!: Todo;
@@ -42,7 +44,7 @@ export class TodoItemComponent {
       await Haptics.impact({ style: ImpactStyle.Light });
     } catch (error) {
       // Haptics might not be available on web
-      console.log('Haptics not available');
+      // Silent fail on web platform
     }
     this.toggle.emit(this.todo.id);
   }
@@ -54,7 +56,7 @@ export class TodoItemComponent {
     try {
       await Haptics.impact({ style: ImpactStyle.Medium });
     } catch (error) {
-      console.log('Haptics not available');
+      // Silent fail on web platform
     }
     this.delete.emit(this.todo.id);
   }

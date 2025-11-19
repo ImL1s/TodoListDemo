@@ -12,11 +12,17 @@
 - ✅ 統計信息顯示
 - ✅ 清除所有已完成項目
 - ✅ Material Design 風格 UI
+- ✅ 數據持久化（SharedPreferences）
+- ✅ 流暢的動畫效果
+- ✅ 錯誤處理和加載狀態
+- ✅ 完整的單元測試和 Widget 測試
 
 ## 項目結構
 
 ```
 03-flutter-basic/
+├── .gitignore                      # Git 忽略文件配置
+├── analysis_options.yaml           # Dart 代碼分析配置
 ├── pubspec.yaml                    # Flutter 項目配置文件
 ├── lib/
 │   ├── main.dart                   # 應用入口
@@ -24,8 +30,17 @@
 │   │   └── todo.dart              # Todo 數據模型
 │   ├── screens/
 │   │   └── todo_list_screen.dart  # 主列表頁面（StatefulWidget）
+│   ├── services/
+│   │   └── todo_storage_service.dart # 數據持久化服務
 │   └── widgets/
 │       └── todo_item.dart         # Todo 列表項組件
+├── test/
+│   ├── models/
+│   │   └── todo_test.dart         # Todo 模型測試
+│   ├── services/
+│   │   └── todo_storage_service_test.dart # 存儲服務測試
+│   └── widgets/
+│       └── todo_item_test.dart    # Widget 測試
 └── README.md                       # 項目說明文檔
 ```
 
@@ -287,8 +302,30 @@ Row(
 - **MyApp**: 根組件，配置主題
 - **TodoListScreen**: 主頁面，管理狀態
 - **TodoItem**: 列表項組件，展示單個 Todo
+- **TodoStorageService**: 數據持久化服務
 
-### 2. 單一數據源
+### 2. 數據持久化
+
+使用 SharedPreferences 實現本地數據存儲：
+
+```dart
+// 保存數據
+await TodoStorageService.saveTodos(_todos);
+
+// 加載數據
+final todos = await TodoStorageService.loadTodos();
+
+// 清除數據
+await TodoStorageService.clearTodos();
+```
+
+**特點：**
+- 自動序列化/反序列化
+- 異步操作，不阻塞 UI
+- 錯誤處理和異常捕獲
+- 應用重啟後數據持久保存
+
+### 3. 單一數據源
 
 使用 `List<Todo>` 作為唯一的數據源：
 
@@ -298,14 +335,16 @@ final List<Todo> _todos = [];
 // 所有操作都基於這個列表
 void _addTodo(String title) {
   setState(() => _todos.add(Todo(title: title)));
+  _saveTodos(); // 持久化保存
 }
 
 void _deleteTodo(String id) {
   setState(() => _todos.removeWhere((t) => t.id == id));
+  _saveTodos(); // 持久化保存
 }
 ```
 
-### 3. 計算屬性
+### 4. 計算屬性
 
 使用 getter 派生狀態：
 
@@ -322,7 +361,7 @@ List<Todo> get _filteredTodos {
 }
 ```
 
-### 4. 回調函數模式
+### 5. 回調函數模式
 
 父組件通過回調函數接收子組件的事件：
 
@@ -341,6 +380,61 @@ class TodoItem extends StatelessWidget {
 
   // 觸發回調
   onTap: onToggle,
+}
+```
+
+### 6. 流暢的動畫效果
+
+使用 Flutter 內置動畫組件提升用戶體驗：
+
+```dart
+// 列表項淡入和滑動動畫
+AnimatedSwitcher(
+  duration: const Duration(milliseconds: 300),
+  transitionBuilder: (child, animation) {
+    return FadeTransition(
+      opacity: animation,
+      child: SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0.2, 0),
+          end: Offset.zero,
+        ).animate(animation),
+        child: child,
+      ),
+    );
+  },
+  child: TodoItem(...),
+)
+
+// 容器動畫
+AnimatedContainer(
+  duration: const Duration(milliseconds: 300),
+  curve: Curves.easeInOut,
+  child: Card(...),
+)
+```
+
+### 7. 完整的錯誤處理
+
+```dart
+// 加載狀態
+if (_isLoading) {
+  return const CircularProgressIndicator();
+}
+
+// 錯誤狀態
+if (_errorMessage != null) {
+  return ErrorWidget(
+    message: _errorMessage!,
+    onRetry: _loadTodos,
+  );
+}
+
+// 異常捕獲
+try {
+  await TodoStorageService.saveTodos(_todos);
+} catch (e) {
+  _showSnackBar('保存失敗: $e');
 }
 ```
 
@@ -365,7 +459,28 @@ flutter pub get
 flutter devices
 ```
 
-3. **運行應用**
+3. **運行測試**
+```bash
+# 運行所有測試
+flutter test
+
+# 運行特定測試文件
+flutter test test/models/todo_test.dart
+
+# 運行測試並生成覆蓋率報告
+flutter test --coverage
+```
+
+4. **代碼分析**
+```bash
+# 運行 Dart 分析器
+flutter analyze
+
+# 格式化代碼
+flutter format lib/ test/
+```
+
+5. **運行應用**
 ```bash
 # 運行在連接的設備上
 flutter run
@@ -375,9 +490,12 @@ flutter run -d <device-id>
 
 # 運行在 Chrome 瀏覽器（Web）
 flutter run -d chrome
+
+# 運行 debug 模式（帶性能分析）
+flutter run --profile
 ```
 
-4. **熱重載**
+6. **熱重載**
 - 在應用運行時，修改代碼後按 `r` 進行熱重載
 - 按 `R` 進行熱重啟
 - 按 `q` 退出應用
@@ -387,6 +505,9 @@ flutter run -d chrome
 ```bash
 # Android APK
 flutter build apk --release
+
+# Android App Bundle（推薦用於 Google Play）
+flutter build appbundle --release
 
 # iOS IPA
 flutter build ios --release
@@ -504,15 +625,91 @@ class Child extends StatelessWidget {
 - 缺乏狀態邏輯復用機制
 - 難以管理複雜狀態
 
+## 測試
+
+本項目包含完整的單元測試和 Widget 測試：
+
+### 測試覆蓋
+
+1. **模型測試** (`test/models/todo_test.dart`)
+   - Todo 創建和屬性
+   - JSON 序列化/反序列化
+   - 相等性比較
+   - copyWith 方法
+
+2. **服務測試** (`test/services/todo_storage_service_test.dart`)
+   - 保存和加載數據
+   - 數據覆蓋
+   - 清除數據
+   - 空列表處理
+
+3. **Widget 測試** (`test/widgets/todo_item_test.dart`)
+   - UI 渲染
+   - 用戶交互
+   - 回調觸發
+   - 對話框顯示
+
+### 運行測試
+
+```bash
+# 運行所有測試
+flutter test
+
+# 查看測試覆蓋率
+flutter test --coverage
+genhtml coverage/lcov.info -o coverage/html
+open coverage/html/index.html
+```
+
+## 代碼品質
+
+### Lint 規則
+
+本項目使用嚴格的 lint 規則（`analysis_options.yaml`）：
+
+- 錯誤檢測規則
+- 代碼風格規則
+- 性能優化建議
+- 最佳實踐檢查
+
+### 代碼分析
+
+```bash
+# 運行分析器
+flutter analyze
+
+# 修復可自動修復的問題
+dart fix --apply
+```
+
+## 性能優化
+
+### 已實現的優化
+
+1. **const 構造函數**
+   - 靜態 Widget 使用 const
+   - 減少不必要的重建
+
+2. **ListView.builder**
+   - 懶加載列表項
+   - 只渲染可見項目
+
+3. **Key 的使用**
+   - ValueKey 確保 Widget 正確復用
+   - 提升列表更新性能
+
+4. **BouncingScrollPhysics**
+   - iOS 風格的滾動效果
+   - 更好的用戶體驗
+
 ## 下一步學習
 
-1. **Provider**: 學習更高級的狀態管理
+1. **Provider**: 學習更高級的狀態管理 → 查看 `04-flutter-riverpod`
 2. **導航**: 多頁面應用和路由
-3. **數據持久化**: SharedPreferences、SQLite
+3. **SQLite**: 更強大的本地數據庫
 4. **網絡請求**: HTTP、Dio
-5. **動畫**: 添加過渡動畫效果
-6. **主題切換**: 實現深色模式
-7. **國際化**: 多語言支持
+5. **主題切換**: 實現深色模式
+6. **國際化**: 多語言支持
 
 ## 參考資源
 
@@ -557,16 +754,42 @@ void initState() {
 
 這個 Flutter 基礎 Todo List 展示了：
 
-1. **StatefulWidget** 的基本用法
+1. **StatefulWidget** 的基本用法和生命周期
 2. **setState()** 的狀態管理機制
 3. **Material Design** 組件的使用
 4. **組件化** 的設計思想
 5. **回調函數** 的通信模式
+6. **數據持久化** 使用 SharedPreferences
+7. **動畫效果** 提升用戶體驗
+8. **錯誤處理** 和加載狀態管理
+9. **測試驅動開發** 完整的測試覆蓋
+10. **代碼品質** 嚴格的 lint 規則
 
 通過這個項目，你應該能夠：
 - 理解 Flutter 的響應式 UI 範式
 - 掌握基礎的狀態管理
 - 熟悉常用的 Material 組件
-- 能夠構建簡單的 Flutter 應用
+- 實現數據持久化
+- 添加流暢的動畫效果
+- 編寫單元測試和 Widget 測試
+- 遵循 Flutter 最佳實踐
+- 能夠構建生產級別的 Flutter 應用
 
 這是學習 Flutter 的堅實基礎，為後續學習更高級的概念打下良好的根基。
+
+## 改進歷史
+
+### v1.1.0 (最新)
+- ✅ 添加數據持久化（SharedPreferences）
+- ✅ 添加流暢的動畫效果
+- ✅ 完整的錯誤處理和加載狀態
+- ✅ 完整的單元測試和 Widget 測試覆蓋
+- ✅ 嚴格的代碼分析規則（analysis_options.yaml）
+- ✅ 添加 .gitignore 配置
+- ✅ 性能優化（const constructors, ValueKey）
+
+### v1.0.0 (初始版本)
+- ✅ 基本的 CRUD 操作
+- ✅ StatefulWidget 和 setState
+- ✅ Material Design UI
+- ✅ 過濾和統計功能

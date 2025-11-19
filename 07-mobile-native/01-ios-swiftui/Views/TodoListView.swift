@@ -53,12 +53,13 @@ struct TodoListView: View {
 
     // MARK: - Computed Properties
 
-    /// Filtered todos based on showCompleted binding
+    /// Filtered todos based on ViewModel and showCompleted binding
     private var filteredTodos: [Todo] {
+        let todos = todoViewModel.filteredTodos
         if showCompleted {
-            return todoViewModel.todos
+            return todos
         } else {
-            return todoViewModel.todos.filter { !$0.isCompleted }
+            return todos.filter { !$0.isCompleted }
         }
     }
 

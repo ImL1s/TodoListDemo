@@ -64,8 +64,8 @@ struct TodoListApp: App {
         case .background:
             // App moved to background
             print("App moved to background")
-            // Save any pending changes
-            todoViewModel.saveTodos()
+            // Save any pending changes immediately (don't wait for debounce)
+            todoViewModel.saveImmediately()
 
         @unknown default:
             print("Unknown scene phase: \(newPhase)")

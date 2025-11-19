@@ -13,6 +13,9 @@ dependencies:
   # GetX - 輕量級狀態管理、路由管理、依賴注入
   get: ^4.6.6
 
+  # GetStorage - GetX 生態的本地存儲解決方案
+  get_storage: ^2.1.1
+
   # UI
   cupertino_icons: ^1.0.2
 

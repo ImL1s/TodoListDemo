@@ -52,6 +52,9 @@ class TodoViewModel: ObservableObject {
     /// Cancellable set for Combine subscriptions
     private var cancellables = Set<AnyCancellable>()
 
+    /// Debounce work item for saving
+    private var saveWorkItem: DispatchWorkItem?
+
     // MARK: - Computed Properties
 
     /// Count of active (incomplete) todos
@@ -256,10 +259,29 @@ class TodoViewModel: ObservableObject {
         print("Loaded \(todos.count) todos from storage")
     }
 
-    /// Save todos to UserDefaults
+    /// Save todos to UserDefaults (with debouncing)
     func saveTodos() {
+        // Cancel any pending save
+        saveWorkItem?.cancel()
+
+        // Create a new save work item
+        let workItem = DispatchWorkItem { [weak self] in
+            guard let self = self else { return }
+            self.storage.saveTodos(self.todos)
+            print("Saved \(self.todos.count) todos to storage")
+        }
+
+        saveWorkItem = workItem
+
+        // Execute after a short delay to debounce rapid changes
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: workItem)
+    }
+
+    /// Save todos immediately (without debouncing)
+    func saveImmediately() {
+        saveWorkItem?.cancel()
         storage.saveTodos(todos)
-        print("Saved \(todos.count) todos to storage")
+        print("Immediately saved \(todos.count) todos to storage")
     }
 
     // MARK: - Private Methods

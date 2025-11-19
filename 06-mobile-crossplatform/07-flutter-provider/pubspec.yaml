@@ -16,6 +16,9 @@ dependencies:
   # Local Storage - SharedPreferences for data persistence
   shared_preferences: ^2.2.2
 
+  # Equality - For value comparison and performance optimization
+  equatable: ^2.0.5
+
   # UI Components
   cupertino_icons: ^1.0.6
 

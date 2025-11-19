@@ -123,34 +123,65 @@ class TodoListScreen extends StatelessWidget {
 
           const SizedBox(height: 20),
 
-          // Stats Summary using context.watch()
-          // context.watch<T>() is alternative to Consumer for simple cases
-          Consumer<TodoProvider>(
-            builder: (context, provider, _) {
-              return Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.info_outline,
-                      color: Colors.white,
-                      size: 20,
+          // Stats Summary and Undo/Redo using Selector for better performance
+          Selector<TodoProvider, ({int active, int total, bool canUndo, bool canRedo})>(
+            selector: (_, p) => (
+              active: p.activeCount,
+              total: p.totalCount,
+              canUndo: p.canUndo,
+              canRedo: p.canRedo,
+            ),
+            builder: (context, stats, _) {
+              return Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    const SizedBox(width: 12),
-                    Text(
-                      '${provider.activeCount} active of ${provider.totalCount} todos',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.info_outline,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            '${stats.active} active of ${stats.total} todos',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        // Undo/Redo buttons
+                        IconButton(
+                          icon: const Icon(Icons.undo, color: Colors.white, size: 20),
+                          onPressed: stats.canUndo
+                              ? () => context.read<TodoProvider>().undo()
+                              : null,
+                          tooltip: 'Undo',
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                        ),
+                        const SizedBox(width: 8),
+                        IconButton(
+                          icon: const Icon(Icons.redo, color: Colors.white, size: 20),
+                          onPressed: stats.canRedo
+                              ? () => context.read<TodoProvider>().redo()
+                              : null,
+                          tooltip: 'Redo',
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               );
             },
           ),

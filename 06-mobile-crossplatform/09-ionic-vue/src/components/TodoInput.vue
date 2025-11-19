@@ -39,31 +39,38 @@ import {
   IonIcon
 } from '@ionic/vue'
 import { addCircleOutline, informationCircleOutline } from 'ionicons/icons'
+import { useHaptics } from '@/composables'
 
 // Emits
 const emit = defineEmits<{
   (e: 'add-todo', text: string): void
 }>()
 
+// Composables
+const haptics = useHaptics()
+
 // State
 const inputText = ref('')
 const isFocused = ref(false)
 
 // Methods
-const handleSubmit = () => {
+const handleSubmit = async () => {
   const text = inputText.value.trim()
   if (text) {
+    await haptics.lightImpact()
     emit('add-todo', text)
     inputText.value = ''
   }
 }
 
-const handleFocus = () => {
+const handleFocus = async () => {
   isFocused.value = true
+  await haptics.selectionStart()
 }
 
-const handleBlur = () => {
+const handleBlur = async () => {
   isFocused.value = false
+  await haptics.selectionEnd()
 }
 </script>
 

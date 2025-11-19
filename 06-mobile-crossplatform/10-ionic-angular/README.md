@@ -2,6 +2,22 @@
 
 一個使用 Ionic 7 和 Angular 17 構建的現代化跨平台 Todo List 應用程式。這個專案展示了如何結合 Ionic Framework 的強大 UI 組件與 Angular 的企業級架構來構建高品質的移動應用。
 
+## 最新改進 (2025-11-19)
+
+本專案已進行重大改進，包含以下新特性：
+
+- **Angular Signals**: 使用 Angular 17+ 的 Signals API 進行響應式狀態管理
+- **TypeScript 嚴格模式**: 啟用完整的嚴格類型檢查
+- **性能優化**: OnPush 變更檢測 + TrackBy 優化
+- **Capacitor 增強**: 新增 Toast、Alert、Network 原生功能
+- **移動端特性**: Pull-to-refresh、加載指示器
+- **錯誤處理**: 統一的錯誤處理和用戶反饋
+- **響應式設計**: 平板和桌面優化、深色模式、動畫效果
+
+詳細改進說明請查看：
+- [IMPROVEMENTS.md](./IMPROVEMENTS.md) - 完整改進文檔
+- [SIGNALS_GUIDE.md](./SIGNALS_GUIDE.md) - Angular Signals 使用指南
+
 ## 目錄
 
 - [專案概述](#專案概述)
@@ -133,20 +149,31 @@ Ionic 是一個開源的移動 UI 工具包，用於構建高品質的跨平台�
 
 ### 技術特性
 
-1. **Angular 17 新特性**
+1. **Angular 17+ 新特性**
    - Standalone Components（獨立組件）
    - Signal-based Reactivity（信號響應式）
+   - OnPush 變更檢測優化
+   - Computed Signals 自動計算
+   - TypeScript 嚴格模式
    - 改進的模板語法
    - 更好的類型推斷
 
 2. **Ionic 7 特性**
    - 現代化的 UI 組件
+   - Pull-to-refresh 刷新
+   - Ion-refresher 支持
    - 改進的性能
    - 更好的可訪問性
    - 增強的手勢支持
+   - 響應式設計
 
 3. **Capacitor 5 特性**
    - 統一的插件 API
+   - Toast 消息提示
+   - Alert 原生對話框
+   - Network 狀態監控
+   - Haptics 觸覺反饋
+   - Status Bar 控制
    - 更好的 TypeScript 支持
    - 改進的原生集成
    - 實時重載
@@ -302,32 +329,60 @@ export class HomePage {
 }
 ```
 
-### RxJS 與響應式編程
+### Angular Signals 響應式編程
 
-RxJS 是 Angular 的核心依賴，提供了強大的響應式編程能力：
+本專案使用 Angular 17+ 的 Signals API，提供更簡單直觀的響應式狀態管理：
 
 ```typescript
 export class TodoService {
-  private todosSubject = new BehaviorSubject<Todo[]>([]);
-  public todos$ = this.todosSubject.asObservable();
+  // Signals for state management
+  private todosSignal = signal<Todo[]>([]);
+  public readonly todos = this.todosSignal.asReadonly();
 
-  // Derived state
-  public activeTodos$ = this.todos$.pipe(
-    map(todos => todos.filter(t => !t.completed))
-  );
+  // Computed signals (自動計算)
+  public readonly filteredTodos = computed(() => {
+    const todos = this.todosSignal();
+    const filter = this.filterSignal();
+    return this.applyFilter(todos, filter);
+  });
 
-  public completedTodos$ = this.todos$.pipe(
-    map(todos => todos.filter(t => t.completed))
-  );
+  public readonly stats = computed(() => {
+    const todos = this.todosSignal();
+    return {
+      total: todos.length,
+      active: todos.filter(t => !t.completed).length,
+      completed: todos.filter(t => t.completed).length
+    };
+  });
+
+  // 更新狀態
+  async addTodo(text: string): Promise<void> {
+    this.todosSignal.update(todos => [...todos, newTodo]);
+  }
 }
 ```
 
-**優點：**
+**Signals 優點：**
 
+- ⚡ 性能優秀（細粒度更新）
+- 🎯 簡單直觀（比 RxJS 易學）
 - 🔄 自動更新 UI
-- 🎯 聲明式數據流
-- 🔀 複雜異步操作處理
-- 💾 內存自動管理
+- 💾 自動內存管理（無需取消訂閱）
+- 🎨 完美配合 OnPush 變更檢測
+
+**同時支持 RxJS：**
+
+本專案同時提供 Signals 和 RxJS Observable，實現向後兼容：
+
+```typescript
+// Signals API (推薦)
+public readonly todos = this.todosSignal.asReadonly();
+
+// RxJS API (兼容)
+public todos$ = toObservable(this.todosSignal);
+```
+
+詳細使用指南：[SIGNALS_GUIDE.md](./SIGNALS_GUIDE.md)
 
 ## 專案架構
 

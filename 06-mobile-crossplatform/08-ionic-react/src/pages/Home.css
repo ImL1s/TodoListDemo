@@ -6,6 +6,48 @@
   flex-wrap: wrap;
 }
 
+.tech-stack-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.tech-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.tech-description {
+  margin: 0;
+  color: var(--ion-color-medium);
+  line-height: 1.5;
+}
+
+.offline-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-weight: 500;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  gap: 12px;
+}
+
+.loading-container p {
+  margin: 0;
+}
+
 ion-card-title {
   font-size: 1.2rem;
   margin-bottom: 8px;
@@ -15,4 +57,16 @@ ion-card-content p {
   margin: 0;
   color: var(--ion-color-medium);
   line-height: 1.5;
+}
+
+/* 响应式设计 */
+@media (max-width: 576px) {
+  .tech-stack-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stats-container {
+    gap: 6px;
+  }
 }

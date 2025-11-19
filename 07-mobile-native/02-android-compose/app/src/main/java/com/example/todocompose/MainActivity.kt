@@ -8,30 +8,42 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.todocompose.ui.TodoListScreen
 import com.example.todocompose.ui.theme.TodoComposeTheme
 import com.example.todocompose.viewmodel.TodoViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * MainActivity - The entry point of the Todo Compose application
  *
+ * The @AndroidEntryPoint annotation enables dependency injection in this Activity.
+ * It generates a Hilt component attached to the Activity's lifecycle.
+ *
  * This activity follows the modern Android development approach by:
  * 1. Using Jetpack Compose for UI (no XML layouts)
  * 2. Enabling edge-to-edge display for immersive experience
- * 3. Integrating with ViewModel for state management
- * 4. Applying Material Design 3 theming
+ * 3. Using Hilt for dependency injection
+ * 4. Integrating with ViewModel for state management
+ * 5. Applying Material Design 3 theming
  *
  * Key Features:
  * - Single Activity Architecture: All UI is rendered in Compose
  * - Edge-to-Edge Display: Content extends to system bars
+ * - Dependency Injection: Hilt manages all dependencies
  * - Theme Support: Automatic dark/light mode based on system settings
  * - ViewModel Integration: State survives configuration changes
+ *
+ * Hilt Integration:
+ * - @AndroidEntryPoint: Enables field injection in this Activity
+ * - hiltViewModel(): Creates ViewModel with injected dependencies
+ * - No manual Factory needed!
  *
  * @see TodoListScreen The main composable that renders the todo list
  * @see TodoViewModel The ViewModel managing todo state and business logic
  * @see TodoComposeTheme The Material Design 3 theme for the app
  */
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     /**
@@ -57,16 +69,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // Create or retrieve the ViewModel
-                    // viewModel() is lifecycle-aware and survives configuration changes
-                    val todoViewModel: TodoViewModel = viewModel(
-                        factory = TodoViewModel.Factory(applicationContext)
-                    )
-
                     // Render the main todo list screen
-                    TodoListScreen(viewModel = todoViewModel)
+                    // hiltViewModel() automatically injects dependencies
+                    TodoListScreen(viewModel = hiltViewModel())
                 }
             }
         }
     }
 }
+

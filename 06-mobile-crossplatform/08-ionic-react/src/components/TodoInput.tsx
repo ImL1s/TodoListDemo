@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import {
   IonCard,
   IonCardContent,
@@ -6,10 +6,10 @@ import {
   IonInput,
   IonButton,
   IonIcon,
-  useIonToast,
 } from '@ionic/react';
 import { addCircle } from 'ionicons/icons';
 import { Keyboard } from '@capacitor/keyboard';
+import { useToast } from '../hooks';
 import './TodoInput.css';
 
 interface TodoInputProps {
@@ -18,49 +18,52 @@ interface TodoInputProps {
 
 const TodoInput: React.FC<TodoInputProps> = ({ onAddTodo }) => {
   const [inputValue, setInputValue] = useState('');
-  const [present] = useIonToast();
   const inputRef = useRef<HTMLIonInputElement>(null);
+  const { showWarning, showError } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // 使用 useCallback 优化函数引用
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
 
-    const trimmedValue = inputValue.trim();
+      const trimmedValue = inputValue.trim();
 
-    if (!trimmedValue) {
-      present({
-        message: 'Please enter a todo item',
-        duration: 2000,
-        position: 'bottom',
-        color: 'warning',
-      });
-      return;
-    }
+      if (!trimmedValue) {
+        showWarning('Please enter a todo item');
+        return;
+      }
 
-    if (trimmedValue.length > 200) {
-      present({
-        message: 'Todo text is too long (max 200 characters)',
-        duration: 2000,
-        position: 'bottom',
-        color: 'danger',
-      });
-      return;
-    }
+      if (trimmedValue.length < 3) {
+        showWarning('Todo must be at least 3 characters');
+        return;
+      }
 
-    onAddTodo(trimmedValue);
-    setInputValue('');
+      if (trimmedValue.length > 200) {
+        showError('Todo text is too long (max 200 characters)');
+        return;
+      }
 
-    // 在移動設備上隱藏鍵盤
-    try {
-      await Keyboard.hide();
-    } catch (error) {
-      // Keyboard plugin not available in web
-    }
+      onAddTodo(trimmedValue);
+      setInputValue('');
 
-    // 重新聚焦輸入框
-    setTimeout(() => {
-      inputRef.current?.setFocus();
-    }, 100);
-  };
+      // 在移动设备上隐藏键盘
+      try {
+        await Keyboard.hide();
+      } catch (error) {
+        // Keyboard plugin not available in web
+      }
+
+      // 重新聚焦输入框
+      setTimeout(() => {
+        inputRef.current?.setFocus();
+      }, 100);
+    },
+    [inputValue, onAddTodo, showWarning, showError]
+  );
+
+  const handleInputChange = useCallback((e: any) => {
+    setInputValue(e.detail.value || '');
+  }, []);
 
   return (
     <IonCard className="todo-input-card">
@@ -71,17 +74,20 @@ const TodoInput: React.FC<TodoInputProps> = ({ onAddTodo }) => {
               ref={inputRef}
               value={inputValue}
               placeholder="What needs to be done?"
-              onIonInput={(e) => setInputValue(e.detail.value || '')}
+              onIonInput={handleInputChange}
               clearInput
               autocomplete="off"
               enterkeyhint="done"
               className="todo-input"
+              maxlength={200}
+              counter
             />
             <IonButton
               slot="end"
               type="submit"
               color="primary"
-              disabled={!inputValue.trim()}
+              disabled={!inputValue.trim() || inputValue.trim().length < 3}
+              className="add-button"
             >
               <IonIcon slot="start" icon={addCircle} />
               Add
@@ -93,4 +99,5 @@ const TodoInput: React.FC<TodoInputProps> = ({ onAddTodo }) => {
   );
 };
 
-export default TodoInput;
+// 使用 React.memo 优化重渲染
+export default React.memo(TodoInput);

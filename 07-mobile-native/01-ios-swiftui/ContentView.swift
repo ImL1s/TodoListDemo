@@ -31,6 +31,9 @@ struct ContentView: View {
     /// Controls the visibility of completed todos
     @State private var showCompletedTodos = true
 
+    /// Controls the delete all confirmation alert
+    @State private var showDeleteAllConfirmation = false
+
     /// Current color scheme (light/dark mode)
     @Environment(\.colorScheme) var colorScheme
 
@@ -77,11 +80,28 @@ struct ContentView: View {
                 }
 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    settingsButton
+                    HStack(spacing: 16) {
+                        filterMenu
+                        sortMenu
+                        settingsButton
+                    }
                 }
             }
+            .searchable(text: $todoViewModel.searchText,
+                       prompt: "Search todos...")
             .sheet(isPresented: $showingSettings) {
                 settingsView
+            }
+            .alert("Clear All Todos", isPresented: $showDeleteAllConfirmation) {
+                Button("Cancel", role: .cancel) { }
+                Button("Delete All", role: .destructive) {
+                    withAnimation {
+                        todoViewModel.clearAll()
+                    }
+                    showingSettings = false
+                }
+            } message: {
+                Text("Are you sure you want to delete all todos? This action cannot be undone.")
             }
         }
         // Support for iPad split view
@@ -162,6 +182,42 @@ struct ContentView: View {
                 .foregroundColor(.white)
                 .font(.system(size: 16, weight: .semibold))
         }
+        .accessibilityLabel(showCompletedTodos ? "Hide completed todos" : "Show completed todos")
+        .accessibilityHint("Double tap to toggle completed todos visibility")
+    }
+
+    /// Filter menu for todos
+    private var filterMenu: some View {
+        Menu {
+            Picker("Filter", selection: $todoViewModel.currentFilter) {
+                ForEach(TodoViewModel.FilterOption.allCases) { option in
+                    Label(option.rawValue, systemImage: option.icon)
+                        .tag(option)
+                }
+            }
+        } label: {
+            Image(systemName: "line.3.horizontal.decrease.circle")
+                .foregroundColor(.white)
+                .font(.system(size: 16, weight: .semibold))
+        }
+        .accessibilityLabel("Filter todos")
+    }
+
+    /// Sort menu for todos
+    private var sortMenu: some View {
+        Menu {
+            Picker("Sort", selection: $todoViewModel.sortOrder) {
+                ForEach(TodoViewModel.SortOrder.allCases) { order in
+                    Label(order.rawValue, systemImage: order.icon)
+                        .tag(order)
+                }
+            }
+        } label: {
+            Image(systemName: "arrow.up.arrow.down.circle")
+                .foregroundColor(.white)
+                .font(.system(size: 16, weight: .semibold))
+        }
+        .accessibilityLabel("Sort todos")
     }
 
     /// Settings button
@@ -173,6 +229,7 @@ struct ContentView: View {
                 .foregroundColor(.white)
                 .font(.system(size: 16, weight: .semibold))
         }
+        .accessibilityLabel("Settings")
     }
 
     /// Statistics footer showing todo counts
@@ -237,13 +294,25 @@ struct ContentView: View {
 
                 Section(header: Text("Data")) {
                     Button(action: {
-                        clearAllTodos()
+                        showDeleteAllConfirmation = true
                     }) {
                         HStack {
                             Image(systemName: "trash")
                                 .foregroundColor(.red)
                             Text("Clear All Todos")
                                 .foregroundColor(.red)
+                        }
+                    }
+
+                    Button(action: {
+                        todoViewModel.clearCompleted()
+                        showingSettings = false
+                    }) {
+                        HStack {
+                            Image(systemName: "checkmark.circle.badge.xmark")
+                                .foregroundColor(.orange)
+                            Text("Clear Completed Todos")
+                                .foregroundColor(.orange)
                         }
                     }
                 }
@@ -283,30 +352,6 @@ struct ContentView: View {
         }
     }
 
-    // MARK: - Private Methods
-
-    /// Clear all todos with confirmation
-    private func clearAllTodos() {
-        let alert = UIAlertController(
-            title: "Clear All Todos",
-            message: "Are you sure you want to delete all todos? This action cannot be undone.",
-            preferredStyle: .alert
-        )
-
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        alert.addAction(UIAlertAction(title: "Delete All", style: .destructive) { _ in
-            withAnimation {
-                todoViewModel.clearAll()
-            }
-            showingSettings = false
-        })
-
-        // Present the alert
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let rootViewController = windowScene.windows.first?.rootViewController {
-            rootViewController.present(alert, animated: true)
-        }
-    }
 }
 
 // MARK: - Preview Provider

@@ -3,33 +3,45 @@ import 'package:get/get.dart';
 import '../controllers/todo_controller.dart';
 import '../widgets/todo_item.dart';
 
-/// Todo List 主畫面
+/// Todo List 主畫面（改進版）
 ///
 /// 使用 GetX 的幾種方式：
-/// 1. Get.put() - 依賴注入，創建並註冊 Controller
-/// 2. Get.find() - 獲取已註冊的 Controller
-/// 3. Obx - 自動響應式 UI 更新
-/// 4. GetBuilder - 手動控制 UI 更新（性能更好）
+/// 1. Get.find() - 獲取已註冊的 Controller（通過 Binding）
+/// 2. Obx - 自動響應式 UI 更新
+/// 3. Get.dialog - 顯示對話框
+/// 4. .tr - 國際化翻譯
+///
+/// 改進重點：
+/// - 使用 Get.find() 替代 Get.put()（配合 Bindings）
+/// - 添加搜索功能（演示 debounce Worker）
+/// - 完整的國際化支持
+/// - 使用 Get.toNamed() 路由導航
 class TodoListScreen extends StatelessWidget {
   const TodoListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // 使用 Get.put() 註冊 Controller，如果已存在則返回現有實例
-    final todoController = Get.put(TodoController());
+    // 使用 Get.find() 獲取已註冊的 Controller（由 Binding 注入）
+    final todoController = Get.find<TodoController>();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('GetX Todo List'),
+        title: Text('app_title'.tr),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
+          // 設置按鈕
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => Get.toNamed('/settings'),
+            tooltip: 'settings'.tr,
+          ),
           // 清除已完成項目按鈕
           Obx(() {
             return todoController.completedCount > 0
                 ? IconButton(
                     icon: const Icon(Icons.delete_sweep),
                     onPressed: () => _showClearCompletedDialog(todoController),
-                    tooltip: '清除已完成',
+                    tooltip: 'clear_completed'.tr,
                   )
                 : const SizedBox.shrink();
           }),
@@ -43,7 +55,7 @@ class TodoListScreen extends StatelessWidget {
                           : Icons.check_box_outline_blank,
                     ),
                     onPressed: todoController.toggleAll,
-                    tooltip: '全選/取消全選',
+                    tooltip: 'toggle_all'.tr,
                   )
                 : const SizedBox.shrink();
           }),
@@ -54,8 +66,14 @@ class TodoListScreen extends StatelessWidget {
           // 統計資訊
           _buildStatsBar(todoController),
 
+          // 搜索欄（演示 debounce Worker）
+          _buildSearchBar(todoController),
+
           // 過濾器選項
           _buildFilterBar(todoController),
+
+          // Workers 狀態顯示（演示用）
+          _buildWorkersInfo(todoController),
 
           // Todo 列表
           Expanded(
@@ -63,7 +81,7 @@ class TodoListScreen extends StatelessWidget {
               final todos = todoController.filteredTodos;
 
               if (todos.isEmpty) {
-                return _buildEmptyState(todoController.filter);
+                return _buildEmptyState(todoController);
               }
 
               return ListView.builder(
@@ -87,7 +105,7 @@ class TodoListScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddTodoDialog(todoController),
         icon: const Icon(Icons.add),
-        label: const Text('新增待辦'),
+        label: Text('add_todo'.tr),
       ),
     );
   }
@@ -106,9 +124,9 @@ class TodoListScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildStatItem('全部', controller.totalCount, Colors.blue),
-            _buildStatItem('進行中', controller.activeCount, Colors.orange),
-            _buildStatItem('已完成', controller.completedCount, Colors.green),
+            _buildStatItem('total'.tr, controller.totalCount, Colors.blue),
+            _buildStatItem('active'.tr, controller.activeCount, Colors.orange),
+            _buildStatItem('completed'.tr, controller.completedCount, Colors.green),
           ],
         ),
       );
@@ -139,6 +157,33 @@ class TodoListScreen extends StatelessWidget {
     );
   }
 
+  /// 搜索欄（演示 debounce Worker）
+  Widget _buildSearchBar(TodoController controller) {
+    return Obx(() {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: TextField(
+          decoration: InputDecoration(
+            hintText: 'search_hint'.tr,
+            prefixIcon: const Icon(Icons.search),
+            suffixIcon: controller.searchKeyword.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: controller.clearSearch,
+                  )
+                : null,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            filled: true,
+            fillColor: Colors.grey.shade50,
+          ),
+          onChanged: controller.setSearchKeyword,
+        ),
+      );
+    });
+  }
+
   /// 過濾器選項欄
   Widget _buildFilterBar(TodoController controller) {
     return Obx(() {
@@ -148,21 +193,21 @@ class TodoListScreen extends StatelessWidget {
           children: [
             _buildFilterChip(
               controller,
-              '全部',
+              'all'.tr,
               TodoFilter.all,
               Icons.list,
             ),
             const SizedBox(width: 8),
             _buildFilterChip(
               controller,
-              '進行中',
+              'active'.tr,
               TodoFilter.active,
               Icons.radio_button_unchecked,
             ),
             const SizedBox(width: 8),
             _buildFilterChip(
               controller,
-              '已完成',
+              'completed'.tr,
               TodoFilter.completed,
               Icons.check_circle,
             ),
@@ -188,7 +233,7 @@ class TodoListScreen extends StatelessWidget {
           children: [
             Icon(icon, size: 16),
             const SizedBox(width: 4),
-            Text(label),
+            Flexible(child: Text(label, overflow: TextOverflow.ellipsis)),
           ],
         ),
         selected: isSelected,
@@ -199,24 +244,52 @@ class TodoListScreen extends StatelessWidget {
     );
   }
 
+  /// Workers 資訊顯示（演示用）
+  Widget _buildWorkersInfo(TodoController controller) {
+    return Obx(() {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        child: Row(
+          children: [
+            Icon(Icons.sensors, size: 16, color: Colors.grey.shade600),
+            const SizedBox(width: 8),
+            Text(
+              'Workers: ${controller.changeCount} changes',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey.shade600,
+              ),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
   /// 空狀態視圖
-  Widget _buildEmptyState(TodoFilter filter) {
+  Widget _buildEmptyState(TodoController controller) {
     String message;
     IconData icon;
 
-    switch (filter) {
-      case TodoFilter.active:
-        message = '沒有進行中的待辦事項';
-        icon = Icons.inbox_outlined;
-        break;
-      case TodoFilter.completed:
-        message = '還沒有完成任何事項';
-        icon = Icons.check_circle_outline;
-        break;
-      case TodoFilter.all:
-      default:
-        message = '還沒有任何待辦事項\n點擊下方按鈕新增';
-        icon = Icons.playlist_add;
+    // 如果有搜索關鍵字，顯示無搜索結果
+    if (controller.searchKeyword.isNotEmpty) {
+      message = 'No results for "${controller.searchKeyword}"';
+      icon = Icons.search_off;
+    } else {
+      switch (controller.filter) {
+        case TodoFilter.active:
+          message = 'no_active_todos'.tr;
+          icon = Icons.inbox_outlined;
+          break;
+        case TodoFilter.completed:
+          message = 'no_completed_todos'.tr;
+          icon = Icons.check_circle_outline;
+          break;
+        case TodoFilter.all:
+        default:
+          message = 'no_todos'.tr;
+          icon = Icons.playlist_add;
+      }
     }
 
     return Center(
@@ -248,13 +321,13 @@ class TodoListScreen extends StatelessWidget {
 
     Get.dialog(
       AlertDialog(
-        title: const Text('新增待辦事項'),
+        title: Text('add_todo_title'.tr),
         content: TextField(
           controller: textController,
           autofocus: true,
-          decoration: const InputDecoration(
-            hintText: '輸入待辦事項...',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            hintText: 'input_hint'.tr,
+            border: const OutlineInputBorder(),
           ),
           onSubmitted: (value) {
             if (value.trim().isNotEmpty) {
@@ -266,7 +339,7 @@ class TodoListScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: const Text('取消'),
+            child: Text('cancel'.tr),
           ),
           ElevatedButton(
             onPressed: () {
@@ -275,7 +348,7 @@ class TodoListScreen extends StatelessWidget {
                 Get.back();
               }
             },
-            child: const Text('新增'),
+            child: Text('add'.tr),
           ),
         ],
       ),
@@ -286,12 +359,16 @@ class TodoListScreen extends StatelessWidget {
   void _showClearCompletedDialog(TodoController controller) {
     Get.dialog(
       AlertDialog(
-        title: const Text('確認清除'),
-        content: Text('確定要清除所有 ${controller.completedCount} 個已完成的事項嗎？'),
+        title: Text('confirm_clear'.tr),
+        content: Text(
+          'confirm_clear_message'.trParams({
+            'count': controller.completedCount.toString(),
+          }),
+        ),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: const Text('取消'),
+            child: Text('cancel'.tr),
           ),
           ElevatedButton(
             onPressed: () {
@@ -302,7 +379,7 @@ class TodoListScreen extends StatelessWidget {
               backgroundColor: Colors.red,
               foregroundColor: Colors.white,
             ),
-            child: const Text('清除'),
+            child: Text('delete'.tr),
           ),
         ],
       ),

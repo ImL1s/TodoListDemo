@@ -4,7 +4,7 @@
       <ion-checkbox
         slot="start"
         :checked="todo.completed"
-        @ionChange="$emit('toggle')"
+        @ionChange="handleToggle"
         :color="todo.completed ? 'success' : 'primary'"
       ></ion-checkbox>
 
@@ -26,7 +26,7 @@
     </ion-item>
 
     <ion-item-options side="end">
-      <ion-item-option color="danger" @click="$emit('delete')">
+      <ion-item-option color="danger" @click="handleDelete">
         <ion-icon slot="icon-only" :icon="trashOutline"></ion-icon>
       </ion-item-option>
     </ion-item-options>
@@ -49,7 +49,8 @@ import {
   trashOutline,
   timeOutline
 } from 'ionicons/icons'
-import type { Todo } from '../views/Home.vue'
+import type { Todo } from '@/types'
+import { useHaptics } from '@/composables'
 
 // Props
 const props = defineProps<{
@@ -57,10 +58,24 @@ const props = defineProps<{
 }>()
 
 // Emits
-defineEmits<{
+const emit = defineEmits<{
   (e: 'toggle'): void
   (e: 'delete'): void
 }>()
+
+// Composables
+const haptics = useHaptics()
+
+// Handlers
+const handleToggle = async () => {
+  await haptics.selectionChanged()
+  emit('toggle')
+}
+
+const handleDelete = async () => {
+  await haptics.mediumImpact()
+  emit('delete')
+}
 
 // Computed
 const formattedDate = computed(() => {

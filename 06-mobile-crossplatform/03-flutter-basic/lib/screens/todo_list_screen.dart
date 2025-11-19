@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/todo.dart';
 import '../widgets/todo_item.dart';
+import '../services/todo_storage_service.dart';
 
 /// Todo 列表頁面
 ///
@@ -29,15 +30,58 @@ class _TodoListScreenState extends State<TodoListScreen> {
   /// 過濾選項：'all'（全部）、'active'（未完成）、'completed'（已完成）
   String _filter = 'all';
 
+  /// 數據是否正在加載
+  bool _isLoading = true;
+
+  /// 錯誤信息
+  String? _errorMessage;
+
+
   @override
   void initState() {
     super.initState();
-    // 初始化時添加一些示例數據
-    _todos.addAll([
-      Todo(title: '學習 Flutter 基礎'),
-      Todo(title: '理解 StatefulWidget', isCompleted: true),
-      Todo(title: '掌握 setState 用法'),
-    ]);
+    _loadTodos();
+  }
+
+  /// 從本地存儲加載待辦事項
+  Future<void> _loadTodos() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final todos = await TodoStorageService.loadTodos();
+      setState(() {
+        _todos.clear();
+        if (todos.isEmpty) {
+          // 如果是首次使用，添加一些示例數據
+          _todos.addAll([
+            Todo(title: '學習 Flutter 基礎'),
+            Todo(title: '理解 StatefulWidget', isCompleted: true),
+            Todo(title: '掌握 setState 用法'),
+          ]);
+          _saveTodos(); // 保存示例數據
+        } else {
+          _todos.addAll(todos);
+        }
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = '加載數據失敗: $e';
+        _isLoading = false;
+      });
+    }
+  }
+
+  /// 保存待辦事項到本地存儲
+  Future<void> _saveTodos() async {
+    try {
+      await TodoStorageService.saveTodos(_todos);
+    } catch (e) {
+      _showSnackBar('保存失敗: $e');
+    }
   }
 
   @override
@@ -59,6 +103,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
       _textController.clear();
     });
 
+    _saveTodos();
     _showSnackBar('已添加：$title');
   }
 
@@ -68,6 +113,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
       final todo = _todos.firstWhere((t) => t.id == id);
       todo.toggleCompleted();
     });
+    _saveTodos();
   }
 
   /// 刪除待辦事項
@@ -76,6 +122,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
     setState(() {
       _todos.removeWhere((t) => t.id == id);
     });
+    _saveTodos();
     _showSnackBar('已刪除：${todo.title}');
   }
 
@@ -100,6 +147,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
                 setState(() {
                   todo.title = value.trim();
                 });
+                _saveTodos();
                 Navigator.of(context).pop();
                 _showSnackBar('已更新');
               }
@@ -116,6 +164,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
                   setState(() {
                     todo.title = controller.text.trim();
                   });
+                  _saveTodos();
                   Navigator.of(context).pop();
                   _showSnackBar('已更新');
                 }
@@ -153,6 +202,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
                 setState(() {
                   _todos.removeWhere((t) => t.isCompleted);
                 });
+                _saveTodos();
                 Navigator.of(context).pop();
                 _showSnackBar('已清除 $completedCount 個已完成項目');
               },
@@ -232,6 +282,44 @@ class _TodoListScreenState extends State<TodoListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // 如果正在加載，顯示加載指示器
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    // 如果有錯誤，顯示錯誤信息
+    if (_errorMessage != null) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.error_outline,
+                size: 64,
+                color: Colors.red,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                _errorMessage!,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _loadTodos,
+                child: const Text('重試'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     final filteredTodos = _filteredTodos;
     final totalCount = _todos.length;
     final activeCount = _todos.where((t) => !t.isCompleted).length;
@@ -298,14 +386,35 @@ class _TodoListScreenState extends State<TodoListScreen> {
             child: filteredTodos.isEmpty
                 ? _buildEmptyState()
                 : ListView.builder(
+                    physics: const BouncingScrollPhysics(),
                     itemCount: filteredTodos.length,
                     itemBuilder: (context, index) {
                       final todo = filteredTodos[index];
-                      return TodoItem(
-                        todo: todo,
-                        onToggle: () => _toggleTodo(todo.id),
-                        onDelete: () => _deleteTodo(todo.id),
-                        onEdit: () => _editTodo(todo),
+                      // 使用 AnimatedSwitcher 為每個項目添加過渡動畫
+                      return AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        transitionBuilder: (child, animation) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(0.2, 0),
+                                end: Offset.zero,
+                              ).animate(CurvedAnimation(
+                                parent: animation,
+                                curve: Curves.easeOut,
+                              )),
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: TodoItem(
+                          key: ValueKey(todo.id),
+                          todo: todo,
+                          onToggle: () => _toggleTodo(todo.id),
+                          onDelete: () => _deleteTodo(todo.id),
+                          onEdit: () => _editTodo(todo),
+                        ),
                       );
                     },
                   ),

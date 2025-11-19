@@ -72,6 +72,57 @@ struct TodoItemRow: View {
         .frame(height: 70)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: swipeOffset)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: showDeleteButton)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(accessibilityLabel)
+        .accessibilityHint(accessibilityHint)
+        .accessibilityAddTraits(todo.isCompleted ? [.isButton, .isSelected] : [.isButton])
+        .accessibilityAction(named: "Toggle Completion") {
+            onToggle()
+        }
+        .accessibilityAction(named: "Delete") {
+            onDelete()
+        }
+    }
+
+    // MARK: - Accessibility
+
+    /// Accessibility label for the todo item
+    private var accessibilityLabel: String {
+        var components: [String] = []
+
+        // Title
+        components.append(todo.title)
+
+        // Priority
+        components.append("\(todo.priority.rawValue) priority")
+
+        // Completion status
+        components.append(todo.isCompleted ? "Completed" : "Not completed")
+
+        // Due date
+        if let dueDate = todo.formattedDueDate {
+            if todo.isOverdue {
+                components.append("Overdue: \(dueDate)")
+            } else {
+                components.append("Due: \(dueDate)")
+            }
+        }
+
+        // Tags
+        if !todo.tags.isEmpty {
+            components.append("Tags: \(todo.tags.joined(separator: ", "))")
+        }
+
+        return components.joined(separator: ". ")
+    }
+
+    /// Accessibility hint for the todo item
+    private var accessibilityHint: String {
+        if todo.isCompleted {
+            return "Double tap to mark as not completed. Swipe left to delete."
+        } else {
+            return "Double tap to mark as completed. Swipe left to delete."
+        }
     }
 
     // MARK: - Subviews
@@ -128,12 +179,14 @@ struct TodoItemRow: View {
             }
         }
         .buttonStyle(PlainButtonStyle())
+        .accessibilityLabel(todo.isCompleted ? "Completed" : "Not completed")
+        .accessibilityHint("Double tap to toggle")
     }
 
     /// Title text with strike-through if completed
     private var titleText: some View {
         Text(todo.title)
-            .font(.system(size: 16, weight: .medium))
+            .font(.body)  // Dynamic Type support
             .foregroundColor(
                 todo.isCompleted ?
                 .white.opacity(0.5) :

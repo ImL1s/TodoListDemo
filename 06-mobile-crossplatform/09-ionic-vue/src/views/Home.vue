@@ -5,18 +5,29 @@
         <ion-title>Todo List</ion-title>
         <ion-buttons slot="end">
           <ion-badge color="light" style="margin-right: 16px; padding: 4px 8px; font-size: 14px;">
-            {{ incompleteTodoCount }} / {{ todos.length }}
+            {{ incompleteTodoCount }} / {{ totalTodoCount }}
           </ion-badge>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
     <ion-content :fullscreen="true">
+      <!-- Large Title Header -->
       <ion-header collapse="condense">
         <ion-toolbar>
           <ion-title size="large">Todo List</ion-title>
         </ion-toolbar>
       </ion-header>
+
+      <!-- Pull to Refresh -->
+      <ion-refresher slot="fixed" @ionRefresh="handleRefresh($event)">
+        <ion-refresher-content
+          :pulling-icon="chevronDownCircleOutline"
+          pulling-text="Pull to refresh"
+          refreshing-spinner="circles"
+          refreshing-text="Refreshing..."
+        ></ion-refresher-content>
+      </ion-refresher>
 
       <!-- Technology Tag -->
       <ion-card class="tech-tag-card">
@@ -28,17 +39,23 @@
           <p class="tech-description">
             Cross-platform mobile app with native experience
           </p>
+          <div v-if="platformInfo.isNative" class="platform-badge">
+            <ion-chip :color="platformInfo.isIOS ? 'primary' : 'success'">
+              <ion-icon :icon="platformInfo.isIOS ? logoApple : logoAndroid"></ion-icon>
+              <ion-label>{{ platformInfo.platform.toUpperCase() }}</ion-label>
+            </ion-chip>
+          </div>
         </ion-card-content>
       </ion-card>
 
       <!-- Todo Input -->
-      <TodoInput @add-todo="addTodo" />
+      <TodoInput @add-todo="handleAddTodo" />
 
       <!-- Filter Buttons -->
       <div class="filter-container">
         <ion-segment :value="filter" @ionChange="handleFilterChange">
           <ion-segment-button value="all">
-            <ion-label>All ({{ todos.length }})</ion-label>
+            <ion-label>All ({{ totalTodoCount }})</ion-label>
           </ion-segment-button>
           <ion-segment-button value="active">
             <ion-label>Active ({{ incompleteTodoCount }})</ion-label>
@@ -49,29 +66,36 @@
         </ion-segment>
       </div>
 
+      <!-- Loading State -->
+      <div v-if="loading" class="loading-container">
+        <ion-spinner name="circles"></ion-spinner>
+        <p>Loading tasks...</p>
+      </div>
+
       <!-- Todo List -->
       <TodoList
+        v-else
         :todos="filteredTodos"
-        @toggle-todo="toggleTodo"
-        @delete-todo="deleteTodo"
+        @toggle-todo="handleToggleTodo"
+        @delete-todo="handleDeleteTodo"
       />
 
       <!-- Empty State -->
-      <div v-if="filteredTodos.length === 0" class="empty-state">
+      <div v-if="!loading && filteredTodos.length === 0" class="empty-state">
         <ion-icon :icon="checkmarkDoneCircleOutline" size="large" color="medium"></ion-icon>
         <p>{{ emptyStateMessage }}</p>
       </div>
 
       <!-- Clear Completed Button -->
-      <div v-if="completedTodoCount > 0" class="clear-completed-container">
-        <ion-button expand="block" color="danger" @click="clearCompleted">
+      <div v-if="hasCompletedTodos" class="clear-completed-container">
+        <ion-button expand="block" color="danger" @click="handleClearCompleted">
           <ion-icon slot="start" :icon="trashOutline"></ion-icon>
           Clear Completed ({{ completedTodoCount }})
         </ion-button>
       </div>
 
       <!-- Stats Card -->
-      <ion-card v-if="todos.length > 0" class="stats-card">
+      <ion-card v-if="hasTodos" class="stats-card">
         <ion-card-header>
           <ion-card-title>Statistics</ion-card-title>
         </ion-card-header>
@@ -81,7 +105,7 @@
               <ion-icon :icon="listOutline" color="primary"></ion-icon>
               <div class="stat-info">
                 <span class="stat-label">Total Tasks</span>
-                <span class="stat-value">{{ todos.length }}</span>
+                <span class="stat-value">{{ totalTodoCount }}</span>
               </div>
             </div>
             <div class="stat-item">
@@ -121,13 +145,17 @@
           Built with Ionic 7 + Vue 3 + Capacitor
         </p>
         <p>Data stored locally using Capacitor Preferences</p>
+        <p v-if="platformInfo.isNative" class="platform-info">
+          <ion-icon :icon="phonePortraitOutline"></ion-icon>
+          Running on {{ platformInfo.platform.toUpperCase() }}
+        </p>
       </div>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import {
   IonPage,
   IonHeader,
@@ -146,123 +174,76 @@ import {
   IonSegmentButton,
   IonLabel,
   IonProgressBar,
-  alertController,
-  toastController
+  IonRefresher,
+  IonRefresherContent,
+  IonSpinner,
+  IonChip,
+  alertController
 } from '@ionic/vue'
 import {
   logoIonic,
+  logoApple,
+  logoAndroid,
   checkmarkDoneCircleOutline,
   trashOutline,
   listOutline,
   checkmarkCircleOutline,
   timeOutline,
   statsChartOutline,
-  informationCircleOutline
+  informationCircleOutline,
+  phonePortraitOutline,
+  chevronDownCircleOutline
 } from 'ionicons/icons'
-import { Preferences } from '@capacitor/preferences'
-import TodoInput from '../components/TodoInput.vue'
-import TodoList from '../components/TodoList.vue'
+import { useTodos, useAutoSetupPlatform } from '@/composables'
+import TodoInput from '@/components/TodoInput.vue'
+import TodoList from '@/components/TodoList.vue'
 
-// Types
-export interface Todo {
-  id: number
-  text: string
-  completed: boolean
-  createdAt: string
-}
+// Use composables
+const {
+  // State
+  filter,
+  loading,
+  // Computed
+  filteredTodos,
+  incompleteTodoCount,
+  completedTodoCount,
+  totalTodoCount,
+  completionPercentage,
+  emptyStateMessage,
+  hasCompletedTodos,
+  hasTodos,
+  // Methods
+  loadTodos,
+  addTodo,
+  toggleTodo,
+  deleteTodo,
+  clearCompleted,
+  setFilter,
+  refresh
+} = useTodos()
 
-type FilterType = 'all' | 'active' | 'completed'
-
-// State
-const todos = ref<Todo[]>([])
-const filter = ref<FilterType>('all')
-
-// Computed
-const filteredTodos = computed(() => {
-  switch (filter.value) {
-    case 'active':
-      return todos.value.filter(todo => !todo.completed)
-    case 'completed':
-      return todos.value.filter(todo => todo.completed)
-    default:
-      return todos.value
-  }
-})
-
-const incompleteTodoCount = computed(() => {
-  return todos.value.filter(todo => !todo.completed).length
-})
-
-const completedTodoCount = computed(() => {
-  return todos.value.filter(todo => todo.completed).length
-})
-
-const completionPercentage = computed(() => {
-  if (todos.value.length === 0) return 0
-  return Math.round((completedTodoCount.value / todos.value.length) * 100)
-})
-
-const emptyStateMessage = computed(() => {
-  switch (filter.value) {
-    case 'active':
-      return 'No active tasks. Great job!'
-    case 'completed':
-      return 'No completed tasks yet'
-    default:
-      return 'No tasks yet. Add one above!'
-  }
-})
-
-// Methods
-const saveTodos = async () => {
-  try {
-    await Preferences.set({
-      key: 'todos',
-      value: JSON.stringify(todos.value)
-    })
-  } catch (error) {
-    console.error('Error saving todos:', error)
-    showToast('Failed to save todos', 'danger')
-  }
-}
-
-const loadTodos = async () => {
-  try {
-    const { value } = await Preferences.get({ key: 'todos' })
-    if (value) {
-      todos.value = JSON.parse(value)
+// Platform setup with auto-configuration
+const platformInfo = useAutoSetupPlatform({
+  statusBarBackgroundColor: '#3880ff',
+  onBackButton: (canGoBack) => {
+    if (!canGoBack) {
+      showExitConfirmation()
+    } else {
+      window.history.back()
     }
-  } catch (error) {
-    console.error('Error loading todos:', error)
-    showToast('Failed to load todos', 'danger')
   }
+})
+
+// Handlers
+const handleAddTodo = async (text: string) => {
+  await addTodo(text)
 }
 
-const addTodo = (text: string) => {
-  const newTodo: Todo = {
-    id: Date.now(),
-    text,
-    completed: false,
-    createdAt: new Date().toISOString()
-  }
-  todos.value.unshift(newTodo)
-  saveTodos()
-  showToast('Task added successfully', 'success')
+const handleToggleTodo = async (id: number) => {
+  await toggleTodo(id)
 }
 
-const toggleTodo = (id: number) => {
-  const todo = todos.value.find(t => t.id === id)
-  if (todo) {
-    todo.completed = !todo.completed
-    saveTodos()
-    showToast(
-      todo.completed ? 'Task completed!' : 'Task marked as active',
-      todo.completed ? 'success' : 'warning'
-    )
-  }
-}
-
-const deleteTodo = async (id: number) => {
+const handleDeleteTodo = async (id: number) => {
   const alert = await alertController.create({
     header: 'Delete Task',
     message: 'Are you sure you want to delete this task?',
@@ -275,9 +256,7 @@ const deleteTodo = async (id: number) => {
         text: 'Delete',
         role: 'destructive',
         handler: () => {
-          todos.value = todos.value.filter(t => t.id !== id)
-          saveTodos()
-          showToast('Task deleted', 'danger')
+          deleteTodo(id)
         }
       }
     ]
@@ -286,7 +265,7 @@ const deleteTodo = async (id: number) => {
   await alert.present()
 }
 
-const clearCompleted = async () => {
+const handleClearCompleted = async () => {
   const alert = await alertController.create({
     header: 'Clear Completed',
     message: `Delete ${completedTodoCount.value} completed task${completedTodoCount.value > 1 ? 's' : ''}?`,
@@ -299,10 +278,7 @@ const clearCompleted = async () => {
         text: 'Clear',
         role: 'destructive',
         handler: () => {
-          const count = completedTodoCount.value
-          todos.value = todos.value.filter(t => !t.completed)
-          saveTodos()
-          showToast(`${count} task${count > 1 ? 's' : ''} cleared`, 'success')
+          clearCompleted()
         }
       }
     ]
@@ -312,17 +288,34 @@ const clearCompleted = async () => {
 }
 
 const handleFilterChange = (event: CustomEvent) => {
-  filter.value = event.detail.value as FilterType
+  setFilter(event.detail.value)
 }
 
-const showToast = async (message: string, color: string = 'primary') => {
-  const toast = await toastController.create({
-    message,
-    duration: 2000,
-    color,
-    position: 'bottom'
+const handleRefresh = async (event: CustomEvent) => {
+  await refresh()
+  event.target.complete()
+}
+
+const showExitConfirmation = async () => {
+  const alert = await alertController.create({
+    header: 'Exit App',
+    message: 'Are you sure you want to exit?',
+    buttons: [
+      {
+        text: 'Cancel',
+        role: 'cancel'
+      },
+      {
+        text: 'Exit',
+        role: 'destructive',
+        handler: () => {
+          platformInfo.exitApp()
+        }
+      }
+    ]
   })
-  await toast.present()
+
+  await alert.present()
 }
 
 // Lifecycle
@@ -361,9 +354,37 @@ onMounted(() => {
   color: var(--ion-color-medium);
 }
 
+.platform-badge {
+  margin-top: 8px;
+}
+
+.platform-badge ion-chip {
+  margin: 0;
+}
+
 /* Filter Container */
 .filter-container {
   padding: 0 16px 16px;
+}
+
+/* Loading Container */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.loading-container ion-spinner {
+  margin-bottom: 16px;
+}
+
+.loading-container p {
+  font-size: 16px;
+  color: var(--ion-color-medium);
+  margin: 0;
 }
 
 /* Empty State */
@@ -449,6 +470,11 @@ onMounted(() => {
 
 .footer-info ion-icon {
   font-size: 18px;
+}
+
+.platform-info {
+  font-weight: 600;
+  color: var(--ion-color-primary);
 }
 
 /* Responsive Design */
