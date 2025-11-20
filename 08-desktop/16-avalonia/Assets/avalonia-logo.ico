@@ -1,0 +1,6 @@
+# Placeholder for application icon
+# In a real application, this would be a .ico file
+# You can create one using tools like:
+# - GIMP
+# - ImageMagick: convert icon.png -define icon:auto-resize=256,128,96,64,48,32,16 icon.ico
+# - Online converters: https://convertio.co/png-ico/

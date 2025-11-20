@@ -1,0 +1,4 @@
+# Tkinter 是 Python 内置库，无需额外安装依赖
+# 但在某些 Linux 发行版上可能需要安装:
+# Ubuntu/Debian: sudo apt-get install python3-tk
+# Fedora: sudo dnf install python3-tkinter

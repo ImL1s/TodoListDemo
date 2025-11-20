@@ -1,0 +1,86 @@
+<div class="todo-item @(Todo.IsCompleted ? "completed" : "")">
+    @if (isEditing)
+    {
+        <input type="text"
+               class="todo-edit-input"
+               @bind="editText"
+               @bind:event="oninput"
+               @onkeypress="HandleKeyPress"
+               @onblur="SaveEdit"
+               @ref="editInputRef" />
+    }
+    else
+    {
+        <div class="todo-content">
+            <input type="checkbox"
+                   class="todo-checkbox"
+                   checked="@Todo.IsCompleted"
+                   @onchange="() => OnToggle.InvokeAsync(Todo.Id)" />
+            <span class="todo-text" @ondblclick="StartEdit">
+                @Todo.Text
+            </span>
+            <span class="todo-date">
+                @Todo.CreatedAt.ToString("MMM dd, yyyy HH:mm")
+            </span>
+        </div>
+        <button class="delete-button" @onclick="() => OnDelete.InvokeAsync(Todo.Id)">
+            ×
+        </button>
+    }
+</div>
+
+@code {
+    private bool isEditing = false;
+    private string editText = string.Empty;
+    private ElementReference editInputRef;
+
+    [Parameter, EditorRequired]
+    public Todo Todo { get; set; } = null!;
+
+    [Parameter]
+    public EventCallback<int> OnToggle { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnDelete { get; set; }
+
+    [Parameter]
+    public EventCallback<(int Id, string Text)> OnUpdate { get; set; }
+
+    private async Task StartEdit()
+    {
+        if (Todo.IsCompleted) return;
+
+        isEditing = true;
+        editText = Todo.Text;
+        StateHasChanged();
+
+        // Focus the input after render
+        await Task.Delay(10);
+        await editInputRef.FocusAsync();
+    }
+
+    private async Task SaveEdit()
+    {
+        if (isEditing)
+        {
+            isEditing = false;
+            if (!string.IsNullOrWhiteSpace(editText) && editText != Todo.Text)
+            {
+                await OnUpdate.InvokeAsync((Todo.Id, editText));
+            }
+        }
+    }
+
+    private async Task HandleKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SaveEdit();
+        }
+        else if (e.Key == "Escape")
+        {
+            isEditing = false;
+            editText = Todo.Text;
+        }
+    }
+}
