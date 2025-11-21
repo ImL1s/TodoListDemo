@@ -1,0 +1,19 @@
+[package]
+name = "todo-list"
+version = "0.1.0"
+description = "Solana TodoList Program - 基于 Anchor 框架的待办事项智能合约"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "todo_list"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+anchor-lang = "0.29.0"

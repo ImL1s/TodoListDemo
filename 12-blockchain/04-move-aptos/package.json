@@ -1,0 +1,30 @@
+{
+  "name": "todo-move-aptos",
+  "version": "1.0.0",
+  "description": "TodoList DApp on Aptos Blockchain with Move",
+  "scripts": {
+    "compile": "aptos move compile",
+    "test": "aptos move test",
+    "deploy": "ts-node scripts/deploy.ts",
+    "interact": "ts-node scripts/interact.ts",
+    "publish": "aptos move publish"
+  },
+  "keywords": [
+    "Aptos",
+    "Move",
+    "Smart Contract",
+    "DApp",
+    "Blockchain"
+  ],
+  "dependencies": {
+    "aptos": "^1.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

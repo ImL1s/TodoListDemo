@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TodoList DApp - Solana</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>📝 TodoList DApp</h1>
+        <p class="subtitle">基于 Solana 区块链的去中心化待办事项列表</p>
+      </header>
+
+      <!-- 连接钱包部分 -->
+      <div class="wallet-section">
+        <button id="connectWallet" class="btn btn-primary">
+          连接 Phantom 钱包
+        </button>
+        <div id="accountInfo" class="account-info" style="display: none">
+          <span id="accountAddress"></span>
+          <span id="networkName"></span>
+          <span id="balance"></span>
+        </div>
+        <button
+          id="disconnectWallet"
+          class="btn btn-secondary"
+          style="display: none"
+        >
+          断开连接
+        </button>
+      </div>
+
+      <!-- 程序配置 -->
+      <div class="program-section">
+        <label for="programId">程序 ID:</label>
+        <input
+          type="text"
+          id="programId"
+          placeholder="程序 ID..."
+          class="input"
+          value="TodoListProgramId111111111111111111111111"
+        />
+        <button id="loadProgram" class="btn btn-secondary">加载程序</button>
+        <div id="programStatus"></div>
+      </div>
+
+      <!-- 主要内容区域 -->
+      <main id="mainContent" style="display: none">
+        <!-- 统计信息 -->
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-value" id="totalCount">0</div>
+            <div class="stat-label">总计</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="activeCount">0</div>
+            <div class="stat-label">进行中</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="completedCount">0</div>
+            <div class="stat-label">已完成</div>
+          </div>
+        </div>
+
+        <!-- 添加待办事项 -->
+        <div class="add-todo">
+          <input
+            type="text"
+            id="todoInput"
+            placeholder="输入新的待办事项..."
+            class="input"
+            maxlength="500"
+          />
+          <button id="addTodo" class="btn btn-primary">添加</button>
+        </div>
+
+        <!-- 过滤器 -->
+        <div class="filters">
+          <button class="filter-btn active" data-filter="all">全部</button>
+          <button class="filter-btn" data-filter="active">进行中</button>
+          <button class="filter-btn" data-filter="completed">已完成</button>
+        </div>
+
+        <!-- 待办事项列表 -->
+        <div id="loading" class="loading" style="display: none">
+          加载中...
+        </div>
+        <ul id="todoList" class="todo-list"></ul>
+
+        <!-- 空状态 -->
+        <div id="emptyState" class="empty-state" style="display: none">
+          <p>📋 还没有待办事项</p>
+          <p class="empty-hint">添加第一个待办事项开始吧！</p>
+        </div>
+      </main>
+
+      <!-- 提示信息 -->
+      <div id="notification" class="notification"></div>
+
+      <!-- 交易状态 -->
+      <div id="txStatus" class="tx-status"></div>
+    </div>
+
+    <!-- 引入 Solana Web3.js 和 Anchor -->
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+    <script src="https://unpkg.com/@coral-xyz/anchor@0.29.0/dist/browser/index.js"></script>
+    <script src="app.ts" type="module"></script>
+  </body>
+</html>
