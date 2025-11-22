@@ -8,9 +8,10 @@ const CONTRACT_ABI = [
   "function getActiveTodos() public view returns (tuple(uint256 id, string text, bool completed, uint256 createdAt)[])",
   "function getCompletedTodos() public view returns (tuple(uint256 id, string text, bool completed, uint256 createdAt)[])",
   "function todoCount() public view returns (uint256)",
-  "event TodoCreated(uint256 indexed id, string text, uint256 createdAt)",
-  "event TodoToggled(uint256 indexed id, bool completed)",
-  "event TodoDeleted(uint256 indexed id)",
+  "function todoOwners(uint256) public view returns (address)",
+  "event TodoCreated(uint256 indexed id, address indexed owner, string text, uint256 createdAt)",
+  "event TodoToggled(uint256 indexed id, address indexed owner, bool completed)",
+  "event TodoDeleted(uint256 indexed id, address indexed owner)",
 ];
 
 // 全局变量
@@ -149,19 +150,28 @@ async function loadContract() {
 
 // 设置合约事件监听
 function setupEventListeners() {
-  contract.on("TodoCreated", (id, text, createdAt) => {
-    console.log("Todo created:", id.toString(), text);
-    loadTodos();
+  contract.on("TodoCreated", (id, owner, text, createdAt) => {
+    console.log("Todo created:", id.toString(), "by", owner, "-", text);
+    // 只在是当前用户的 todo 时才重新加载
+    if (owner.toLowerCase() === userAddress.toLowerCase()) {
+      loadTodos();
+    }
   });
 
-  contract.on("TodoToggled", (id, completed) => {
-    console.log("Todo toggled:", id.toString(), completed);
-    loadTodos();
+  contract.on("TodoToggled", (id, owner, completed) => {
+    console.log("Todo toggled:", id.toString(), "by", owner, "-", completed);
+    // 只在是当前用户的 todo 时才重新加载
+    if (owner.toLowerCase() === userAddress.toLowerCase()) {
+      loadTodos();
+    }
   });
 
-  contract.on("TodoDeleted", (id) => {
-    console.log("Todo deleted:", id.toString());
-    loadTodos();
+  contract.on("TodoDeleted", (id, owner) => {
+    console.log("Todo deleted:", id.toString(), "by", owner);
+    // 只在是当前用户的 todo 时才重新加载
+    if (owner.toLowerCase() === userAddress.toLowerCase()) {
+      loadTodos();
+    }
   });
 }
 

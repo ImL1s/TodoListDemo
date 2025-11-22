@@ -1,6 +1,6 @@
 import { TonConnectUI, CHAIN } from '@tonconnect/ui';
-import { Address, toNano, beginCell } from '@ton/core';
-import { TodoList } from '../wrappers/TodoList';
+import { Address, toNano, beginCell, TonClient } from '@ton/core';
+import { TodoList, storeCreateTodo, storeToggleTodo, storeDeleteTodo } from '../wrappers/TodoList';
 
 // Initialize TON Connect
 const tonConnectUI = new TonConnectUI({
@@ -88,14 +88,16 @@ async function loadContractData() {
 
     try {
         // Note: You would need to implement a proper TON provider here
-        // This is a simplified example
+        // For production, use TonClient with proper endpoint
+        // const client = new TonClient({ endpoint: 'https://toncenter.com/api/v2/jsonRPC' });
+        // const provider = client.provider(todoListContract.address);
 
-        // Get owner
-        // const owner = await todoListContract.getOwner();
+        // Get owner (uncomment when provider is set up)
+        // const owner = await todoListContract.getOwner(provider);
         // ownerAddress.textContent = owner.toString().slice(0, 8) + '...' + owner.toString().slice(-6);
 
-        // Get todo count
-        // const count = await todoListContract.getTodoCount();
+        // Get todo count (uncomment when provider is set up)
+        // const count = await todoListContract.getTodoCount(provider);
         // todoCount.textContent = count.toString();
 
         // Load todos
@@ -182,10 +184,9 @@ addTodoForm.addEventListener('submit', async (e) => {
     try {
         loading.style.display = 'flex';
 
-        // Create message body
+        // Use wrapper to create message body (no hardcoded opcode)
         const body = beginCell()
-            .storeUint(1234567890, 32) // CreateTodo opcode
-            .storeStringRefTail(text)
+            .store(storeCreateTodo({ $$type: 'CreateTodo', text }))
             .endCell();
 
         // Send transaction
@@ -222,9 +223,9 @@ async function toggleTodo(id: bigint) {
     try {
         loading.style.display = 'flex';
 
+        // Use wrapper to create message body (no hardcoded opcode)
         const body = beginCell()
-            .storeUint(1234567891, 32) // ToggleTodo opcode
-            .storeUint(Number(id), 32)
+            .store(storeToggleTodo({ $$type: 'ToggleTodo', id }))
             .endCell();
 
         const transaction = {
@@ -232,7 +233,7 @@ async function toggleTodo(id: bigint) {
             messages: [
                 {
                     address: CONTRACT_ADDRESS,
-                    amount: toNano('0.05').toString(),
+                    amount: toNano('0.03').toString(),
                     payload: body.toBoc().toString('base64')
                 }
             ]
@@ -259,9 +260,9 @@ async function deleteTodo(id: bigint) {
     try {
         loading.style.display = 'flex';
 
+        // Use wrapper to create message body (no hardcoded opcode)
         const body = beginCell()
-            .storeUint(1234567892, 32) // DeleteTodo opcode
-            .storeUint(Number(id), 32)
+            .store(storeDeleteTodo({ $$type: 'DeleteTodo', id }))
             .endCell();
 
         const transaction = {
@@ -269,7 +270,7 @@ async function deleteTodo(id: bigint) {
             messages: [
                 {
                     address: CONTRACT_ADDRESS,
-                    amount: toNano('0.05').toString(),
+                    amount: toNano('0.03').toString(),
                     payload: body.toBoc().toString('base64')
                 }
             ]

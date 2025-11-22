@@ -8,6 +8,8 @@
 - 🔍 按状态过滤（全部/进行中/已完成）
 - 📊 实时统计数据
 - 🔐 基于区块链的数据存储，永久保存
+- 👤 多用户隔离 - 每个地址拥有独立的待办列表
+- 🛡️ 完整的访问控制 - 只能管理自己的待办事项
 - 🦊 MetaMask 钱包集成
 - 🎨 现代化响应式 UI
 - ⛽ Gas 优化的智能合约
@@ -147,14 +149,14 @@ function getCompletedTodos() public view returns (Todo[] memory)
 ### 事件
 
 ```solidity
-event TodoCreated(uint256 indexed id, string text, uint256 createdAt)
-event TodoToggled(uint256 indexed id, bool completed)
-event TodoDeleted(uint256 indexed id)
+event TodoCreated(uint256 indexed id, address indexed owner, string text, uint256 createdAt)
+event TodoToggled(uint256 indexed id, address indexed owner, bool completed)
+event TodoDeleted(uint256 indexed id, address indexed owner)
 ```
 
 ## 🧪 测试
 
-测试套件包含：
+测试套件包含 **28 个测试用例**，全部通过：
 
 - ✅ 部署测试
 - ✅ 创建待办事项（正常和边界情况）
@@ -162,6 +164,8 @@ event TodoDeleted(uint256 indexed id)
 - ✅ 删除功能
 - ✅ 过滤功能
 - ✅ 复杂场景测试
+- ✅ **访问控制测试** - 防止用户操作他人的待办事项
+- ✅ **多用户隔离测试** - 确保用户只能看到自己的数据
 
 运行测试：
 
@@ -191,13 +195,16 @@ npm run coverage
 - `toggleTodo`: ~30,000 gas
 - `deleteTodo`: ~25,000 gas
 
-## 🔒 安全考虑
+## 🔒 安全特性
 
-- ✅ 输入验证（文本长度限制）
-- ✅ 边界检查（ID 存在性验证）
-- ✅ 使用 Solidity 0.8.x 内置溢出保护
-- ✅ 修饰符 (modifier) 保护函数
-- ✅ 事件日志记录所有状态变更
+- ✅ **访问控制**: 用户只能修改/删除自己的待办事项
+- ✅ **数据隔离**: 每个用户只能查看自己的待办列表
+- ✅ **所有权追踪**: 每个待办事项记录其创建者地址
+- ✅ **输入验证**: 文本长度限制（1-500 字符）
+- ✅ **边界检查**: ID 存在性和所有权验证
+- ✅ **溢出保护**: Solidity 0.8.x 内置算术溢出保护
+- ✅ **修饰符保护**: `onlyTodoOwner` 确保操作权限
+- ✅ **事件审计**: 记录所有状态变更及操作者地址
 
 ## 📂 项目结构
 
@@ -255,12 +262,18 @@ MIT
 
 这是一个教育项目，用于学习 Solidity 和 DApp 开发。在生产环境中使用前请进行完整的安全审计。
 
+## 🎯 已实现功能
+
+- ✅ **用户账户系统** - 每个地址拥有独立的待办列表
+- ✅ **完整访问控制** - 用户只能管理自己的待办事项
+- ✅ **多用户隔离** - 数据完全隔离，保护隐私
+
 ## 🎯 后续改进
 
-- [ ] 添加用户账户系统（每个地址独立的待办列表）
 - [ ] 实现待办事项编辑功能
 - [ ] 添加优先级和标签系统
-- [ ] 实现待办事项分享功能
+- [ ] 实现待办事项分享功能（授权其他地址查看）
 - [ ] 集成 IPFS 存储长文本内容
 - [ ] 添加移动端支持
 - [ ] 实现 ENS 域名支持
+- [ ] 添加批量操作功能

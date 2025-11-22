@@ -6,7 +6,6 @@
 USING_NS_CC;
 
 const std::string StorageManager::STORAGE_FILENAME = "todos.json";
-StorageManager* StorageManager::s_instance = nullptr;
 
 StorageManager::StorageManager()
 {
@@ -18,20 +17,11 @@ StorageManager::~StorageManager()
 
 StorageManager* StorageManager::getInstance()
 {
-    if (s_instance == nullptr)
-    {
-        s_instance = new StorageManager();
-    }
-    return s_instance;
-}
-
-void StorageManager::destroyInstance()
-{
-    if (s_instance != nullptr)
-    {
-        delete s_instance;
-        s_instance = nullptr;
-    }
+    // Meyer's Singleton - C++11 guarantees thread-safe initialization
+    // Static local variable is initialized only once, thread-safely
+    // Automatic lifetime management - no need for manual cleanup
+    static StorageManager instance;
+    return &instance;
 }
 
 std::string StorageManager::getStoragePath() const

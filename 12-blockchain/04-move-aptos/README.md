@@ -11,6 +11,7 @@ A decentralized TodoList application built on the Aptos blockchain using the Mov
 - **Event Emission**: Track all operations via blockchain events
 - **Timestamp Tracking**: Each todo records its creation time
 - **On-chain Storage**: All data stored permanently on Aptos blockchain
+- **High Performance**: O(1) lookup, toggle, and delete operations using Table data structure
 
 ## 📋 Technology Stack
 
@@ -161,6 +162,13 @@ public fun is_initialized(account_addr: address): bool
 ```
 Check if TodoList is initialized for an account.
 
+**todo_exists**
+```move
+#[view]
+public fun todo_exists(account_addr: address, todo_id: u64): bool
+```
+Check if a specific todo exists (O(1) lookup).
+
 ### Data Structures
 
 ```move
@@ -172,13 +180,37 @@ struct Todo has store, drop, copy {
 }
 
 struct TodoList has key {
-    todos: vector<Todo>,
+    todos: Table<u64, Todo>,  // Table for O(1) performance
     todo_counter: u64,
     create_todo_events: EventHandle<TodoCreatedEvent>,
     toggle_todo_events: EventHandle<TodoToggledEvent>,
     delete_todo_events: EventHandle<TodoDeletedEvent>,
 }
 ```
+
+### Performance Optimization
+
+This implementation uses **`aptos_std::table::Table`** instead of `vector` for superior performance:
+
+| Operation | Vector (Old) | Table (Current) | Improvement |
+|-----------|--------------|-----------------|-------------|
+| Create Todo | O(1) | O(1) | Same |
+| Get Todo by ID | O(n) | O(1) | ⚡ Much faster |
+| Toggle Todo | O(n) | O(1) | ⚡ Much faster |
+| Delete Todo | O(n) | O(1) | ⚡ Much faster |
+| Check Exists | O(n) | O(1) | ⚡ Much faster |
+
+**Key Benefits:**
+- **Constant-time lookups**: No iteration needed to find todos by ID
+- **Gas efficiency**: Lower gas costs for toggle and delete operations
+- **Scalability**: Performance doesn't degrade with large todo lists
+- **Direct access**: `table::borrow()` and `table::borrow_mut()` provide O(1) access
+
+**Note on `get_todos()`:**
+The `get_todos()` function still returns a `vector<Todo>` for frontend compatibility. It reconstructs the vector by iterating through IDs 1..todo_counter. For production applications with large datasets, consider:
+- Implementing pagination
+- Using event-based todo tracking
+- Querying individual todos by ID instead of bulk fetching
 
 ### Events
 

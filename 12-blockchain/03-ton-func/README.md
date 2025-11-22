@@ -161,6 +161,31 @@ npm run interact
 npx http-server frontend -p 8080
 ```
 
+### Frontend Best Practices
+
+The frontend uses the **type-safe wrapper** generated from the Tact contract:
+
+```typescript
+// ✅ CORRECT: Use wrapper functions (no hardcoded opcodes)
+import { storeCreateTodo, storeToggleTodo, storeDeleteTodo } from '../wrappers/TodoList';
+
+const body = beginCell()
+    .store(storeCreateTodo({ $$type: 'CreateTodo', text }))
+    .endCell();
+
+// ❌ WRONG: Hardcoded opcodes (anti-pattern)
+const body = beginCell()
+    .storeUint(1234567890, 32)  // Don't do this!
+    .storeStringRefTail(text)
+    .endCell();
+```
+
+**Why use wrappers?**
+- Type-safe message construction
+- Automatically synchronized with contract changes
+- No risk of opcode mismatches
+- Better maintainability and refactoring
+
 ### TON Connect Manifest
 
 Create `tonconnect-manifest.json`:
@@ -173,6 +198,27 @@ Create `tonconnect-manifest.json`:
   "termsOfUseUrl": "https://your-domain.com/terms",
   "privacyPolicyUrl": "https://your-domain.com/privacy"
 }
+```
+
+### Reading Contract Data
+
+To read contract data, set up a TON provider:
+
+```typescript
+import { TonClient } from '@ton/core';
+
+// Initialize client
+const client = new TonClient({
+    endpoint: 'https://toncenter.com/api/v2/jsonRPC'
+});
+
+// Create provider
+const provider = client.provider(todoListContract.address);
+
+// Read contract state
+const owner = await todoListContract.getOwner(provider);
+const count = await todoListContract.getTodoCount(provider);
+const todo = await todoListContract.getTodo(provider, 1n);
 ```
 
 ## 🧪 Testing

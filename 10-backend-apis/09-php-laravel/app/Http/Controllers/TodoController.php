@@ -18,6 +18,14 @@ class TodoController extends Controller
     }
 
     /**
+     * Display the specified todo.
+     */
+    public function show(Todo $todo): JsonResponse
+    {
+        return response()->json($todo);
+    }
+
+    /**
      * Store a newly created todo.
      */
     public function store(Request $request): JsonResponse

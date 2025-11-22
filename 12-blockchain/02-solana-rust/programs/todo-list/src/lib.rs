@@ -1,10 +1,21 @@
 use anchor_lang::prelude::*;
 
-declare_id!("TodoListProgramId111111111111111111111111");
+declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
 #[program]
 pub mod todo_list {
     use super::*;
+
+    /// 初始化待办事项计数器
+    pub fn initialize_counter(ctx: Context<InitializeCounter>) -> Result<()> {
+        let counter = &mut ctx.accounts.todo_counter;
+        counter.owner = ctx.accounts.user.key();
+        counter.count = 0;
+        counter.bump = ctx.bumps.todo_counter;
+
+        msg!("Counter initialized for user: {}", counter.owner);
+        Ok(())
+    }
 
     /// 创建新的待办事项
     pub fn create_todo(ctx: Context<CreateTodo>, text: String) -> Result<()> {
@@ -13,14 +24,23 @@ pub mod todo_list {
             TodoError::InvalidText
         );
 
+        let todo_counter = &mut ctx.accounts.todo_counter;
+        let current_count = todo_counter.count;
+
         let todo = &mut ctx.accounts.todo;
         todo.owner = ctx.accounts.user.key();
         todo.text = text;
         todo.completed = false;
         todo.created_at = Clock::get()?.unix_timestamp;
+        todo.todo_id = current_count;
         todo.bump = ctx.bumps.todo;
 
-        msg!("Todo created: {}", todo.text);
+        // 递增计数器
+        todo_counter.count = todo_counter.count
+            .checked_add(1)
+            .ok_or(TodoError::CounterOverflow)?;
+
+        msg!("Todo created: {} (ID: {})", todo.text, todo.todo_id);
         Ok(())
     }
 
@@ -54,6 +74,24 @@ pub mod todo_list {
     }
 }
 
+/// 初始化计数器的上下文
+#[derive(Accounts)]
+pub struct InitializeCounter<'info> {
+    #[account(
+        init,
+        payer = user,
+        space = TodoCounter::SPACE,
+        seeds = [b"counter", user.key().as_ref()],
+        bump
+    )]
+    pub todo_counter: Account<'info, TodoCounter>,
+
+    #[account(mut)]
+    pub user: Signer<'info>,
+
+    pub system_program: Program<'info, System>,
+}
+
 /// 创建待办事项的上下文
 #[derive(Accounts)]
 #[instruction(text: String)]
@@ -62,17 +100,15 @@ pub struct CreateTodo<'info> {
         init,
         payer = user,
         space = Todo::SPACE,
-        seeds = [b"todo", user.key().as_ref(), &[todo_counter.count].as_ref()],
+        seeds = [b"todo", user.key().as_ref(), &todo_counter.count.to_le_bytes()],
         bump
     )]
     pub todo: Account<'info, Todo>,
 
     #[account(
-        init_if_needed,
-        payer = user,
-        space = TodoCounter::SPACE,
+        mut,
         seeds = [b"counter", user.key().as_ref()],
-        bump
+        bump = todo_counter.bump
     )]
     pub todo_counter: Account<'info, TodoCounter>,
 
@@ -88,7 +124,7 @@ pub struct ToggleTodo<'info> {
     #[account(
         mut,
         has_one = owner,
-        seeds = [b"todo", owner.key().as_ref(), &[todo.todo_id].as_ref()],
+        seeds = [b"todo", owner.key().as_ref(), &todo.todo_id.to_le_bytes()],
         bump = todo.bump
     )]
     pub todo: Account<'info, Todo>,
@@ -102,7 +138,7 @@ pub struct UpdateTodo<'info> {
     #[account(
         mut,
         has_one = owner,
-        seeds = [b"todo", owner.key().as_ref(), &[todo.todo_id].as_ref()],
+        seeds = [b"todo", owner.key().as_ref(), &todo.todo_id.to_le_bytes()],
         bump = todo.bump
     )]
     pub todo: Account<'info, Todo>,
@@ -117,7 +153,7 @@ pub struct DeleteTodo<'info> {
         mut,
         has_one = owner,
         close = owner,
-        seeds = [b"todo", owner.key().as_ref(), &[todo.todo_id].as_ref()],
+        seeds = [b"todo", owner.key().as_ref(), &todo.todo_id.to_le_bytes()],
         bump = todo.bump
     )]
     pub todo: Account<'info, Todo>,
@@ -176,4 +212,6 @@ impl TodoCounter {
 pub enum TodoError {
     #[msg("文本不能为空或超过 500 个字符")]
     InvalidText,
+    #[msg("待办事项计数器溢出")]
+    CounterOverflow,
 }

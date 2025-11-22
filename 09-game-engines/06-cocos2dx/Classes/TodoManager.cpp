@@ -3,8 +3,6 @@
 #include <algorithm>
 #include <chrono>
 
-TodoManager* TodoManager::s_instance = nullptr;
-
 TodoManager::TodoManager()
     : m_currentFilter(TodoFilter::ALL)
     , m_nextId(1)
@@ -19,26 +17,25 @@ TodoManager::~TodoManager()
 
 TodoManager* TodoManager::getInstance()
 {
-    if (s_instance == nullptr)
-    {
-        s_instance = new TodoManager();
-    }
-    return s_instance;
-}
-
-void TodoManager::destroyInstance()
-{
-    if (s_instance != nullptr)
-    {
-        delete s_instance;
-        s_instance = nullptr;
-    }
+    // Meyer's Singleton - C++11 guarantees thread-safe initialization
+    // Static local variable is initialized only once, thread-safely
+    // Automatic lifetime management - no need for manual cleanup
+    static TodoManager instance;
+    return &instance;
 }
 
 TodoItem TodoManager::addTodo(const std::string& text)
 {
+    // Enhanced input validation
     if (text.empty())
     {
+        CCLOG("Cannot add todo: text is empty");
+        return TodoItem();
+    }
+
+    if (text.length() > 500)
+    {
+        CCLOG("Cannot add todo: text too long (max 500 characters)");
         return TodoItem();
     }
 
@@ -51,7 +48,12 @@ TodoItem TodoManager::addTodo(const std::string& text)
     TodoItem item(m_nextId++, text, false, timestamp);
     m_todos.push_back(item);
 
-    saveTodos();
+    auto result = saveTodos();
+    if (result != SaveResult::SUCCESS)
+    {
+        CCLOG("Warning: Failed to save todos after adding item");
+    }
+
     notifyChanges();
 
     return item;
@@ -190,9 +192,10 @@ void TodoManager::loadTodos()
     }
 }
 
-void TodoManager::saveTodos()
+SaveResult TodoManager::saveTodos()
 {
-    StorageManager::getInstance()->saveTodos(m_todos);
+    bool success = StorageManager::getInstance()->saveTodos(m_todos);
+    return success ? SaveResult::SUCCESS : SaveResult::WRITE_FAILED;
 }
 
 void TodoManager::setOnTodosChangedCallback(std::function<void()> callback)

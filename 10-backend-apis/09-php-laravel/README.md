@@ -74,6 +74,29 @@ GET /api/todos
 ]
 ```
 
+#### Get Single Todo
+```http
+GET /api/todos/{id}
+```
+
+**Response** (200 OK):
+```json
+{
+  "id": 1,
+  "text": "Learn Laravel",
+  "completed": false,
+  "created_at": "2024-01-01T12:00:00.000000Z",
+  "updated_at": "2024-01-01T12:00:00.000000Z"
+}
+```
+
+**Response** (404 Not Found):
+```json
+{
+  "message": "No query results for model [App\\Models\\Todo] {id}"
+}
+```
+
 #### Create Todo
 ```http
 POST /api/todos

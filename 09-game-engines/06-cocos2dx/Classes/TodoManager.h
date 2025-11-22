@@ -33,23 +33,34 @@ enum class TodoFilter
 };
 
 /**
+ * @brief Result codes for save operations
+ */
+enum class SaveResult
+{
+    SUCCESS,
+    WRITE_FAILED,
+    SERIALIZE_FAILED
+};
+
+/**
  * @brief Manages all todo items and business logic
  *
- * Singleton class that handles CRUD operations for todos,
+ * Thread-safe singleton class that handles CRUD operations for todos,
  * filtering, and persistence through StorageManager.
+ *
+ * Uses Meyer's Singleton pattern (C++11 static local variable),
+ * which guarantees thread-safety and automatic lifetime management.
+ * No manual destruction needed - instance is cleaned up automatically
+ * at program termination.
  */
 class TodoManager
 {
 public:
     /**
-     * @brief Get the singleton instance
+     * @brief Get the singleton instance (thread-safe, Meyer's Singleton)
+     * @return Pointer to the singleton instance
      */
     static TodoManager* getInstance();
-
-    /**
-     * @brief Destroy the singleton instance
-     */
-    static void destroyInstance();
 
     /**
      * @brief Add a new todo item
@@ -124,8 +135,9 @@ public:
 
     /**
      * @brief Save todos to storage
+     * @return Result code indicating success or failure type
      */
-    void saveTodos();
+    SaveResult saveTodos();
 
     /**
      * @brief Register a callback for todo list changes
@@ -136,12 +148,11 @@ private:
     TodoManager();
     ~TodoManager();
 
+    // Delete copy constructor and assignment operator
     TodoManager(const TodoManager&) = delete;
     TodoManager& operator=(const TodoManager&) = delete;
 
     void notifyChanges();
-
-    static TodoManager* s_instance;
 
     std::vector<TodoItem> m_todos;
     TodoFilter m_currentFilter;

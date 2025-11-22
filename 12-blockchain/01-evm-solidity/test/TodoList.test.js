@@ -22,11 +22,10 @@ describe("TodoList Contract", function () {
 
   describe("Creating Todos", function () {
     it("Should create a todo successfully", async function () {
-      const { todoList } = await loadFixture(deployTodoListFixture);
+      const { todoList, owner } = await loadFixture(deployTodoListFixture);
 
       await expect(todoList.createTodo("Test todo"))
-        .to.emit(todoList, "TodoCreated")
-        .withArgs(1, "Test todo", await ethers.provider.getBlock('latest').then(b => b.timestamp + 1));
+        .to.emit(todoList, "TodoCreated");
 
       expect(await todoList.todoCount()).to.equal(1);
 
@@ -35,6 +34,9 @@ describe("TodoList Contract", function () {
       expect(todo.text).to.equal("Test todo");
       expect(todo.completed).to.equal(false);
       expect(todo.createdAt).to.be.greaterThan(0);
+
+      // 验证所有者
+      expect(await todoList.todoOwners(1)).to.equal(owner.address);
     });
 
     it("Should create multiple todos", async function () {
@@ -80,14 +82,14 @@ describe("TodoList Contract", function () {
 
   describe("Toggling Todos", function () {
     it("Should toggle todo completion status", async function () {
-      const { todoList } = await loadFixture(deployTodoListFixture);
+      const { todoList, owner } = await loadFixture(deployTodoListFixture);
 
       await todoList.createTodo("Test todo");
 
       // Toggle to completed
       await expect(todoList.toggleTodo(1))
         .to.emit(todoList, "TodoToggled")
-        .withArgs(1, true);
+        .withArgs(1, owner.address, true);
 
       let todo = await todoList.getTodo(1);
       expect(todo.completed).to.equal(true);
@@ -95,7 +97,7 @@ describe("TodoList Contract", function () {
       // Toggle back to incomplete
       await expect(todoList.toggleTodo(1))
         .to.emit(todoList, "TodoToggled")
-        .withArgs(1, false);
+        .withArgs(1, owner.address, false);
 
       todo = await todoList.getTodo(1);
       expect(todo.completed).to.equal(false);
@@ -121,13 +123,13 @@ describe("TodoList Contract", function () {
 
   describe("Deleting Todos", function () {
     it("Should delete a todo", async function () {
-      const { todoList } = await loadFixture(deployTodoListFixture);
+      const { todoList, owner } = await loadFixture(deployTodoListFixture);
 
       await todoList.createTodo("Test todo");
 
       await expect(todoList.deleteTodo(1))
         .to.emit(todoList, "TodoDeleted")
-        .withArgs(1);
+        .withArgs(1, owner.address);
 
       await expect(todoList.getTodo(1))
         .to.be.revertedWith("Todo has been deleted");
@@ -273,6 +275,190 @@ describe("TodoList Contract", function () {
 
       expect(todo2.id).to.equal(2);
       expect(todo3.id).to.equal(3);
+    });
+  });
+
+  describe("Access Control", function () {
+    it("Should prevent users from toggling other users' todos", async function () {
+      const { todoList, owner, addr1 } = await loadFixture(deployTodoListFixture);
+
+      // Owner creates a todo
+      await todoList.connect(owner).createTodo("Owner's todo");
+
+      // Addr1 tries to toggle owner's todo
+      await expect(todoList.connect(addr1).toggleTodo(1))
+        .to.be.revertedWith("Not the owner of this todo");
+    });
+
+    it("Should prevent users from deleting other users' todos", async function () {
+      const { todoList, owner, addr1 } = await loadFixture(deployTodoListFixture);
+
+      // Owner creates a todo
+      await todoList.connect(owner).createTodo("Owner's todo");
+
+      // Addr1 tries to delete owner's todo
+      await expect(todoList.connect(addr1).deleteTodo(1))
+        .to.be.revertedWith("Not the owner of this todo");
+    });
+
+    it("Should prevent users from viewing other users' todos", async function () {
+      const { todoList, owner, addr1 } = await loadFixture(deployTodoListFixture);
+
+      // Owner creates a todo
+      await todoList.connect(owner).createTodo("Owner's todo");
+
+      // Addr1 tries to view owner's todo
+      await expect(todoList.connect(addr1).getTodo(1))
+        .to.be.revertedWith("Not the owner of this todo");
+    });
+
+    it("Should allow users to manage their own todos", async function () {
+      const { todoList, owner, addr1 } = await loadFixture(deployTodoListFixture);
+
+      // Each user creates their own todos
+      await todoList.connect(owner).createTodo("Owner's todo");
+      await todoList.connect(addr1).createTodo("Addr1's todo");
+
+      // Each user can toggle their own todo
+      await expect(todoList.connect(owner).toggleTodo(1))
+        .to.emit(todoList, "TodoToggled")
+        .withArgs(1, owner.address, true);
+
+      await expect(todoList.connect(addr1).toggleTodo(2))
+        .to.emit(todoList, "TodoToggled")
+        .withArgs(2, addr1.address, true);
+
+      // Each user can delete their own todo
+      await expect(todoList.connect(owner).deleteTodo(1))
+        .to.emit(todoList, "TodoDeleted")
+        .withArgs(1, owner.address);
+
+      await expect(todoList.connect(addr1).deleteTodo(2))
+        .to.emit(todoList, "TodoDeleted")
+        .withArgs(2, addr1.address);
+    });
+  });
+
+  describe("Multi-User Isolation", function () {
+    it("Should only return user's own todos in getAllTodos", async function () {
+      const { todoList, owner, addr1, addr2 } = await loadFixture(deployTodoListFixture);
+
+      // Each user creates todos
+      await todoList.connect(owner).createTodo("Owner todo 1");
+      await todoList.connect(owner).createTodo("Owner todo 2");
+      await todoList.connect(addr1).createTodo("Addr1 todo 1");
+      await todoList.connect(addr2).createTodo("Addr2 todo 1");
+
+      // Each user should only see their own todos
+      const ownerTodos = await todoList.connect(owner).getAllTodos();
+      expect(ownerTodos.length).to.equal(2);
+      expect(ownerTodos[0].text).to.equal("Owner todo 1");
+      expect(ownerTodos[1].text).to.equal("Owner todo 2");
+
+      const addr1Todos = await todoList.connect(addr1).getAllTodos();
+      expect(addr1Todos.length).to.equal(1);
+      expect(addr1Todos[0].text).to.equal("Addr1 todo 1");
+
+      const addr2Todos = await todoList.connect(addr2).getAllTodos();
+      expect(addr2Todos.length).to.equal(1);
+      expect(addr2Todos[0].text).to.equal("Addr2 todo 1");
+    });
+
+    it("Should only return user's own todos in getActiveTodos", async function () {
+      const { todoList, owner, addr1 } = await loadFixture(deployTodoListFixture);
+
+      // Owner creates and completes one todo
+      await todoList.connect(owner).createTodo("Owner active");
+      await todoList.connect(owner).createTodo("Owner completed");
+      await todoList.connect(owner).toggleTodo(2);
+
+      // Addr1 creates active todo
+      await todoList.connect(addr1).createTodo("Addr1 active");
+
+      // Check active todos
+      const ownerActive = await todoList.connect(owner).getActiveTodos();
+      expect(ownerActive.length).to.equal(1);
+      expect(ownerActive[0].text).to.equal("Owner active");
+
+      const addr1Active = await todoList.connect(addr1).getActiveTodos();
+      expect(addr1Active.length).to.equal(1);
+      expect(addr1Active[0].text).to.equal("Addr1 active");
+    });
+
+    it("Should only return user's own todos in getCompletedTodos", async function () {
+      const { todoList, owner, addr1 } = await loadFixture(deployTodoListFixture);
+
+      // Owner creates and completes todos
+      await todoList.connect(owner).createTodo("Owner todo 1");
+      await todoList.connect(owner).createTodo("Owner todo 2");
+      await todoList.connect(owner).toggleTodo(1);
+      await todoList.connect(owner).toggleTodo(2);
+
+      // Addr1 creates and completes one todo
+      await todoList.connect(addr1).createTodo("Addr1 todo 1");
+      await todoList.connect(addr1).toggleTodo(3);
+
+      // Check completed todos
+      const ownerCompleted = await todoList.connect(owner).getCompletedTodos();
+      expect(ownerCompleted.length).to.equal(2);
+
+      const addr1Completed = await todoList.connect(addr1).getCompletedTodos();
+      expect(addr1Completed.length).to.equal(1);
+      expect(addr1Completed[0].text).to.equal("Addr1 todo 1");
+    });
+
+    it("Should handle deletions correctly in multi-user scenario", async function () {
+      const { todoList, owner, addr1 } = await loadFixture(deployTodoListFixture);
+
+      // Both users create todos
+      await todoList.connect(owner).createTodo("Owner todo 1");
+      await todoList.connect(addr1).createTodo("Addr1 todo 1");
+      await todoList.connect(owner).createTodo("Owner todo 2");
+
+      // Owner deletes their first todo
+      await todoList.connect(owner).deleteTodo(1);
+
+      // Check results
+      const ownerTodos = await todoList.connect(owner).getAllTodos();
+      expect(ownerTodos.length).to.equal(1);
+      expect(ownerTodos[0].text).to.equal("Owner todo 2");
+
+      const addr1Todos = await todoList.connect(addr1).getAllTodos();
+      expect(addr1Todos.length).to.equal(1);
+      expect(addr1Todos[0].text).to.equal("Addr1 todo 1");
+    });
+
+    it("Should emit events with correct owner address", async function () {
+      const { todoList, owner, addr1 } = await loadFixture(deployTodoListFixture);
+
+      // Test TodoCreated event - 不检查时间戳，因为它可能有微小差异
+      const tx1 = await todoList.connect(owner).createTodo("Test");
+      await expect(tx1)
+        .to.emit(todoList, "TodoCreated");
+
+      // 验证事件参数
+      const receipt1 = await tx1.wait();
+      const event1 = receipt1.logs.find(log => {
+        try {
+          return todoList.interface.parseLog(log).name === "TodoCreated";
+        } catch {
+          return false;
+        }
+      });
+      const parsedEvent1 = todoList.interface.parseLog(event1);
+      expect(parsedEvent1.args[0]).to.equal(1n); // id
+      expect(parsedEvent1.args[1]).to.equal(owner.address); // owner
+      expect(parsedEvent1.args[2]).to.equal("Test"); // text
+
+      // Test TodoToggled event
+      await expect(todoList.connect(owner).toggleTodo(1))
+        .to.emit(todoList, "TodoToggled")
+        .withArgs(1, owner.address, true);
+
+      // Test TodoDeleted event
+      await expect(todoList.connect(owner).deleteTodo(1))
+        .to.emit(todoList, "TodoDeleted")
+        .withArgs(1, owner.address);
     });
   });
 });

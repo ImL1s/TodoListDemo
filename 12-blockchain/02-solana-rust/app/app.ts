@@ -177,8 +177,11 @@ async function loadProgram() {
 
 // Helper 函数：获取待办事项 PDA
 function getTodoPDA(owner: PublicKey, todoId: number): [PublicKey, number] {
+  const todoIdBuffer = Buffer.alloc(8);
+  todoIdBuffer.writeBigUInt64LE(BigInt(todoId));
+
   return PublicKey.findProgramAddressSync(
-    [Buffer.from("todo"), owner.toBuffer(), Buffer.from([todoId])],
+    [Buffer.from("todo"), owner.toBuffer(), todoIdBuffer],
     program.programId
   );
 }
@@ -210,17 +213,42 @@ async function addTodo() {
 
     const [counterPDA] = getCounterPDA(userPublicKey);
 
-    // 获取当前计数
+    // 检查计数器是否存在，如果不存在则初始化
     let count = 0;
+    let counterExists = false;
     try {
       const counterAccount = await program.account.todoCounter.fetch(counterPDA);
       count = counterAccount.count.toNumber();
+      counterExists = true;
     } catch {
-      // 计数器还不存在，这是第一个待办事项
+      // 计数器还不存在，需要初始化
+      counterExists = false;
+    }
+
+    // 如果计数器不存在，先初始化
+    if (!counterExists) {
+      showTxStatus("正在初始化计数器...", "pending");
+      try {
+        await program.methods
+          .initializeCounter()
+          .accounts({
+            todoCounter: counterPDA,
+            user: userPublicKey,
+            systemProgram: SystemProgram.programId,
+          })
+          .rpc();
+        count = 0;
+      } catch (error) {
+        console.error("初始化计数器失败:", error);
+        showTxStatus("", "");
+        showNotification("初始化失败: " + error.message, "error");
+        return;
+      }
     }
 
     const [todoPDA] = getTodoPDA(userPublicKey, count);
 
+    showTxStatus("正在创建待办事项...", "pending");
     const tx = await program.methods
       .createTodo(text)
       .accounts({

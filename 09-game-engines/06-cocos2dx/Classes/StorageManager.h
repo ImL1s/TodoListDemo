@@ -9,21 +9,22 @@
 /**
  * @brief Manages data persistence using JSON format
  *
- * Singleton class that handles saving and loading todo items
+ * Thread-safe singleton class that handles saving and loading todo items
  * to/from the local file system using Cocos2d-x FileUtils.
+ *
+ * Uses Meyer's Singleton pattern (C++11 static local variable),
+ * which guarantees thread-safety and automatic lifetime management.
+ * No manual destruction needed - instance is cleaned up automatically
+ * at program termination.
  */
 class StorageManager
 {
 public:
     /**
-     * @brief Get the singleton instance
+     * @brief Get the singleton instance (thread-safe, Meyer's Singleton)
+     * @return Pointer to the singleton instance
      */
     static StorageManager* getInstance();
-
-    /**
-     * @brief Destroy the singleton instance
-     */
-    static void destroyInstance();
 
     /**
      * @brief Save todos to local storage
@@ -48,14 +49,13 @@ private:
     StorageManager();
     ~StorageManager();
 
+    // Delete copy constructor and assignment operator
     StorageManager(const StorageManager&) = delete;
     StorageManager& operator=(const StorageManager&) = delete;
 
     std::string getStoragePath() const;
     std::string todosToJson(const std::vector<TodoItem>& todos) const;
     std::vector<TodoItem> jsonToTodos(const std::string& json) const;
-
-    static StorageManager* s_instance;
 
     static const std::string STORAGE_FILENAME;
 };

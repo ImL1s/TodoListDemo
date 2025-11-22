@@ -14,11 +14,14 @@ describe("todo-list", () => {
 
   // Helper 函数：获取待办事项 PDA
   const getTodoPDA = async (owner: PublicKey, todoId: number) => {
+    const todoIdBuffer = Buffer.alloc(8);
+    todoIdBuffer.writeBigUInt64LE(BigInt(todoId));
+
     return PublicKey.findProgramAddressSync(
       [
         Buffer.from("todo"),
         owner.toBuffer(),
-        Buffer.from([todoId]),
+        todoIdBuffer,
       ],
       program.programId
     );
@@ -31,6 +34,44 @@ describe("todo-list", () => {
       program.programId
     );
   };
+
+  describe("初始化计数器", () => {
+    it("应该成功初始化计数器", async () => {
+      const [counterPDA] = await getCounterPDA(user.publicKey);
+
+      await program.methods
+        .initializeCounter()
+        .accounts({
+          todoCounter: counterPDA,
+          user: user.publicKey,
+          systemProgram: SystemProgram.programId,
+        })
+        .rpc();
+
+      const counterAccount = await program.account.todoCounter.fetch(counterPDA);
+
+      expect(counterAccount.owner.toString()).to.equal(user.publicKey.toString());
+      expect(counterAccount.count.toNumber()).to.equal(0);
+    });
+
+    it("应该拒绝重复初始化", async () => {
+      const [counterPDA] = await getCounterPDA(user.publicKey);
+
+      try {
+        await program.methods
+          .initializeCounter()
+          .accounts({
+            todoCounter: counterPDA,
+            user: user.publicKey,
+            systemProgram: SystemProgram.programId,
+          })
+          .rpc();
+        expect.fail("应该抛出错误");
+      } catch (error) {
+        expect(error).to.exist;
+      }
+    });
+  });
 
   describe("创建待办事项", () => {
     it("应该成功创建一个待办事项", async () => {
@@ -279,6 +320,17 @@ describe("todo-list", () => {
       const [counterPDA] = await getCounterPDA(newUser.publicKey);
       const [todo0PDA] = await getTodoPDA(newUser.publicKey, 0);
       const [todo1PDA] = await getTodoPDA(newUser.publicKey, 1);
+
+      // 初始化计数器
+      await program.methods
+        .initializeCounter()
+        .accounts({
+          todoCounter: counterPDA,
+          user: newUser.publicKey,
+          systemProgram: SystemProgram.programId,
+        })
+        .signers([newUser])
+        .rpc();
 
       // 创建两个待办事项
       await program.methods
