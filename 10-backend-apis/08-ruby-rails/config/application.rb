@@ -27,15 +27,20 @@ module TodolistRails
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
-    # CORS configuration
+    # CORS configuration - use environment variable for allowed origins
     config.middleware.insert_before 0, Rack::Cors do
       allow do
-        origins '*'
+        origins ENV.fetch('ALLOWED_ORIGINS', 'http://localhost:3000').split(',').map(&:strip)
         resource '*',
           headers: :any,
-          methods: [:get, :post, :put, :patch, :delete, :options, :head]
+          methods: [:get, :post, :put, :patch, :delete, :options, :head],
+          credentials: true,
+          max_age: 3600
       end
     end
+
+    # Rate limiting
+    config.middleware.use Rack::Attack
 
     # Time zone
     config.time_zone = 'UTC'

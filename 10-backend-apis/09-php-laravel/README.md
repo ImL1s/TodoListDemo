@@ -209,3 +209,64 @@ php artisan migrate:fresh
 ## License
 
 MIT
+
+## 📊 日志和监控
+
+本项目使用 Laravel 的 Monolog 实现结构化 JSON 日志。
+
+### 日志级别
+
+- **ERROR**: 错误和异常
+- **WARNING**: 警告（验证失败、慢操作）
+- **INFO**: 重要操作（CRUD 操作）
+- **DEBUG**: 调试信息
+
+### 配置日志级别
+
+```bash
+LOG_LEVEL=info php artisan serve
+```
+
+### 日志格式
+
+日志输出 JSON 格式：
+
+```json
+{
+  "message": "Request completed",
+  "context": {
+    "method": "POST",
+    "path": "api/todos",
+    "status": 201,
+    "duration_ms": 45.23,
+    "ip": "127.0.0.1"
+  },
+  "level": 200,
+  "level_name": "INFO",
+  "datetime": "2024-01-01T12:00:00.000000+00:00"
+}
+```
+
+### 性能监控
+
+- 自动记录所有请求响应时间
+- 警告超过 100ms 的慢请求
+- 记录 CRUD 操作执行时间
+
+### 使用日志中间件
+
+在 `app/Http/Kernel.php` 中注册 `LogRequests` 中间件：
+
+```php
+protected $middleware = [
+    // ...
+    \App\Http\Middleware\LogRequests::class,
+];
+```
+
+### 环境变量
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `LOG_LEVEL` | `info` | 日志级别 (debug, info, warning, error) |
+| `LOG_CHANNEL` | `stack` | 日志通道 |

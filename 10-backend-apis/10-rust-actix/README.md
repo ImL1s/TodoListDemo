@@ -217,3 +217,59 @@ cargo build --release
 ## License
 
 MIT
+
+## 📊 日志和监控
+
+本项目使用 `tracing` 和 `tracing-subscriber` 实现结构化日志。
+
+### 日志级别
+
+- **ERROR**: 错误和异常
+- **WARN**: 警告
+- **INFO**: 重要操作（CRUD操作）
+- **DEBUG**: 调试信息
+- **TRACE**: 最详细追踪
+
+### 配置日志级别
+
+```bash
+RUST_LOG=info cargo run
+```
+
+### 在 Cargo.toml 中添加依赖
+
+```toml
+[dependencies]
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["json", "env-filter"] }
+tracing-actix-web = "0.7"
+```
+
+### 日志格式
+
+使用 JSON 格式输出结构化日志：
+
+```json
+{
+  "timestamp": "2024-01-01T12:00:00.000Z",
+  "level": "INFO",
+  "target": "actix_todo",
+  "fields": {
+    "message": "Todo created",
+    "todo_id": 123,
+    "duration_ms": 45
+  }
+}
+```
+
+### 性能监控
+
+- 自动记录所有 HTTP 请求
+- 检测慢操作（>100ms）
+- 记录数据库操作时间
+
+### 环境变量
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `RUST_LOG` | `info` | 日志级别过滤器 |

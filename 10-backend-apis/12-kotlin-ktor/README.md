@@ -333,3 +333,49 @@ Adjust logging in `src/main/resources/logback.xml`:
 ## License
 
 MIT
+
+## 📊 日志和监控
+
+本项目使用 Logback 和 logstash-logback-encoder 实现结构化 JSON 日志。
+
+### 日志级别
+
+- **ERROR**: 错误和异常
+- **WARN**: 警告
+- **INFO**: 重要操作
+- **DEBUG**: 调试信息
+
+### 配置日志级别
+
+在 `logback.xml` 中配置或通过环境变量：
+
+```bash
+LOG_LEVEL=INFO ./gradlew run
+```
+
+### 日志格式
+
+JSON 格式输出：
+
+```json
+{
+  "@timestamp": "2024-01-01T12:00:00.000Z",
+  "level": "INFO",
+  "logger_name": "Application",
+  "message": "Todo created",
+  "todo_id": 123,
+  "duration_ms": 45
+}
+```
+
+### 性能监控
+
+- HTTP 请求日志
+- 慢操作告警（>100ms）
+- 异常追踪
+
+### 环境变量
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `LOG_LEVEL` | `INFO` | 日志级别 |

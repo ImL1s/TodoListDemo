@@ -301,3 +301,54 @@ NODE_ENV=development
 ## License
 
 MIT
+
+## 📊 日志和监控
+
+本项目集成 Winston 日志库实现结构化日志。
+
+### 日志级别
+
+- **ERROR**: 错误和异常
+- **WARN**: 警告
+- **INFO**: 重要操作
+- **DEBUG**: 调试信息
+
+### 配置日志级别
+
+```bash
+LOG_LEVEL=info npm start
+```
+
+### 安装依赖
+
+```bash
+npm install winston nest-winston
+```
+
+### 日志格式
+
+JSON 格式输出：
+
+```json
+{
+  "timestamp": "2024-01-01T12:00:00.000Z",
+  "level": "info",
+  "message": "Todo created",
+  "context": {
+    "todoId": 123,
+    "duration": 45
+  }
+}
+```
+
+### 性能监控
+
+- HTTP 请求自动日志
+- 慢操作检测（>100ms）
+- 错误追踪和上下文
+
+### 环境变量
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `LOG_LEVEL` | `info` | 日志级别 |

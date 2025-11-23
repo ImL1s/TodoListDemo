@@ -531,3 +531,60 @@ While Cocos2d-x is primarily a game engine, this demo demonstrates:
 ---
 
 **Built with Cocos2d-x 4.0** | **C++11** | **Cross-Platform**
+
+## 📊 日志和监控
+
+本项目实现了自定义结构化日志系统。
+
+### 日志级别
+
+- **ERROR**: 错误和异常
+- **WARN**: 警告
+- **INFO**: 重要操作（游戏事件、UI交互）
+- **DEBUG**: 调试信息
+
+### 使用日志系统
+
+```cpp
+#include "Logger.h"
+
+// 记录信息
+Logger::info("Todo created", {
+    {"todo_id", std::to_string(todo.id)},
+    {"text", todo.text}
+});
+
+// 记录错误
+Logger::error("Failed to create todo", {
+    {"error", errorMsg}
+});
+
+// 记录警告
+Logger::warn("Slow operation", {
+    {"operation", "create_todo"},
+    {"duration_ms", std::to_string(duration)}
+});
+```
+
+### 日志格式
+
+控制台输出格式：
+
+```
+[2024-01-01 12:00:00] [INFO] Todo created | todo_id=123, text=Learn Cocos2d-x
+[2024-01-01 12:00:01] [ERROR] Failed to create todo | error=Database connection lost
+```
+
+### 性能监控
+
+- 记录关键操作执行时间
+- 检测慢操作（>100ms）
+- FPS 监控
+- 内存使用追踪
+
+### 日志文件
+
+日志文件位置：
+- iOS: `Documents/logs/`
+- Android: `/sdcard/Android/data/[package]/files/logs/`
+- Windows/macOS: `./logs/`

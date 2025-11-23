@@ -62,4 +62,8 @@ object DatabaseFactory {
     suspend fun deleteTodo(id: Int): Boolean = dbQuery {
         Todos.deleteWhere { Todos.id eq id } > 0
     }
+
+    suspend fun clearAll() = dbQuery {
+        Todos.deleteAll()
+    }
 }

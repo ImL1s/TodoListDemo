@@ -15,12 +15,12 @@ type Todo struct {
 
 // CreateTodoInput defines the input structure for creating a todo
 type CreateTodoInput struct {
-	Text      string `json:"text" validate:"required"`
+	Text      string `json:"text" validate:"required,min=1,max=500"`
 	Completed bool   `json:"completed"`
 }
 
 // UpdateTodoInput defines the input structure for updating a todo
 type UpdateTodoInput struct {
-	Text      *string `json:"text"`
+	Text      *string `json:"text" validate:"omitempty,min=1,max=500"`
 	Completed *bool   `json:"completed"`
 }

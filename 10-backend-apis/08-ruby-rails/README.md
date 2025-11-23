@@ -299,3 +299,53 @@ end
 ## 📄 许可证
 
 MIT License
+
+## 📊 日志和监控
+
+本项目使用 Lograge gem 实现结构化 JSON 日志。
+
+### 日志级别
+
+- **ERROR**: 错误和异常
+- **WARN**: 警告（验证失败、慢操作）
+- **INFO**: 重要操作（CRUD 操作）
+- **DEBUG**: 调试信息
+
+### 配置日志级别
+
+```bash
+export LOG_LEVEL=info
+rails server
+```
+
+### 日志格式
+
+日志输出 JSON 格式：
+
+```json
+{
+  "method": "POST",
+  "path": "/api/todos",
+  "format": "json",
+  "controller": "TodosController",
+  "action": "create",
+  "status": 201,
+  "duration": 45.23,
+  "view": 0.5,
+  "db": 12.3,
+  "time": "2024-01-01T12:00:00.000Z"
+}
+```
+
+### 性能监控
+
+- 自动记录所有请求的响应时间
+- 警告超过 100ms 的慢操作
+- 记录数据库查询时间
+- 记录视图渲染时间
+
+### 环境变量
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `LOG_LEVEL` | `info` | 日志级别 (debug, info, warn, error) |

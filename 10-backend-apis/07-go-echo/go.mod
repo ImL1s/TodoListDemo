@@ -4,7 +4,11 @@ go 1.21
 
 require (
 	github.com/go-playground/validator/v10 v10.16.0
+	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.11.4
+	github.com/stretchr/testify v1.8.4
+	github.com/ulule/limiter/v3 v3.11.2
+	go.uber.org/zap v1.26.0
 	gorm.io/driver/sqlite v1.5.4
 	gorm.io/gorm v1.25.5
 )
