@@ -1,0 +1,425 @@
+/* ===========================
+   全域樣式
+   =========================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #4a90e2;
+    --primary-hover: #357abd;
+    --danger-color: #e74c3c;
+    --success-color: #2ecc71;
+    --text-color: #333;
+    --text-muted: #999;
+    --border-color: #e0e0e0;
+    --bg-color: #f5f5f5;
+    --white: #ffffff;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: var(--text-color);
+}
+
+/* ===========================
+   容器
+   =========================== */
+.container {
+    width: 100%;
+    max-width: 600px;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: var(--shadow-hover);
+    overflow: hidden;
+}
+
+/* ===========================
+   Header
+   =========================== */
+header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: var(--white);
+    padding: 30px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.subtitle {
+    font-size: 0.95rem;
+    opacity: 0.95;
+    font-weight: 300;
+}
+
+/* ===========================
+   應用主體
+   =========================== */
+#todoapp {
+    padding: 25px;
+}
+
+/* ===========================
+   輸入區域
+   =========================== */
+.input-section {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+#new-todo {
+    flex: 1;
+    padding: 12px 16px;
+    font-size: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+#new-todo:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+#new-todo::placeholder {
+    color: var(--text-muted);
+}
+
+/* ===========================
+   按鈕樣式
+   =========================== */
+.btn {
+    padding: 12px 24px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    padding: 8px 16px;
+}
+
+.btn-secondary:hover {
+    color: var(--danger-color);
+    background: rgba(231, 76, 60, 0.1);
+}
+
+/* ===========================
+   過濾器
+   =========================== */
+.filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding: 12px;
+    background: var(--bg-color);
+    border-radius: 8px;
+}
+
+.filter-btn {
+    flex: 1;
+    padding: 10px 16px;
+    font-size: 0.95rem;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    background: var(--white);
+    color: var(--text-color);
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    background: var(--white);
+    border-color: var(--primary-color);
+}
+
+.filter-btn.active {
+    background: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+}
+
+/* ===========================
+   Todo 列表
+   =========================== */
+#todo-list {
+    list-style: none;
+    margin-bottom: 20px;
+}
+
+#todo-list:empty::after {
+    content: '目前沒有待辦事項';
+    display: block;
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+/* ===========================
+   Todo 項目
+   =========================== */
+.todo-item {
+    background: var(--white);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.todo-item:hover {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow);
+    transform: translateX(4px);
+}
+
+.todo-item.completed {
+    opacity: 0.7;
+    background: var(--bg-color);
+}
+
+.todo-item .view {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    gap: 12px;
+}
+
+.todo-item.editing .view {
+    display: none;
+}
+
+.todo-item .edit {
+    display: none;
+    width: 100%;
+    padding: 16px;
+    font-size: 1rem;
+    border: none;
+    outline: none;
+}
+
+.todo-item.editing .edit {
+    display: block;
+    border: 2px solid var(--primary-color);
+}
+
+/* ===========================
+   Checkbox
+   =========================== */
+.toggle {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    outline: none;
+    appearance: none;
+    transition: all 0.3s ease;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.toggle:checked {
+    background: var(--success-color);
+    border-color: var(--success-color);
+}
+
+.toggle:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--white);
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.toggle:hover {
+    border-color: var(--success-color);
+}
+
+/* ===========================
+   Todo 文字
+   =========================== */
+.todo-text {
+    flex: 1;
+    font-size: 1rem;
+    color: var(--text-color);
+    cursor: pointer;
+    user-select: none;
+    word-break: break-word;
+}
+
+.completed .todo-text {
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+/* ===========================
+   刪除按鈕
+   =========================== */
+.destroy {
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 28px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.destroy:hover {
+    color: var(--white);
+    background: var(--danger-color);
+    transform: rotate(90deg);
+}
+
+/* ===========================
+   統計資訊
+   =========================== */
+.stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: var(--bg-color);
+    border-radius: 8px;
+}
+
+.todo-count {
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+.todo-count strong {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+/* ===========================
+   Footer
+   =========================== */
+.app-footer {
+    text-align: center;
+    padding: 20px;
+    background: var(--bg-color);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.app-footer p {
+    margin: 4px 0;
+}
+
+/* ===========================
+   動畫效果
+   =========================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.todo-item {
+    animation: fadeIn 0.3s ease;
+}
+
+/* ===========================
+   響應式設計
+   =========================== */
+@media (max-width: 640px) {
+    header h1 {
+        font-size: 2rem;
+    }
+
+    .subtitle {
+        font-size: 0.85rem;
+    }
+
+    #todoapp {
+        padding: 20px;
+    }
+
+    .input-section {
+        flex-direction: column;
+    }
+
+    .filters {
+        flex-direction: column;
+    }
+
+    .stats {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+}
+
+/* ===========================
+   隱藏元素
+   =========================== */
+.hidden {
+    display: none !important;
+}
+
+/* ===========================
+   載入狀態
+   =========================== */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}

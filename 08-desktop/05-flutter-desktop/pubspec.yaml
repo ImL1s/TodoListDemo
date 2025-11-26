@@ -1,0 +1,44 @@
+name: flutter_desktop_todo
+description: A cross-platform desktop Todo List application built with Flutter
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  provider: ^6.1.1
+
+  # Local Storage
+  path_provider: ^2.1.1
+  sqflite_common_ffi: ^2.3.0
+
+  # UI Components
+  cupertino_icons: ^1.0.6
+
+  # Window Management
+  window_manager: ^0.3.7
+
+  # Shortcuts & Hotkeys
+  hotkey_manager: ^0.1.8
+
+  # Platform Info
+  platform_detect: ^2.0.8
+
+  # UUID for unique IDs
+  uuid: ^4.2.1
+
+  # Date formatting
+  intl: ^0.18.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true

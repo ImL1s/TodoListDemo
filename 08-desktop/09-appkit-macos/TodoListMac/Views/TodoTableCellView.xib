@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22155" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22155"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner"/>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="c22-O7-iKe" customClass="TodoTableCellView" customModule="TodoListMac" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="480" height="44"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vDl-kZ-8hN">
+                    <rect key="frame" x="8" y="12" width="20" height="20"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="20" id="Hnx-dQ-6lF"/>
+                        <constraint firstAttribute="height" constant="20" id="Uw9-aY-7gK"/>
+                    </constraints>
+                    <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="only" state="on" inset="2" id="gBe-gZ-8hO">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                </button>
+                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Rxb-gD-6kv">
+                    <rect key="frame" x="36" y="14" width="320" height="16"/>
+                    <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" title="Todo Item Title" drawsBackground="YES" id="2c6-ct-gYx">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="eGd-hN-9tJ">
+                    <rect key="frame" x="364" y="17" width="4" height="10"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="4" id="6rB-dQ-8lF"/>
+                        <constraint firstAttribute="height" constant="10" id="xZu-aY-9gK"/>
+                    </constraints>
+                </customView>
+                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fMx-gD-7kv">
+                    <rect key="frame" x="376" y="14" width="60" height="16"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="60" id="Bmx-dQ-9lF"/>
+                    </constraints>
+                    <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" enabled="NO" sendsActionOnEndEditing="YES" title="2 days ago" id="3c7-ct-hYx">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wEl-kZ-9hN">
+                    <rect key="frame" x="444" y="12" width="20" height="20"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="20" id="Inx-eQ-7lF"/>
+                        <constraint firstAttribute="height" constant="20" id="Vw0-bY-8gK"/>
+                    </constraints>
+                    <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="trash" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hCf-hZ-9hP">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                </button>
+            </subviews>
+            <constraints>
+                <constraint firstItem="vDl-kZ-8hN" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" constant="8" id="1jK-Vx-3Mw"/>
+                <constraint firstItem="vDl-kZ-8hN" firstAttribute="centerY" secondItem="c22-O7-iKe" secondAttribute="centerY" id="2kL-Wy-4Nx"/>
+                <constraint firstItem="Rxb-gD-6kv" firstAttribute="leading" secondItem="vDl-kZ-8hN" secondAttribute="trailing" constant="8" id="3lM-Xz-5Oy"/>
+                <constraint firstItem="Rxb-gD-6kv" firstAttribute="centerY" secondItem="c22-O7-iKe" secondAttribute="centerY" id="4mN-Yz-6Pz"/>
+                <constraint firstItem="eGd-hN-9tJ" firstAttribute="leading" secondItem="Rxb-gD-6kv" secondAttribute="trailing" constant="8" id="5nO-Za-7Qa"/>
+                <constraint firstItem="eGd-hN-9tJ" firstAttribute="centerY" secondItem="c22-O7-iKe" secondAttribute="centerY" id="6oP-Ab-8Rb"/>
+                <constraint firstItem="fMx-gD-7kv" firstAttribute="leading" secondItem="eGd-hN-9tJ" secondAttribute="trailing" constant="8" id="7pQ-Bc-9Sc"/>
+                <constraint firstItem="fMx-gD-7kv" firstAttribute="centerY" secondItem="c22-O7-iKe" secondAttribute="centerY" id="8qR-Cd-0Td"/>
+                <constraint firstItem="wEl-kZ-9hN" firstAttribute="leading" secondItem="fMx-gD-7kv" secondAttribute="trailing" constant="8" id="9rS-De-1Ue"/>
+                <constraint firstItem="wEl-kZ-9hN" firstAttribute="centerY" secondItem="c22-O7-iKe" secondAttribute="centerY" id="0sT-Ef-2Vf"/>
+                <constraint firstAttribute="trailing" secondItem="wEl-kZ-9hN" secondAttribute="trailing" constant="16" id="1tU-Fg-3Wg"/>
+                <constraint firstAttribute="height" constant="44" id="2uV-Gh-4Xh"/>
+            </constraints>
+            <connections>
+                <outlet property="checkboxButton" destination="vDl-kZ-8hN" id="abc-12-def"/>
+                <outlet property="titleTextField" destination="Rxb-gD-6kv" id="ghi-34-jkl"/>
+                <outlet property="priorityIndicator" destination="eGd-hN-9tJ" id="mno-56-pqr"/>
+                <outlet property="dateLabel" destination="fMx-gD-7kv" id="stu-78-vwx"/>
+                <outlet property="deleteButton" destination="wEl-kZ-9hN" id="yza-90-bcd"/>
+            </connections>
+        </customView>
+    </objects>
+    <resources>
+        <image name="trash" width="16" height="16"/>
+    </resources>
+</document>

@@ -1,0 +1,35 @@
+{
+  "name": "phaser-todo-list",
+  "version": "1.0.0",
+  "description": "A gamified Todo List application built with Phaser 3 game engine",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write \"src/**/*.ts\""
+  },
+  "keywords": [
+    "phaser",
+    "phaser3",
+    "typescript",
+    "todo",
+    "game-engine",
+    "gamification"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "phaser": "^3.70.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.1.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.8"
+  }
+}

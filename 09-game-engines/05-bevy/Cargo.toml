@@ -1,0 +1,60 @@
+[package]
+name = "todolist-bevy"
+version = "1.0.0"
+edition = "2021"
+authors = ["TodoList Demo Team"]
+description = "A feature-complete Todo List application built with Bevy game engine, showcasing ECS architecture"
+license = "MIT"
+repository = "https://github.com/yourusername/todolist-demo"
+
+[dependencies]
+# Bevy with minimal features for testing in CI/headless environments
+# For full desktop use, enable the "desktop" feature
+bevy = { version = "0.12", default-features = false, features = [
+    # Core ECS and scheduling
+    "bevy_asset",
+    "bevy_scene",
+    "bevy_core_pipeline",
+    "bevy_render",
+    "bevy_sprite",
+    "bevy_text",
+    "bevy_ui",
+
+    # File formats
+    "png",
+
+    # Serialization support
+    "serialize",
+
+    # Windowing (enable for desktop builds)
+    "bevy_winit",
+    "x11",  # Linux default, can also use wayland
+] }
+
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+chrono = { version = "0.4", features = ["serde"] }
+
+[features]
+default = ["desktop"]
+desktop = []  # Marker feature for desktop builds
+wasm = []     # Marker feature for WASM builds
+
+# Enable optimizations for bevy in dev builds to improve performance
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+
+# Enable wasm support
+[target.wasm32-unknown-unknown]
+
+# Additional metadata
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ["-O4"]

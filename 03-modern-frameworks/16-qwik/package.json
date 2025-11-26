@@ -1,0 +1,38 @@
+{
+  "name": "qwik-todo-list",
+  "version": "1.0.0",
+  "description": "A comprehensive Todo List application built with Qwik demonstrating resumability and zero JavaScript by default",
+  "scripts": {
+    "dev": "vite --mode ssr",
+    "dev.debug": "node --inspect-brk ./node_modules/vite/bin/vite.js --mode ssr --force",
+    "build": "qwik build",
+    "build.client": "vite build",
+    "build.preview": "vite build --ssr src/entry.preview.tsx",
+    "build.types": "tsc --incremental --noEmit",
+    "preview": "qwik build preview && vite preview --open",
+    "start": "vite --open --mode ssr",
+    "qwik": "qwik",
+    "lint": "eslint \"src/**/*.ts*\"",
+    "fmt": "prettier --write .",
+    "fmt.check": "prettier --check ."
+  },
+  "dependencies": {
+    "@builder.io/qwik": "^1.5.5",
+    "@builder.io/qwik-city": "^1.5.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "@typescript-eslint/eslint-plugin": "^7.8.0",
+    "@typescript-eslint/parser": "^7.8.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-qwik": "^1.5.5",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.5",
+    "undici": "^6.13.0",
+    "vite": "^5.2.11",
+    "vite-tsconfig-paths": "^4.3.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

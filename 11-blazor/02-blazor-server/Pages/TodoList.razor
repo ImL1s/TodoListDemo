@@ -1,0 +1,148 @@
+@page "/"
+@inject TodoService TodoService
+@implements IDisposable
+
+<PageTitle>Blazor Server TodoList</PageTitle>
+
+<div class="todo-app">
+    <header class="app-header">
+        <h1>Blazor Server</h1>
+        <p class="subtitle">TodoList with SignalR & EF Core</p>
+    </header>
+
+    <div class="todo-container">
+        <TodoInput OnAdd="HandleAdd" />
+
+        @if (todos.Any())
+        {
+            <div class="filter-tabs">
+                <button class="@(currentFilter == "all" ? "active" : "")" @onclick="() => SetFilter(\"all\")">
+                    All (@todos.Count)
+                </button>
+                <button class="@(currentFilter == "active" ? "active" : "")" @onclick="() => SetFilter(\"active\")">
+                    Active (@activeCount)
+                </button>
+                <button class="@(currentFilter == "completed" ? "active" : "")" @onclick="() => SetFilter(\"completed\")">
+                    Completed (@completedCount)
+                </button>
+            </div>
+
+            <div class="todo-list">
+                @foreach (var todo in GetFilteredTodos())
+                {
+                    <TodoItem @key="todo.Id"
+                              Todo="todo"
+                              OnToggle="HandleToggle"
+                              OnDelete="HandleDelete"
+                              OnUpdate="HandleUpdate" />
+                }
+            </div>
+
+            <div class="todo-footer">
+                <span class="todo-count">
+                    @activeCount item@(activeCount != 1 ? "s" : "") left
+                </span>
+                @if (completedCount > 0)
+                {
+                    <button class="clear-completed" @onclick="HandleClearCompleted">
+                        Clear completed (@completedCount)
+                    </button>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <p>No todos yet. Add one above to get started!</p>
+            </div>
+        }
+    </div>
+
+    <footer class="app-footer">
+        <p>Double-click a todo to edit • Data persists in SQLite database</p>
+        <p class="tech-stack">
+            Built with <strong>Blazor Server</strong> + <strong>SignalR</strong> + <strong>EF Core</strong>
+        </p>
+    </footer>
+</div>
+
+@code {
+    private List<Todo> todos = new();
+    private int activeCount = 0;
+    private int completedCount = 0;
+    private string currentFilter = "all";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTodosAsync();
+        TodoService.OnChange += HandleTodoChange;
+    }
+
+    private async Task LoadTodosAsync()
+    {
+        todos = await TodoService.GetTodosAsync();
+        activeCount = await TodoService.GetActiveCountAsync();
+        completedCount = await TodoService.GetCompletedCountAsync();
+    }
+
+    private void HandleTodoChange()
+    {
+        InvokeAsync(async () =>
+        {
+            await LoadTodosAsync();
+            StateHasChanged();
+        });
+    }
+
+    private List<Todo> GetFilteredTodos()
+    {
+        return currentFilter switch
+        {
+            "active" => todos.Where(t => !t.IsCompleted).ToList(),
+            "completed" => todos.Where(t => t.IsCompleted).ToList(),
+            _ => todos
+        };
+    }
+
+    private void SetFilter(string filter)
+    {
+        currentFilter = filter;
+    }
+
+    private async Task HandleAdd(string text)
+    {
+        try
+        {
+            await TodoService.AddTodoAsync(text);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error adding todo: {ex.Message}");
+        }
+    }
+
+    private async Task HandleToggle(int id)
+    {
+        await TodoService.ToggleTodoAsync(id);
+    }
+
+    private async Task HandleDelete(int id)
+    {
+        await TodoService.DeleteTodoAsync(id);
+    }
+
+    private async Task HandleUpdate((int Id, string Text) data)
+    {
+        await TodoService.UpdateTodoAsync(data.Id, data.Text);
+    }
+
+    private async Task HandleClearCompleted()
+    {
+        await TodoService.ClearCompletedAsync();
+    }
+
+    public void Dispose()
+    {
+        TodoService.OnChange -= HandleTodoChange;
+    }
+}

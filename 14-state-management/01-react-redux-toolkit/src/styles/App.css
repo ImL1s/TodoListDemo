@@ -1,0 +1,421 @@
+/* ===== 全域樣式 ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* 色彩變數 */
+  --primary-color: #764ba2;
+  --secondary-color: #667eea;
+  --success-color: #10b981;
+  --danger-color: #ef4444;
+  --warning-color: #f59e0b;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --border-color: #e5e7eb;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  /* 過渡效果 */
+  --transition: all 0.3s ease;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  color: var(--text-primary);
+}
+
+/* ===== 容器 ===== */
+.app {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: calc(100vh - 4rem);
+}
+
+.container {
+  width: 100%;
+  max-width: 600px;
+  background: var(--bg-primary);
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+/* ===== 標題區域 ===== */
+.app-header {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: white;
+  padding: 2rem;
+  text-align: center;
+}
+
+.app-header h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+/* ===== 主內容區域 ===== */
+.app-main {
+  padding: 2rem;
+}
+
+/* ===== Todo 輸入 ===== */
+.todo-input {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.todo-input-field {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.todo-input-field:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.todo-add-button {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.todo-add-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.todo-add-button:active {
+  transform: translateY(0);
+}
+
+/* ===== Todo 篩選器 ===== */
+.todo-filters {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.filter-btn {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  background: white;
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.filter-btn:hover {
+  border-color: var(--secondary-color);
+}
+
+.filter-btn.active {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: white;
+  border-color: transparent;
+}
+
+.todo-stats {
+  display: flex;
+  justify-content: space-around;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--border-color);
+  margin-top: 0.75rem;
+}
+
+.stat-item {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.stat-item strong {
+  color: var(--secondary-color);
+  font-weight: 600;
+}
+
+.btn-clear-completed {
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  background: var(--danger-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-clear-completed:hover {
+  background: #dc2626;
+}
+
+/* ===== Todo 列表 ===== */
+.todo-list-container {
+  margin-bottom: 1rem;
+}
+
+.toggle-all-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.toggle-all-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.toggle-all-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.todo-list {
+  list-style: none;
+}
+
+.todo-list-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-secondary);
+}
+
+.todo-list-empty p {
+  font-size: 1.125rem;
+}
+
+/* ===== Todo 項目 ===== */
+.todo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background: white;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  transition: var(--transition);
+}
+
+.todo-item:hover {
+  border-color: var(--secondary-color);
+  box-shadow: var(--shadow);
+}
+
+.todo-item.completed {
+  opacity: 0.6;
+}
+
+.todo-item.editing {
+  padding: 0.5rem;
+}
+
+.todo-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.todo-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.todo-text {
+  flex: 1;
+  font-size: 1rem;
+  user-select: none;
+  cursor: pointer;
+}
+
+.todo-item.completed .todo-text {
+  text-decoration: line-through;
+  color: var(--text-secondary);
+}
+
+.todo-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-edit,
+.btn-delete {
+  padding: 0.25rem 0.5rem;
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: var(--transition);
+  border-radius: 4px;
+}
+
+.btn-edit:hover {
+  background: var(--bg-secondary);
+}
+
+.btn-delete:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* ===== 編輯模式 ===== */
+.todo-edit-container {
+  width: 100%;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.todo-edit-input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 2px solid var(--secondary-color);
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.todo-edit-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.todo-edit-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.btn-save,
+.btn-cancel {
+  padding: 0.25rem 0.5rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-save {
+  background: var(--success-color);
+}
+
+.btn-save:hover {
+  background: #059669;
+}
+
+.btn-cancel {
+  background: var(--danger-color);
+}
+
+.btn-cancel:hover {
+  background: #dc2626;
+}
+
+/* ===== 頁尾 ===== */
+.app-footer {
+  padding: 1.5rem 2rem;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.app-footer p {
+  margin-bottom: 0.75rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.tech-stack {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: white;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* ===== 響應式設計 ===== */
+@media (max-width: 640px) {
+  body {
+    padding: 1rem 0.5rem;
+  }
+
+  .app-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .app-main {
+    padding: 1.5rem 1rem;
+  }
+
+  .todo-input {
+    flex-direction: column;
+  }
+
+  .filter-buttons {
+    flex-direction: column;
+  }
+
+  .todo-stats {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "solidjs-todo-list",
+  "version": "1.0.0",
+  "description": "Todo List application built with SolidJS demonstrating fine-grained reactivity",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "solid-js": "^1.8.11"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10",
+    "vite-plugin-solid": "^2.8.2"
+  },
+  "keywords": [
+    "solidjs",
+    "todo",
+    "typescript",
+    "vite",
+    "reactive",
+    "fine-grained-reactivity",
+    "signals",
+    "stores"
+  ],
+  "author": "",
+  "license": "MIT"
+}

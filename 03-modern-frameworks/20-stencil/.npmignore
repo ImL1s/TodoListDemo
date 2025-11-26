@@ -1,0 +1,25 @@
+# Source files (don't publish to npm)
+src/
+.stencil/
+
+# Build configs
+tsconfig.json
+stencil.config.ts
+
+# Development files
+www/
+
+# Tests
+*.spec.ts
+*.e2e.ts
+
+# IDE
+.idea/
+.vscode/
+
+# Git
+.git/
+.gitignore
+
+# Docs (optional, remove if you want to publish docs)
+docs/

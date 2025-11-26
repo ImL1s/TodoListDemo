@@ -1,0 +1,55 @@
+# Unreal Engine
+Binaries/
+Build/
+Intermediate/
+Saved/
+DerivedDataCache/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+
+# Rider
+.idea/
+*.sln.iml
+
+# Visual Studio Code
+.vscode/
+
+# Platform specific
+*.VC.db
+*.VC.opendb
+*.opensdf
+*.sdf
+*.ipa
+*.apk
+*.exe
+*.app
+
+# Compiled source
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Mac
+.DS_Store
+
+# Starter Content (optional)
+Content/StarterContent/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*~
+
+# UE4 specific
+DesktopEngine.ini

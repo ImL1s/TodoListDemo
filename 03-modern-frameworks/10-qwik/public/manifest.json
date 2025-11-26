@@ -1,0 +1,16 @@
+{
+  "name": "Qwik Todo App",
+  "short_name": "Qwik Todo",
+  "description": "A modern Todo List application built with Qwik framework",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#8b5cf6",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

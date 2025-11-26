@@ -1,0 +1,69 @@
+/* Dark Theme Stylesheet */
+
+QMainWindow {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+}
+
+QWidget {
+    color: #e0e0e0;
+}
+
+QListView {
+    background-color: #252525;
+    border: 1px solid #3a3a3a;
+    border-radius: 4px;
+    padding: 5px;
+    font-size: 14px;
+    color: #e0e0e0;
+}
+
+QListView::item {
+    padding: 8px;
+    border-bottom: 1px solid #3a3a3a;
+}
+
+QListView::item:selected {
+    background-color: #0d47a1;
+    color: white;
+}
+
+QListView::item:hover {
+    background-color: #2a2a2a;
+}
+
+QLineEdit {
+    padding: 8px;
+    border: 2px solid #3a3a3a;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: #252525;
+    color: #e0e0e0;
+}
+
+QLineEdit:focus {
+    border-color: #1976d2;
+}
+
+QPushButton {
+    background-color: #1976d2;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #1565c0;
+}
+
+QPushButton:pressed {
+    background-color: #0d47a1;
+}
+
+QPushButton:disabled {
+    background-color: #444;
+    color: #888;
+}

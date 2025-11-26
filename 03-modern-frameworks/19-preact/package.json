@@ -1,0 +1,22 @@
+{
+  "name": "preact-todo-app",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Complete Todo List application built with Preact and @preact/signals",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "preact": "^10.19.3",
+    "@preact/signals": "^1.2.2"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.8.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.8"
+  }
+}

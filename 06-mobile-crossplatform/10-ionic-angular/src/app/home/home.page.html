@@ -1,0 +1,21 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>
+      <ion-icon name="checkbox-outline" class="title-icon"></ion-icon>
+      Ionic Angular Todo
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Todo List</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="content-container">
+    <app-todo-input></app-todo-input>
+    <app-todo-list></app-todo-list>
+  </div>
+</ion-content>

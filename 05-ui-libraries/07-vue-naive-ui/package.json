@@ -1,0 +1,32 @@
+{
+  "name": "vue-naive-ui-todo",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Todo List application built with Vue 3, TypeScript, and Naive UI",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview",
+    "type-check": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "vue": "^3.4.21",
+    "naive-ui": "^2.38.1",
+    "@vicons/ionicons5": "^0.12.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "typescript": "^5.4.2",
+    "vite": "^5.1.6",
+    "vue-tsc": "^2.0.6"
+  },
+  "keywords": [
+    "vue3",
+    "naive-ui",
+    "typescript",
+    "todo",
+    "vite"
+  ],
+  "author": "",
+  "license": "MIT"
+}

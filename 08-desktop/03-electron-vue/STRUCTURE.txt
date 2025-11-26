@@ -1,0 +1,264 @@
+Electron Vue Todo - 项目结构
+================================================================================
+
+electron-vue-todo/
+│
+├── 📁 .vscode/                      # VS Code 配置
+│   ├── settings.json               # 编辑器设置
+│   └── extensions.json             # 推荐扩展
+│
+├── 📁 electron/                     # Electron 主进程
+│   ├── main.ts                     # 主进程入口 (450+ 行)
+│   │   ├── 窗口管理
+│   │   ├── IPC 处理器
+│   │   ├── 文件系统操作
+│   │   ├── 原生菜单
+│   │   └── 系统托盘
+│   │
+│   └── preload.ts                  # Preload 脚本 (100+ 行)
+│       ├── contextBridge API
+│       ├── 类型定义
+│       └── IPC 通信封装
+│
+├── 📁 src/                          # Vue 3 渲染进程
+│   ├── 📁 components/              # Vue 组件
+│   │   ├── TodoInput.vue          # 输入组件 (100+ 行)
+│   │   │   ├── 输入框
+│   │   │   ├── 添加按钮
+│   │   │   └── 字符计数
+│   │   │
+│   │   ├── TodoList.vue           # 列表组件 (50+ 行)
+│   │   │   ├── 列表容器
+│   │   │   └── 过渡动画
+│   │   │
+│   │   └── TodoItem.vue           # 待办项组件 (200+ 行)
+│   │       ├── 复选框
+│   │       ├── 文本显示/编辑
+│   │       ├── 操作按钮
+│   │       └── 元数据显示
+│   │
+│   ├── 📁 types/                   # TypeScript 类型
+│   │   └── index.ts               # 类型定义 (60+ 行)
+│   │       ├── Todo 接口
+│   │       ├── FilterType
+│   │       ├── AppInfo
+│   │       └── ElectronAPI
+│   │
+│   ├── App.vue                    # 根组件 (450+ 行)
+│   │   ├── 全局状态管理
+│   │   ├── IPC 通信
+│   │   ├── 事件监听
+│   │   ├── 过滤器
+│   │   ├── 统计信息
+│   │   └── 模态对话框
+│   │
+│   ├── main.ts                    # Vue 应用入口 (5 行)
+│   └── style.css                  # 全局样式 (50+ 行)
+│
+├── 📁 public/                      # 静态资源（待添加）
+│   └── icon.png                   # 应用图标
+│
+├── 📁 build/                       # 构建资源（待添加）
+│   ├── icon.icns                  # macOS 图标
+│   ├── icon.ico                   # Windows 图标
+│   └── icons/                     # Linux 图标集
+│       ├── 16x16.png
+│       ├── 32x32.png
+│       ├── 48x48.png
+│       ├── 64x64.png
+│       ├── 128x128.png
+│       ├── 256x256.png
+│       └── 512x512.png
+│
+├── 📁 dist/                        # Vue 构建输出（自动生成）
+├── 📁 dist-electron/               # Electron 构建输出（自动生成）
+├── 📁 release/                     # 打包输出（自动生成）
+│
+├── 📄 index.html                   # HTML 模板
+├── 📄 package.json                 # 项目配置
+├── 📄 vite.config.ts              # Vite 配置
+├── 📄 electron-builder.json        # Electron Builder 配置
+├── 📄 tsconfig.json               # TypeScript 配置（源代码）
+├── 📄 tsconfig.node.json          # TypeScript 配置（Node.js）
+│
+├── 📄 .gitignore                  # Git 忽略文件
+│
+├── 📘 README.md                    # 完整文档 (1200+ 行)
+├── 📗 QUICKSTART.md               # 快速开始指南
+├── 📙 INSTALL.md                  # 安装与构建指南
+├── 📕 PROJECT_SUMMARY.md          # 项目总结
+└── 📋 STRUCTURE.txt               # 项目结构（本文件）
+
+================================================================================
+统计信息
+================================================================================
+
+文件统计:
+  TypeScript 文件:    5 个
+  Vue 组件:           4 个
+  配置文件:           5 个
+  文档文件:           5 个
+  总计:              21 个文件
+
+代码行数（估算）:
+  electron/main.ts:      ~450 行
+  electron/preload.ts:   ~100 行
+  src/App.vue:           ~450 行
+  src/components/*:      ~400 行
+  src/types/index.ts:    ~60 行
+  配置文件:              ~300 行
+  文档文件:              ~2500 行
+  ────────────────────────────
+  总计:                  ~4260 行
+
+技术栈:
+  框架:    Electron 28+, Vue 3.4+
+  语言:    TypeScript 5.4+
+  构建:    Vite 5+
+  打包:    Electron Builder 24+
+
+核心特性:
+  ✅ IPC 通信 (contextBridge)
+  ✅ 文件系统操作
+  ✅ 原生菜单和托盘
+  ✅ 数据持久化
+  ✅ 跨平台打包
+  ✅ Vue 3 Composition API
+  ✅ TypeScript 类型安全
+  ✅ 安全最佳实践
+
+支持平台:
+  Windows:  ✅ NSIS, Portable, ZIP (x64, ia32)
+  macOS:    ✅ DMG, ZIP (x64, arm64)
+  Linux:    ✅ AppImage, DEB, RPM, TAR.GZ (x64, arm64)
+
+================================================================================
+快速命令
+================================================================================
+
+开发:
+  npm install          # 安装依赖
+  npm run electron:dev # 启动开发环境
+  npm run type-check   # TypeScript 类型检查
+
+构建:
+  npm run build        # 构建当前平台
+  npm run build:win    # 构建 Windows
+  npm run build:mac    # 构建 macOS
+  npm run build:linux  # 构建 Linux
+
+工具:
+  npm run preview      # 预览构建结果
+  npm outdated         # 检查过期依赖
+  npm audit            # 安全审计
+
+================================================================================
+核心文件说明
+================================================================================
+
+electron/main.ts
+  主进程入口文件，负责：
+  - 创建和管理应用窗口
+  - 定义 IPC 处理器（getTodos, addTodo, etc.）
+  - 实现文件系统操作（读写 todos.json）
+  - 创建原生应用菜单
+  - 管理系统托盘
+  - 处理应用生命周期
+
+electron/preload.ts
+  Preload 脚本，负责：
+  - 使用 contextBridge 暴露安全的 API
+  - 封装 IPC 通信方法
+  - 定义 TypeScript 类型
+  - 提供事件监听接口
+
+src/App.vue
+  Vue 根组件，负责：
+  - 管理全局状态（todos, filter）
+  - 调用 electronAPI 进行 IPC 通信
+  - 实现业务逻辑（添加、编辑、删除待办）
+  - 处理数据导入导出
+  - 显示统计信息和模态对话框
+
+src/components/TodoInput.vue
+  输入组件，负责：
+  - 提供输入框和添加按钮
+  - 处理用户输入
+  - 显示字符计数
+  - 暴露 focus() 方法
+
+src/components/TodoList.vue
+  列表组件，负责：
+  - 渲染待办列表
+  - 管理列表动画
+  - 转发事件到父组件
+
+src/components/TodoItem.vue
+  待办项组件，负责：
+  - 显示单个待办事项
+  - 实现双击编辑功能
+  - 提供完成/删除操作
+  - 显示创建时间
+
+vite.config.ts
+  Vite 配置文件，负责：
+  - 配置 Vue 插件
+  - 配置 Electron 插件
+  - 设置路径别名
+  - 配置开发服务器
+  - 优化构建输出
+
+electron-builder.json
+  打包配置文件，负责：
+  - 定义应用 ID 和名称
+  - 配置各平台打包选项
+  - 设置输出目录
+  - 配置更新服务器
+
+================================================================================
+开发工作流
+================================================================================
+
+1. 开发阶段:
+   npm install          → 安装依赖
+   npm run electron:dev → 启动开发环境
+   编辑代码              → HMR 自动更新
+   npm run type-check   → 检查类型
+
+2. 测试阶段:
+   npm run preview      → 预览构建
+   手动测试功能          → 验证功能正常
+
+3. 构建阶段:
+   npm run build:win    → 构建 Windows
+   npm run build:mac    → 构建 macOS
+   npm run build:linux  → 构建 Linux
+
+4. 发布阶段:
+   创建 GitHub Release  → 上传构建产物
+   更新 CHANGELOG       → 记录变更
+   发布到各平台商店      → 分发应用
+
+================================================================================
+学习路径
+================================================================================
+
+初级（2-4 小时）:
+  1. 理解项目结构
+  2. 运行开发环境
+  3. 修改 UI 组件
+  4. 添加简单功能
+
+中级（4-8 小时）:
+  1. 理解 IPC 通信
+  2. 实现新的 API
+  3. 添加复杂功能
+  4. 优化性能
+
+高级（8+ 小时）:
+  1. 理解安全模型
+  2. 实现自动更新
+  3. 跨平台适配
+  4. 打包和分发
+
+================================================================================

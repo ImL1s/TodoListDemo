@@ -1,0 +1,94 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AppDelegate.swift in Sources = {isa = PBXBuildFile; };
+		MainWindowController.swift in Sources = {isa = PBXBuildFile; };
+		MainViewController.swift in Sources = {isa = PBXBuildFile; };
+		TodoItem.swift in Sources = {isa = PBXBuildFile; };
+		TodoManager.swift in Sources = {isa = PBXBuildFile; };
+		TodoTableCellView.swift in Sources = {isa = PBXBuildFile; };
+		StorageService.swift in Sources = {isa = PBXBuildFile; };
+		TodoService.swift in Sources = {isa = PBXBuildFile; };
+		Assets.xcassets in Resources = {isa = PBXBuildFile; };
+		Main.storyboard in Resources = {isa = PBXBuildFile; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		TodoListMac.app = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TodoListMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AppDelegate.swift = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		Info.plist = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		TodoListMac.entitlements = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TodoListMac.entitlements; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		MainGroup = {
+			isa = PBXGroup;
+			children = (
+				TodoListMac,
+				Products,
+			);
+			sourceTree = "<group>";
+		};
+		Products = {
+			isa = PBXGroup;
+			children = (
+				TodoListMac.app,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		TodoListMac = {
+			isa = PBXGroup;
+			children = (
+				AppDelegate.swift,
+				MainWindowController.swift,
+				MainViewController.swift,
+				Models,
+				Views,
+				ViewControllers,
+				Services,
+				Extensions,
+				Resources,
+				Info.plist,
+				TodoListMac.entitlements,
+			);
+			path = TodoListMac;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXProject section */
+		Project object = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+			};
+			buildConfigurationList = BuildConfigurationList;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = MainGroup;
+			productRefGroup = Products;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				TodoListMac,
+			);
+		};
+/* End PBXProject section */
+
+	};
+	rootObject = Project object;
+}

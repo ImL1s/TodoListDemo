@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        Base application theme for Jetpack Compose.
+
+        This theme is intentionally minimal because Compose uses its own
+        theming system via MaterialTheme. The XML theme is only used for:
+        1. Launch screen before Compose initializes
+        2. System bars and navigation
+        3. Backwards compatibility
+    -->
+    <style name="Theme.TodoCompose" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+
+        <!-- Ensure edge-to-edge layout -->
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
+        <item name="android:enforceStatusBarContrast">false</item>
+    </style>
+</resources>

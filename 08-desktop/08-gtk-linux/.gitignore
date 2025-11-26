@@ -1,0 +1,68 @@
+# Build directories
+build/
+bin/
+
+# Object files
+*.o
+*.so
+*.a
+
+# Executables
+todolist-gtk
+*.exe
+*.out
+
+# Meson files
+meson-private/
+meson-logs/
+meson-info/
+compile_commands.json
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Debug files
+*.log
+vgcore.*
+core
+gmon.out
+
+# Test files
+test-results/
+*.trs
+
+# Generated files
+config.h
+*.desktop
+*.appdata.xml
+
+# Backup files
+*~
+*.bak
+*.orig
+
+# Translation files (generated)
+*.mo
+*.pot
+
+# Local data
+todos.json
+.local/
+
+# Packaging
+*.deb
+*.rpm
+*.tar.gz
+*.tar.xz
+*.zip
+dist/
+pkg/
+
+# Flatpak
+.flatpak-builder/
+repo/

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="一個功能完整的 PWA Todo List 應用，支援離線使用、安裝到主屏幕">
+    <meta name="theme-color" content="#4CAF50">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="PWA Todo">
+
+    <title>PWA Todo List - 離線待辦事項</title>
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
+
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180x180.png">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- PWA 安裝提示橫幅 -->
+    <div id="installBanner" class="install-banner hidden">
+        <div class="install-content">
+            <svg class="install-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 16V3" stroke-width="2" stroke-linecap="round"/>
+                <path d="M5 21h14" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <div class="install-text">
+                <h3>安裝 PWA Todo</h3>
+                <p>將此應用安裝到您的設備以獲得更好的體驗</p>
+            </div>
+            <div class="install-actions">
+                <button id="installButton" class="btn btn-install">安裝</button>
+                <button id="dismissInstall" class="btn btn-dismiss">稍後</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 離線狀態提示 -->
+    <div id="offlineIndicator" class="offline-indicator hidden">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <line x1="1" y1="1" x2="23" y2="23" stroke-width="2"/>
+            <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55" stroke-width="2" stroke-linecap="round"/>
+            <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39" stroke-width="2" stroke-linecap="round"/>
+            <path d="M10.71 5.05A16 16 0 0 1 22.58 9" stroke-width="2" stroke-linecap="round"/>
+            <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88" stroke-width="2" stroke-linecap="round"/>
+            <path d="M8.53 16.11a6 6 0 0 1 6.95 0" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>離線模式</span>
+    </div>
+
+    <!-- 在線狀態提示 -->
+    <div id="onlineIndicator" class="online-indicator hidden">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>已連線</span>
+    </div>
+
+    <!-- 主應用容器 -->
+    <div class="app-container">
+        <!-- 頭部 -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <img src="icons/icon-72x72.png" alt="PWA Todo Icon" class="app-logo">
+                    <div class="app-title">
+                        <h1>PWA Todo List</h1>
+                        <p class="subtitle">Progressive Web App</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button id="syncButton" class="icon-btn" title="同步數據">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="23 4 23 10 17 10" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polyline points="1 20 1 14 7 14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button id="notificationButton" class="icon-btn" title="通知設定">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button id="settingsButton" class="icon-btn" title="設定">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="12" cy="12" r="3" stroke-width="2"/>
+                            <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 統計資訊 -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon total">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M9 11l3 3L22 4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="totalCount">0</div>
+                    <div class="stat-label">總任務</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                        <polyline points="12 6 12 12 16 14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="activeCount">0</div>
+                    <div class="stat-label">進行中</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon completed">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <polyline points="22 4 12 14.01 9 11.01" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="completedCount">0</div>
+                    <div class="stat-label">已完成</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主要內容區 -->
+        <main class="main-content">
+            <!-- 新增任務區 -->
+            <div class="add-todo-section">
+                <form id="addTodoForm" class="add-todo-form">
+                    <input
+                        type="text"
+                        id="todoInput"
+                        class="todo-input"
+                        placeholder="新增待辦事項..."
+                        autocomplete="off"
+                        required
+                    >
+                    <button type="submit" class="btn btn-add">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <line x1="12" y1="5" x2="12" y2="19" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="5" y1="12" x2="19" y2="12" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <span>新增</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- 過濾器標籤 -->
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-filter="all">
+                    全部 <span class="tab-count" id="allTabCount">0</span>
+                </button>
+                <button class="filter-tab" data-filter="active">
+                    進行中 <span class="tab-count" id="activeTabCount">0</span>
+                </button>
+                <button class="filter-tab" data-filter="completed">
+                    已完成 <span class="tab-count" id="completedTabCount">0</span>
+                </button>
+            </div>
+
+            <!-- 排序和搜尋 -->
+            <div class="controls-section">
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="11" cy="11" r="8" stroke-width="2"/>
+                        <path d="m21 21-4.35-4.35" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <input
+                        type="text"
+                        id="searchInput"
+                        class="search-input"
+                        placeholder="搜尋任務..."
+                        autocomplete="off"
+                    >
+                </div>
+                <div class="sort-controls">
+                    <label for="sortSelect">排序：</label>
+                    <select id="sortSelect" class="sort-select">
+                        <option value="newest">最新優先</option>
+                        <option value="oldest">最舊優先</option>
+                        <option value="alphabetical">字母順序</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 任務列表 -->
+            <div id="todoList" class="todo-list">
+                <!-- 任務項目會動態插入這裡 -->
+            </div>
+
+            <!-- 空狀態 -->
+            <div id="emptyState" class="empty-state hidden">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="9 11 12 14 22 4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <h3>目前沒有任務</h3>
+                <p>新增您的第一個待辦事項開始使用</p>
+            </div>
+
+            <!-- 批量操作 -->
+            <div id="bulkActions" class="bulk-actions hidden">
+                <button id="clearCompleted" class="btn btn-secondary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polyline points="3 6 5 6 21 6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    清除已完成
+                </button>
+            </div>
+        </main>
+
+        <!-- 頁腳 -->
+        <footer class="app-footer">
+            <div class="footer-info">
+                <p>
+                    <strong>PWA Todo List</strong> - 完全離線可用
+                </p>
+                <p class="cache-info">
+                    緩存版本: <span id="cacheVersion">v1.0.0</span> |
+                    上次同步: <span id="lastSync">未同步</span>
+                </p>
+            </div>
+            <div class="pwa-badge">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+                <span>Progressive Web App</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 設定模態框 -->
+    <div id="settingsModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>設定</h2>
+                <button class="close-modal" data-modal="settingsModal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <line x1="18" y1="6" x2="6" y2="18" stroke-width="2" stroke-linecap="round"/>
+                        <line x1="6" y1="6" x2="18" y2="18" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h3>通知設定</h3>
+                    <div class="setting-item">
+                        <label class="switch">
+                            <input type="checkbox" id="enableNotifications">
+                            <span class="slider"></span>
+                        </label>
+                        <div class="setting-info">
+                            <strong>啟用通知</strong>
+                            <p>允許接收待辦事項提醒</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h3>數據管理</h3>
+                    <div class="setting-item">
+                        <button id="exportData" class="btn btn-secondary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <polyline points="7 10 12 15 17 10" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <line x1="12" y1="15" x2="12" y2="3" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            匯出數據
+                        </button>
+                        <p class="setting-description">將所有待辦事項匯出為 JSON 檔案</p>
+                    </div>
+                    <div class="setting-item">
+                        <button id="importData" class="btn btn-secondary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <polyline points="17 8 12 3 7 8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <line x1="12" y1="3" x2="12" y2="15" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            匯入數據
+                        </button>
+                        <input type="file" id="importFile" accept=".json" class="hidden">
+                        <p class="setting-description">從 JSON 檔案匯入待辦事項</p>
+                    </div>
+                    <div class="setting-item">
+                        <button id="clearCache" class="btn btn-warning">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="3 6 5 6 21 6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            清除緩存
+                        </button>
+                        <p class="setting-description">清除所有緩存的資源（數據不受影響）</p>
+                    </div>
+                    <div class="setting-item">
+                        <button id="clearAllData" class="btn btn-danger">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                                <line x1="15" y1="9" x2="9" y2="15" stroke-width="2" stroke-linecap="round"/>
+                                <line x1="9" y1="9" x2="15" y2="15" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            清除所有數據
+                        </button>
+                        <p class="setting-description">刪除所有待辦事項和緩存（無法復原）</p>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h3>關於</h3>
+                    <div class="about-info">
+                        <p><strong>版本:</strong> 1.0.0</p>
+                        <p><strong>技術:</strong> PWA + IndexedDB + Service Worker</p>
+                        <p><strong>狀態:</strong> <span id="pwaStatus">檢查中...</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 通知 -->
+    <div id="toast" class="toast hidden">
+        <div class="toast-content">
+            <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="22 4 12 14.01 9 11.01" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="toast-message"></span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/db.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

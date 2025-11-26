@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
+  <title>Stencil Todo List - Web Components Compiler</title>
+
+  <meta name="description" content="Todo List built with Stencil - TypeScript + JSX + Virtual DOM compiled to Web Components" />
+
+  <!--
+    Stencil Output
+
+    Stencil compiles to optimized web components with:
+    - Lazy loading by default
+    - Automatic code splitting
+    - Polyfills for older browsers
+    - ES modules for modern browsers
+  -->
+  <script type="module" src="/build/todo-app.esm.js"></script>
+  <script nomodule src="/build/todo-app.js"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+        Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .info-banner {
+      background: white;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-banner h2 {
+      color: #7c3aed;
+      margin-bottom: 0.5rem;
+      font-size: 1.25rem;
+    }
+
+    .info-banner p {
+      color: #6b7280;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .feature {
+      padding: 0.75rem;
+      background: #f9fafb;
+      border-radius: 0.5rem;
+      border-left: 3px solid #7c3aed;
+    }
+
+    .feature strong {
+      color: #7c3aed;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .feature span {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    /* Loading state */
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: white;
+      font-size: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="info-banner">
+      <h2>🚀 Stencil - Web Components Compiler</h2>
+      <p>
+        Stencil combines the best concepts from popular frameworks into a compile-time tool that generates
+        standards-based Web Components. Built by the Ionic team, it uses TypeScript, JSX, and Virtual DOM
+        but compiles to vanilla web components that work everywhere.
+      </p>
+      <div class="features">
+        <div class="feature">
+          <strong>Compiler Approach</strong>
+          <span>Build-time optimization, zero runtime</span>
+        </div>
+        <div class="feature">
+          <strong>Virtual DOM</strong>
+          <span>Efficient updates like React</span>
+        </div>
+        <div class="feature">
+          <strong>Lazy Loading</strong>
+          <span>Automatic code splitting</span>
+        </div>
+        <div class="feature">
+          <strong>Framework Agnostic</strong>
+          <span>Works with any framework</span>
+        </div>
+      </div>
+    </div>
+
+    <!--
+      Stencil Web Component Usage
+
+      Custom elements work like standard HTML tags:
+      - No framework required
+      - Lazy loaded automatically
+      - Shadow DOM for encapsulation
+      - Works with any framework or vanilla JS
+    -->
+    <todo-app></todo-app>
+  </div>
+
+  <noscript>
+    <p class="loading">JavaScript is required to run this application.</p>
+  </noscript>
+</body>
+</html>

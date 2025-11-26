@@ -1,0 +1,73 @@
+.todo-list {
+  max-height: 500px;
+  overflow-y: auto;
+  background: var(--bg-primary);
+}
+
+/* Custom scrollbar */
+.todo-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.todo-list::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+.todo-list::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.todo-list::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Empty State */
+.empty-state {
+  padding: 80px 40px;
+  text-align: center;
+  background: var(--bg-primary);
+}
+
+.empty-icon {
+  width: 80px;
+  height: 80px;
+  color: var(--text-muted);
+  margin: 0 auto 24px;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 640px) {
+  .todo-list {
+    max-height: 400px;
+  }
+
+  .empty-state {
+    padding: 60px 20px;
+  }
+
+  .empty-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .empty-state h3 {
+    font-size: 18px;
+  }
+
+  .empty-state p {
+    font-size: 14px;
+  }
+}

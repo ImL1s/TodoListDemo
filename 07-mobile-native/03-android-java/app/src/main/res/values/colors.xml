@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary colors -->
+    <color name="primary">#3B82F6</color>
+    <color name="primary_dark">#2563EB</color>
+    <color name="primary_light">#60A5FA</color>
+
+    <!-- Accent colors -->
+    <color name="accent">#10B981</color>
+    <color name="accent_dark">#059669</color>
+
+    <!-- Background colors -->
+    <color name="background">#F5F7FA</color>
+    <color name="surface">#FFFFFF</color>
+
+    <!-- Text colors -->
+    <color name="text_primary">#1F2937</color>
+    <color name="text_secondary">#6B7280</color>
+    <color name="text_hint">#9CA3AF</color>
+
+    <!-- Utility colors -->
+    <color name="error">#EF4444</color>
+    <color name="success">#10B981</color>
+    <color name="warning">#F59E0B</color>
+
+    <!-- Border colors -->
+    <color name="border">#E5E7EB</color>
+    <color name="divider">#F3F4F6</color>
+
+    <!-- Status bar and navigation bar -->
+    <color name="status_bar">#2563EB</color>
+    <color name="navigation_bar">#FFFFFF</color>
+
+    <!-- Material Design default colors (for compatibility) -->
+    <color name="purple_200">#BBDEFB</color>
+    <color name="purple_500">#3B82F6</color>
+    <color name="purple_700">#2563EB</color>
+    <color name="teal_200">#80CBC4</color>
+    <color name="teal_700">#00796B</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+</resources>

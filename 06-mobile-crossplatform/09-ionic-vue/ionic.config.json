@@ -1,0 +1,8 @@
+{
+  "name": "ionic-vue-todo-list",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue",
+  "id": "io.ionic.todolist"
+}

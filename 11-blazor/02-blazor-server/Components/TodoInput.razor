@@ -1,0 +1,35 @@
+<div class="todo-input-container">
+    <input type="text"
+           class="todo-input"
+           placeholder="What needs to be done?"
+           @bind="newTodoText"
+           @bind:event="oninput"
+           @onkeypress="HandleKeyPress" />
+    <button class="add-button" @onclick="AddTodo" disabled="@string.IsNullOrWhiteSpace(newTodoText)">
+        Add
+    </button>
+</div>
+
+@code {
+    private string newTodoText = string.Empty;
+
+    [Parameter]
+    public EventCallback<string> OnAdd { get; set; }
+
+    private async Task AddTodo()
+    {
+        if (!string.IsNullOrWhiteSpace(newTodoText))
+        {
+            await OnAdd.InvokeAsync(newTodoText);
+            newTodoText = string.Empty;
+        }
+    }
+
+    private async Task HandleKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await AddTodo();
+        }
+    }
+}

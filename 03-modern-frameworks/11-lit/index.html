@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lit Todo List - Web Components</title>
+  <meta name="description" content="A modern Todo List application built with Lit Web Components">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      color: white;
+    }
+
+    .header h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .header .subtitle {
+      font-size: 1.1rem;
+      opacity: 0.95;
+      margin-bottom: 8px;
+    }
+
+    .tech-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      color: white;
+      opacity: 0.9;
+      font-size: 0.95rem;
+    }
+
+    .footer a {
+      color: white;
+      text-decoration: underline;
+      font-weight: 500;
+    }
+
+    /* Loading state */
+    .loading {
+      text-align: center;
+      color: white;
+      font-size: 1.2rem;
+      padding: 40px;
+    }
+
+    /* Browser support warning */
+    .browser-warning {
+      background: #ff6b6b;
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    @media (max-width: 640px) {
+      .header h1 {
+        font-size: 2.5rem;
+      }
+
+      .header .subtitle {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="browser-warning" id="browserWarning">
+      您的瀏覽器可能不完全支援 Web Components。請使用最新版本的 Chrome、Firefox、Safari 或 Edge。
+    </div>
+
+    <div class="header">
+      <h1>📝 Todo List</h1>
+      <p class="subtitle">使用 Lit 建構的 Web Components 應用</p>
+      <span class="tech-badge">Lit</span>
+    </div>
+
+    <!-- Main Lit Component -->
+    <todo-app></todo-app>
+
+    <div class="footer">
+      <p>Built with ❤️ using <a href="https://lit.dev" target="_blank" rel="noopener">Lit</a> - Web Components 標準</p>
+      <p style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;">
+        可在任何框架中使用（React、Vue、Angular、Vanilla JS）
+      </p>
+    </div>
+  </div>
+
+  <script type="module">
+    // Check for Web Components support
+    if (!('customElements' in window) || !('attachShadow' in Element.prototype)) {
+      document.getElementById('browserWarning').style.display = 'block';
+      console.error('Web Components are not fully supported in this browser');
+    }
+  </script>
+
+  <!-- Import the main app component -->
+  <script type="module" src="/src/todo-app.ts"></script>
+</body>
+</html>

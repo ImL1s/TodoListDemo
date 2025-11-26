@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Filter submenu -->
+    <item
+        android:id="@+id/action_filter"
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:title="Filter"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/action_filter_all"
+                android:title="All Todos" />
+            <item
+                android:id="@+id/action_filter_active"
+                android:title="Active Only" />
+            <item
+                android:id="@+id/action_filter_completed"
+                android:title="Completed Only" />
+        </menu>
+    </item>
+
+    <!-- Clear completed -->
+    <item
+        android:id="@+id/action_clear_completed"
+        android:title="Clear Completed"
+        app:showAsAction="never" />
+
+    <!-- Delete all -->
+    <item
+        android:id="@+id/action_delete_all"
+        android:title="Delete All"
+        app:showAsAction="never" />
+
+</menu>

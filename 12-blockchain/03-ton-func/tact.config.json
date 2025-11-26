@@ -1,0 +1,9 @@
+{
+  "projects": [
+    {
+      "name": "TodoList",
+      "path": "./contracts/TodoList.tact",
+      "output": "./build"
+    }
+  ]
+}

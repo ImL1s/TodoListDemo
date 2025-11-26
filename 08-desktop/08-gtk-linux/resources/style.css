@@ -1,0 +1,90 @@
+/* style.css
+ *
+ * Copyright 2025 TodoList Demo
+ *
+ * GTK CSS styling for the Todo List application.
+ * Demonstrates GTK theming and custom styling.
+ */
+
+/* Strikethrough text for completed items */
+.strikethrough {
+    text-decoration: line-through;
+}
+
+/* Boxed list styling */
+.boxed-list {
+    border-radius: 6px;
+    background-color: @theme_base_color;
+}
+
+.boxed-list > row {
+    border-bottom: 1px solid alpha(@borders, 0.5);
+}
+
+.boxed-list > row:last-child {
+    border-bottom: none;
+}
+
+/* Todo row styling */
+.todo-row {
+    padding: 8px 12px;
+    transition: background-color 200ms ease;
+}
+
+.todo-row:hover {
+    background-color: alpha(@theme_fg_color, 0.05);
+}
+
+/* Completed todo styling */
+.todo-completed {
+    opacity: 0.6;
+}
+
+/* Entry styling */
+entry.new-todo {
+    border-radius: 6px;
+    padding: 8px;
+    font-size: 14pt;
+}
+
+/* Filter button styling */
+.filter-buttons button {
+    border-radius: 6px;
+}
+
+.filter-buttons button.toggle:checked {
+    background-color: @accent_bg_color;
+    color: @accent_fg_color;
+}
+
+/* Status label */
+.status-label {
+    font-size: 10pt;
+    opacity: 0.7;
+}
+
+/* Delete button */
+.delete-button {
+    opacity: 0.5;
+    transition: opacity 200ms ease;
+}
+
+.delete-button:hover {
+    opacity: 1.0;
+    color: @error_color;
+}
+
+/* Header bar */
+headerbar {
+    background: @headerbar_bg_color;
+}
+
+/* Empty state */
+.empty-state {
+    padding: 48px;
+    opacity: 0.5;
+}
+
+.empty-state label {
+    font-size: 18pt;
+}

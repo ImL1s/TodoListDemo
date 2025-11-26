@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.todolist.controller.TodoController"
+      spacing="15"
+      styleClass="root">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header -->
+    <VBox spacing="5" styleClass="header-section">
+        <Label text="TodoList" styleClass="title-label">
+            <font>
+                <Font name="System Bold" size="32"/>
+            </font>
+        </Label>
+        <Label text="Organize your tasks efficiently" styleClass="subtitle-label">
+            <font>
+                <Font size="14"/>
+            </font>
+        </Label>
+    </VBox>
+
+    <!-- Input Section -->
+    <HBox spacing="10" styleClass="input-section">
+        <TextField fx:id="inputField"
+                   promptText="What needs to be done?"
+                   styleClass="input-field"
+                   HBox.hgrow="ALWAYS">
+            <font>
+                <Font size="14"/>
+            </font>
+        </TextField>
+        <Button fx:id="addButton"
+                text="Add"
+                styleClass="add-button"
+                prefWidth="80">
+            <font>
+                <Font size="14"/>
+            </font>
+        </Button>
+    </HBox>
+
+    <!-- Filter Section -->
+    <HBox spacing="15" styleClass="filter-section" alignment="CENTER_LEFT">
+        <Label text="Filter:" styleClass="filter-label">
+            <font>
+                <Font size="13"/>
+            </font>
+        </Label>
+        <RadioButton fx:id="filterAll" text="All" selected="true" styleClass="filter-radio">
+            <toggleGroup>
+                <ToggleGroup fx:id="filterGroup"/>
+            </toggleGroup>
+        </RadioButton>
+        <RadioButton fx:id="filterActive" text="Active" toggleGroup="$filterGroup" styleClass="filter-radio"/>
+        <RadioButton fx:id="filterCompleted" text="Completed" toggleGroup="$filterGroup" styleClass="filter-radio"/>
+
+        <!-- Spacer -->
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button fx:id="clearCompletedButton"
+                text="Clear Completed"
+                styleClass="clear-button">
+            <font>
+                <Font size="12"/>
+            </font>
+        </Button>
+    </HBox>
+
+    <!-- Todo List -->
+    <ListView fx:id="todoListView"
+              styleClass="todo-list"
+              VBox.vgrow="ALWAYS">
+    </ListView>
+
+    <!-- Status Bar -->
+    <HBox styleClass="status-section">
+        <Label fx:id="statusLabel"
+               text="Total: 0 | Active: 0 | Completed: 0"
+               styleClass="status-label">
+            <font>
+                <Font size="12"/>
+            </font>
+        </Label>
+    </HBox>
+
+</VBox>

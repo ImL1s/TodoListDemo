@@ -1,0 +1,17 @@
+<ion-item lines="none" class="todo-input-container">
+  <ion-input
+    [(ngModel)]="newTodoText"
+    (keypress)="onKeyPress($event)"
+    placeholder="What needs to be done?"
+    clearInput="true"
+    class="todo-input"
+  ></ion-input>
+  <ion-button
+    slot="end"
+    (click)="addTodo()"
+    [disabled]="!newTodoText.trim()"
+    class="add-button"
+  >
+    <ion-icon slot="icon-only" name="add"></ion-icon>
+  </ion-button>
+</ion-item>

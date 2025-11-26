@@ -1,0 +1,265 @@
+/*
+ * TodoList JavaFX Application Stylesheet
+ * Modern, clean design with subtle animations
+ */
+
+/* ==================== Root & Background ==================== */
+
+.root {
+    -fx-background-color: #f5f7fa;
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ==================== Header Section ==================== */
+
+.header-section {
+    -fx-padding: 0 0 10 0;
+    -fx-border-color: transparent transparent #e1e4e8 transparent;
+    -fx-border-width: 0 0 2 0;
+}
+
+.title-label {
+    -fx-text-fill: #2c3e50;
+    -fx-font-weight: bold;
+}
+
+.subtitle-label {
+    -fx-text-fill: #7f8c8d;
+}
+
+/* ==================== Input Section ==================== */
+
+.input-section {
+    -fx-padding: 5 0 5 0;
+}
+
+.input-field {
+    -fx-background-color: white;
+    -fx-border-color: #d1d5db;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 10;
+    -fx-font-size: 14;
+}
+
+.input-field:focused {
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2;
+}
+
+.add-button {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: white;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+
+.add-button:hover {
+    -fx-background-color: #2563eb;
+}
+
+.add-button:pressed {
+    -fx-background-color: #1d4ed8;
+}
+
+/* ==================== Filter Section ==================== */
+
+.filter-section {
+    -fx-padding: 5 0;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e5e7eb;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 10;
+}
+
+.filter-label {
+    -fx-text-fill: #6b7280;
+    -fx-font-weight: bold;
+}
+
+.filter-radio {
+    -fx-text-fill: #374151;
+}
+
+.filter-radio:selected {
+    -fx-text-fill: #3b82f6;
+}
+
+.clear-button {
+    -fx-background-color: #ef4444;
+    -fx-text-fill: white;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 6 12;
+    -fx-cursor: hand;
+}
+
+.clear-button:hover {
+    -fx-background-color: #dc2626;
+}
+
+.clear-button:pressed {
+    -fx-background-color: #b91c1c;
+}
+
+/* ==================== Todo List ==================== */
+
+.todo-list {
+    -fx-background-color: white;
+    -fx-border-color: #e5e7eb;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.todo-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 12 15;
+    -fx-border-color: transparent transparent #f3f4f6 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.todo-list .list-cell:hover {
+    -fx-background-color: #f9fafb;
+}
+
+.todo-list .list-cell:selected {
+    -fx-background-color: #eff6ff;
+    -fx-text-fill: black;
+}
+
+.todo-list .list-cell:filled:selected:focused {
+    -fx-background-color: #dbeafe;
+}
+
+.todo-list .list-cell .label {
+    -fx-text-fill: #1f2937;
+    -fx-font-size: 14;
+}
+
+/* ==================== Delete Button in List ==================== */
+
+.delete-button {
+    -fx-background-color: #fecaca;
+    -fx-text-fill: #991b1b;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 4 10;
+    -fx-cursor: hand;
+    -fx-font-size: 12;
+}
+
+.delete-button:hover {
+    -fx-background-color: #fca5a5;
+}
+
+.delete-button:pressed {
+    -fx-background-color: #f87171;
+}
+
+/* ==================== CheckBox ==================== */
+
+.check-box {
+    -fx-cursor: hand;
+}
+
+.check-box .box {
+    -fx-background-color: white;
+    -fx-border-color: #d1d5db;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #3b82f6;
+    -fx-border-color: #3b82f6;
+}
+
+.check-box:hover .box {
+    -fx-border-color: #9ca3af;
+}
+
+.check-box .mark {
+    -fx-background-color: white;
+}
+
+/* ==================== Status Section ==================== */
+
+.status-section {
+    -fx-padding: 10 0 0 0;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e5e7eb;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 10;
+}
+
+.status-label {
+    -fx-text-fill: #6b7280;
+    -fx-font-weight: bold;
+}
+
+/* ==================== Radio Button ==================== */
+
+.radio-button {
+    -fx-cursor: hand;
+}
+
+.radio-button .radio {
+    -fx-background-color: white;
+    -fx-border-color: #d1d5db;
+}
+
+.radio-button:selected .radio {
+    -fx-background-color: white;
+    -fx-border-color: #3b82f6;
+}
+
+.radio-button:selected .dot {
+    -fx-background-color: #3b82f6;
+}
+
+/* ==================== ScrollBar ==================== */
+
+.scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical .track {
+    -fx-background-color: #f3f4f6;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.scroll-bar:vertical .thumb {
+    -fx-background-color: #d1d5db;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #9ca3af;
+}
+
+.scroll-bar:vertical .increment-button,
+.scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+/* ==================== Alert Dialogs ==================== */
+
+.alert {
+    -fx-background-color: white;
+}
+
+.alert .header-panel {
+    -fx-background-color: #f9fafb;
+}
+
+.alert .content {
+    -fx-padding: 20;
+}

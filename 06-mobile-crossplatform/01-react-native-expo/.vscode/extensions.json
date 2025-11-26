@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ms-vscode.vscode-typescript-next",
+    "dsznajder.es7-react-js-snippets",
+    "christian-kohler.npm-intellisense",
+    "expo.vscode-expo-tools",
+    "bradlc.vscode-tailwindcss",
+    "styled-components.vscode-styled-components",
+    "eamodio.gitlens"
+  ]
+}

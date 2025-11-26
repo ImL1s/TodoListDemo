@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>@APP_ID@</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <name>Todo List</name>
+  <summary>A simple and elegant todo list application</summary>
+
+  <description>
+    <p>
+      Todo List is a GTK4-based application for managing your daily tasks.
+      It features a clean, modern interface following GNOME Human Interface Guidelines.
+    </p>
+    <p>Features:</p>
+    <ul>
+      <li>Add, edit, and delete todo items</li>
+      <li>Mark items as completed</li>
+      <li>Filter items by status (All/Active/Completed)</li>
+      <li>Persistent storage with JSON</li>
+      <li>Keyboard shortcuts for quick access</li>
+      <li>Beautiful Adwaita theme integration</li>
+    </ul>
+  </description>
+
+  <screenshots>
+    <screenshot type="default">
+      <caption>Main window with todo items</caption>
+    </screenshot>
+  </screenshots>
+
+  <url type="homepage">https://github.com/example/todolist-gtk</url>
+  <url type="bugtracker">https://github.com/example/todolist-gtk/issues</url>
+
+  <developer_name>TodoList Demo</developer_name>
+  <update_contact>demo@example.com</update_contact>
+
+  <releases>
+    <release version="1.0.0" date="2025-01-01">
+      <description>
+        <p>Initial release</p>
+      </description>
+    </release>
+  </releases>
+
+  <content_rating type="oars-1.1" />
+</component>

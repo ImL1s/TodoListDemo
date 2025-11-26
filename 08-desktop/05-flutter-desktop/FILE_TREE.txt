@@ -1,0 +1,111 @@
+Flutter Desktop Todo - File Structure
+======================================
+
+08-desktop/05-flutter-desktop/
+│
+├── 📄 Configuration Files
+│   ├── pubspec.yaml                     # Dependencies and project metadata
+│   ├── analysis_options.yaml            # Dart linting rules
+│   └── .gitignore                       # Git ignore patterns
+│
+├── 📄 Documentation (6 files)
+│   ├── README.md                        # Main documentation (comprehensive)
+│   ├── QUICK_START.md                   # 5-minute getting started guide
+│   ├── DEVELOPMENT.md                   # Developer workflow guide
+│   ├── ARCHITECTURE.md                  # Technical architecture details
+│   ├── FEATURES.md                      # Feature documentation
+│   └── PROJECT_SUMMARY.md               # Project overview and statistics
+│
+├── 🔧 Scripts
+│   ├── run.sh                           # Quick run script (Linux/macOS)
+│   └── run.bat                          # Quick run script (Windows)
+│
+├── 🎨 VS Code Configuration
+│   └── .vscode/
+│       ├── launch.json                  # Debug configurations
+│       ├── settings.json                # Editor settings
+│       └── extensions.json              # Recommended extensions
+│
+└── 💻 Source Code (lib/)
+    │
+    ├── 📱 main.dart                     # App entry point, initialization
+    │                                     # - Window configuration
+    │                                     # - Database initialization
+    │                                     # - Provider setup
+    │
+    ├── 📦 models/
+    │   └── todo.dart                    # Todo data model
+    │                                     # - Todo class
+    │                                     # - Serialization (toMap/fromMap)
+    │                                     # - Enums (TodoFilter, TodoSort)
+    │
+    ├── 🔄 providers/
+    │   └── todo_provider.dart           # State management
+    │                                     # - Todo CRUD operations
+    │                                     # - Filtering & sorting logic
+    │                                     # - State notifications
+    │
+    ├── 📺 screens/
+    │   └── home_screen.dart             # Main application screen
+    │                                     # - Responsive layout
+    │                                     # - Keyboard shortcut handling
+    │                                     # - Three-panel layout
+    │
+    ├── 💾 services/
+    │   └── storage_service.dart         # Database operations
+    │                                     # - SQLite integration
+    │                                     # - CRUD methods
+    │                                     # - Query optimization
+    │
+    ├── 🛠️ utils/
+    │   └── app_shortcuts.dart           # Keyboard shortcuts
+    │                                     # - Shortcut definitions
+    │                                     # - Intent/Action system
+    │                                     # - Platform-specific keys
+    │
+    └── 🎨 widgets/
+        ├── add_todo_dialog.dart         # Create new todo
+        ├── edit_todo_dialog.dart        # Edit existing todo
+        ├── filter_sidebar.dart          # Left panel: filters & categories
+        ├── search_bar.dart              # Search functionality
+        ├── statistics_panel.dart        # Right panel: stats & insights
+        ├── todo_item.dart               # Individual todo card
+        └── todo_list.dart               # Todo list container
+
+File Count by Type:
+-------------------
+📄 Dart files:           13
+📄 Documentation:         6
+📄 Configuration:         3
+📄 Scripts:              2
+📄 VS Code config:       3
+📄 Total:               27
+
+Lines of Code (Approximate):
+----------------------------
+Main app:                320 lines
+Models:                  150 lines
+Providers:               250 lines
+Screens:                 380 lines
+Services:                280 lines
+Utils:                   180 lines
+Widgets:               1,450 lines (7 files)
+----------------------------
+Total:                ~3,010 lines (excluding docs & config)
+
+Key Dependencies:
+-----------------
+- flutter (SDK)
+- provider (State management)
+- sqflite_common_ffi (Database)
+- path_provider (File paths)
+- window_manager (Window control)
+- hotkey_manager (Keyboard shortcuts)
+- uuid (Unique IDs)
+- intl (Date formatting)
+
+Platforms Supported:
+-------------------
+✅ Windows (10+)
+✅ macOS (10.14+)
+✅ Linux (Ubuntu, Fedora, etc.)

@@ -1,0 +1,106 @@
+.todo-input-form {
+  padding: 24px;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 14px;
+  padding: 4px 4px 4px 16px;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.input-wrapper:focus-within {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+  background: var(--bg-primary);
+}
+
+.input-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.input-wrapper:focus-within .input-icon {
+  color: var(--primary-color);
+}
+
+.todo-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  color: var(--text-primary);
+  outline: none;
+  padding: 12px 0;
+  font-family: inherit;
+}
+
+.todo-input::placeholder {
+  color: var(--text-muted);
+}
+
+.add-button {
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: var(--primary-color);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+}
+
+.add-button:hover:not(:disabled) {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+}
+
+.add-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.add-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.add-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+@media (max-width: 640px) {
+  .todo-input-form {
+    padding: 16px;
+  }
+
+  .input-wrapper {
+    padding: 4px 4px 4px 12px;
+  }
+
+  .todo-input {
+    font-size: 15px;
+  }
+
+  .add-button {
+    width: 40px;
+    height: 40px;
+  }
+}

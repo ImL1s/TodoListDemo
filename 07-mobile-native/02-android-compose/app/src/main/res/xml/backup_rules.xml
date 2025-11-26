@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   Sample backup rules file; uncomment and customize as necessary.
+   See https://developer.android.com/guide/topics/data/autobackup
+   for details.
+   Note: This file is ignored unless you specify
+   android:fullBackupContent="@xml/backup_rules" in your manifest.
+-->
+<full-backup-content>
+    <!--
+    <include domain="sharedpref" path="."/>
+    <exclude domain="sharedpref" path="device.xml"/>
+    -->
+
+    <!-- Include DataStore preferences -->
+    <include domain="file" path="datastore/" />
+</full-backup-content>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:TodoMaui.ViewModels"
+             xmlns:models="clr-namespace:TodoMaui.Models"
+             x:Class="TodoMaui.Views.TodoListPage"
+             x:DataType="viewmodels:TodoListViewModel"
+             Title="Todo List">
+
+    <Grid RowDefinitions="Auto,Auto,*" Padding="20">
+
+        <!-- Header -->
+        <Label Grid.Row="0"
+               Text="📝 Todo List"
+               FontSize="32"
+               FontAttributes="Bold"
+               HorizontalOptions="Center"
+               Margin="0,0,0,20"/>
+
+        <!-- Input Section -->
+        <Grid Grid.Row="1"
+              ColumnDefinitions="*,Auto"
+              ColumnSpacing="10"
+              Margin="0,0,0,20">
+
+            <Entry Grid.Column="0"
+                   Text="{Binding NewTodoText}"
+                   Placeholder="Enter a new task..."
+                   FontSize="16"
+                   ReturnCommand="{Binding AddTodoCommand}"
+                   VerticalOptions="Center"/>
+
+            <Button Grid.Column="1"
+                    Text="Add"
+                    Command="{Binding AddTodoCommand}"
+                    BackgroundColor="#007AFF"
+                    TextColor="White"
+                    FontSize="16"
+                    Padding="20,10"
+                    CornerRadius="8"/>
+        </Grid>
+
+        <!-- Todo List -->
+        <CollectionView Grid.Row="2"
+                        ItemsSource="{Binding Todos}">
+
+            <CollectionView.EmptyView>
+                <ContentView>
+                    <StackLayout VerticalOptions="Center" Padding="40">
+                        <Label Text="No tasks yet!"
+                               FontSize="20"
+                               TextColor="Gray"
+                               HorizontalOptions="Center"/>
+                        <Label Text="Add a task to get started"
+                               FontSize="14"
+                               TextColor="LightGray"
+                               HorizontalOptions="Center"
+                               Margin="0,10,0,0"/>
+                    </StackLayout>
+                </ContentView>
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Todo">
+                    <SwipeView>
+                        <!-- Swipe to Delete -->
+                        <SwipeView.RightItems>
+                            <SwipeItems>
+                                <SwipeItem Text="Delete"
+                                          BackgroundColor="Red"
+                                          Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:TodoListViewModel}}, Path=DeleteTodoCommand}"
+                                          CommandParameter="{Binding .}"/>
+                            </SwipeItems>
+                        </SwipeView.RightItems>
+
+                        <!-- Todo Item -->
+                        <Border StrokeThickness="1"
+                                Stroke="LightGray"
+                                BackgroundColor="White"
+                                Margin="0,0,0,10"
+                                Padding="15">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8"/>
+                            </Border.StrokeShape>
+
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="15">
+                                <CheckBox Grid.Column="0"
+                                         IsChecked="{Binding IsCompleted}"
+                                         Color="#007AFF"
+                                         VerticalOptions="Center"
+                                         CheckedChanged="OnCheckBoxCheckedChanged"/>
+
+                                <StackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="{Binding Text}"
+                                           FontSize="16"
+                                           TextDecorations="{Binding IsCompleted, Converter={StaticResource CompletedToTextDecorationConverter}}"
+                                           TextColor="{Binding IsCompleted, Converter={StaticResource CompletedToColorConverter}}"/>
+
+                                    <Label Text="{Binding CreatedAt, StringFormat='{0:MMM dd, yyyy HH:mm}'}"
+                                           FontSize="12"
+                                           TextColor="Gray"
+                                           Margin="0,5,0,0"/>
+                                </StackLayout>
+                            </Grid>
+                        </Border>
+                    </SwipeView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

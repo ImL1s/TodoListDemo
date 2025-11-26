@@ -1,0 +1,17 @@
+{
+  "name": "todo-list-typescript",
+  "version": "1.0.0",
+  "description": "Todo List implemented with TypeScript",
+  "main": "dist/app.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "serve": "npx http-server -p 8080"
+  },
+  "keywords": ["typescript", "todo", "vanilla"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

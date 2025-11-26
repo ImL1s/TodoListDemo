@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Todo List - TypeScript</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 任務輸入框 -->
+    <div class="header">
+        <h2>任務清單 <span class="tech-badge">TypeScript</span></h2>
+        <input type="text" id="myInput" placeholder="請輸入任務">
+        <span id="addButton" class="addBtn">添加</span>
+    </div>
+
+    <!-- 任務列表 -->
+    <ul id="myUL">
+        <!-- Todos will be rendered here -->
+    </ul>
+
+    <!-- 加載編譯後的 JavaScript -->
+    <script type="module" src="dist/app.js"></script>
+</body>
+</html>

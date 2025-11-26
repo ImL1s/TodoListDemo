@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List - Backbone.js</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Todo List</h1>
+            <p class="subtitle">使用 Backbone.js 建構 - 經典 MVC 框架</p>
+        </header>
+
+        <div id="todoapp">
+            <!-- 輸入區域 -->
+            <div class="input-section">
+                <input
+                    id="new-todo"
+                    type="text"
+                    placeholder="輸入待辦事項..."
+                    autocomplete="off"
+                >
+                <button id="add-todo" class="btn btn-primary">新增</button>
+            </div>
+
+            <!-- 過濾器 -->
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">全部</button>
+                <button class="filter-btn" data-filter="active">進行中</button>
+                <button class="filter-btn" data-filter="completed">已完成</button>
+            </div>
+
+            <!-- Todo 列表 -->
+            <ul id="todo-list"></ul>
+
+            <!-- 統計資訊 -->
+            <div id="todo-stats" class="stats">
+                <span class="todo-count">
+                    <strong>0</strong> 項待辦事項
+                </span>
+                <button id="clear-completed" class="btn btn-secondary">
+                    清除已完成
+                </button>
+            </div>
+        </div>
+
+        <footer class="app-footer">
+            <p>使用 Backbone.js 1.4+ 建構</p>
+            <p>經典 MVC 框架範例</p>
+        </footer>
+    </div>
+
+    <!-- Underscore.js 模板：單個 Todo 項目 -->
+    <script type="text/template" id="item-template">
+        <div class="view">
+            <input class="toggle" type="checkbox" <%= completed ? 'checked' : '' %>>
+            <label class="todo-text"><%= title %></label>
+            <button class="destroy">×</button>
+        </div>
+        <input class="edit" type="text" value="<%= title %>">
+    </script>
+
+    <!-- CDN 引入 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.13.6/underscore-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.4.1/backbone-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone-localstorage.js/1.1.16/backbone.localStorage-min.js"></script>
+
+    <!-- 應用程式腳本 -->
+    <script src="js/models/Todo.js"></script>
+    <script src="js/collections/Todos.js"></script>
+    <script src="js/views/TodoView.js"></script>
+    <script src="js/views/AppView.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

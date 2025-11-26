@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aptos TodoList DApp</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📝 Aptos TodoList</h1>
+            <p class="subtitle">Decentralized Todo Management on Aptos Blockchain</p>
+        </header>
+
+        <div class="wallet-section">
+            <button id="connectBtn" class="btn btn-primary">Connect Petra Wallet</button>
+            <div id="walletInfo" class="wallet-info" style="display: none;">
+                <p>Connected: <span id="walletAddress"></span></p>
+                <button id="disconnectBtn" class="btn btn-secondary">Disconnect</button>
+            </div>
+        </div>
+
+        <div id="contractSection" style="display: none;">
+            <div class="contract-info">
+                <h2>Contract Information</h2>
+                <p>Module Address: <span id="moduleAddress"></span></p>
+                <p>Network: <span id="network">Testnet</span></p>
+                <p>Total Todos Created: <span id="todoCount">0</span></p>
+                <button id="initBtn" class="btn btn-secondary" style="display: none;">Initialize TodoList</button>
+            </div>
+
+            <div class="add-todo">
+                <h2>Add New Todo</h2>
+                <form id="addTodoForm">
+                    <input
+                        type="text"
+                        id="todoInput"
+                        placeholder="Enter your todo..."
+                        maxlength="500"
+                        required
+                    >
+                    <button type="submit" class="btn btn-primary">Add Todo</button>
+                </form>
+            </div>
+
+            <div class="todos-section">
+                <h2>Your Todos</h2>
+                <button id="refreshBtn" class="btn btn-secondary">Refresh</button>
+                <div id="todosList" class="todos-list">
+                    <p class="empty-state">No todos yet. Create one to get started!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="loading" id="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p id="loadingText">Processing transaction...</p>
+        </div>
+
+        <footer>
+            <p>Built with Aptos Blockchain & Move</p>
+            <p>
+                <a href="https://aptos.dev" target="_blank">Aptos Docs</a> |
+                <a href="https://move-language.github.io/move/" target="_blank">Move Docs</a> |
+                <a href="https://petra.app" target="_blank">Petra Wallet</a>
+            </p>
+        </footer>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
