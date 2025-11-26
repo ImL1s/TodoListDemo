@@ -188,7 +188,7 @@ $(document).ready(function() {
 
         // 創建新任務
         const newTodo = {
-            id: Date.now(),
+            id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
             text: text,
             completed: false,
             createdAt: new Date().toISOString(),
@@ -233,11 +233,13 @@ $(document).ready(function() {
     function deleteTodo(id) {
         const $item = $(`.todo-item[data-id="${id}"]`);
 
+        // 先更新數據，避免 race condition
+        todos = todos.filter(t => t.id !== id);
+        saveTodos();
+        
         // jQuery 動畫：淡出並向上滑動
         $item.fadeOut(300, function() {
-            // 動畫完成後刪除數據
-            todos = todos.filter(t => t.id !== id);
-            saveTodos();
+            // 動畫完成後重新渲染
             renderTodos();
             updateCounts();
             console.log('刪除任務:', id);
