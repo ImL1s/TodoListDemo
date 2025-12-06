@@ -28,7 +28,7 @@ import TodoItem from './TodoItem.vue'
 import type { TodoListProps, TodoListEmits } from '../types'
 
 // 定義 props - 使用泛型和類型定義
-const props = defineProps<TodoListProps>()
+defineProps<TodoListProps>()
 
 // 定義 emits - 使用類型定義
 const emit = defineEmits<TodoListEmits>()

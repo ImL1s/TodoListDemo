@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import TodoInput from './components/TodoInput';
 import TodoList from './components/TodoList';
 import type { Todo, FilterType, TodoStats, UseLocalStorageReturn } from './types';

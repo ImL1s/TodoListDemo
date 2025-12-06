@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Layout, Typography, Button, Space, ConfigProvider, theme } from 'antd';
 import {
   CheckSquareOutlined,

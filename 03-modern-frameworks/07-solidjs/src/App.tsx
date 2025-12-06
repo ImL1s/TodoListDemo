@@ -1,5 +1,4 @@
-import { createSignal, createMemo, createEffect, For } from 'solid-js';
-import { createStore } from 'solid-js/store';
+import { createSignal, createMemo, createEffect } from 'solid-js';
 import TodoInput from './components/TodoInput';
 import TodoList from './components/TodoList';
 import type { Todo, FilterType, TodoStats } from './types';

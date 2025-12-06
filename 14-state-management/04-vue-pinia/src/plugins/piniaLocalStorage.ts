@@ -40,7 +40,7 @@ interface LocalStorageOptions {
  */
 const defaultSerializer = {
   serialize: (value: any): string => {
-    return JSON.stringify(value, (key, val) => {
+    return JSON.stringify(value, (_key, val) => {
       // 特殊處理 Date 對象
       if (val instanceof Date) {
         return { __type: 'Date', value: val.toISOString() }
@@ -50,7 +50,7 @@ const defaultSerializer = {
   },
 
   deserialize: (value: string): any => {
-    return JSON.parse(value, (key, val) => {
+    return JSON.parse(value, (_key, val) => {
       // 還原 Date 對象
       if (val && val.__type === 'Date') {
         return new Date(val.value)

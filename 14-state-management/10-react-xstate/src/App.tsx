@@ -1,4 +1,3 @@
-import React from 'react';
 import { useMachine } from '@xstate/react';
 import { todoMachine } from './machines/todoMachine';
 import { AddTodo } from './components/AddTodo';

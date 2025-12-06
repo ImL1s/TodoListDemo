@@ -2,61 +2,84 @@
 * {
     box-sizing: border-box;
 }
-/* 消除List裡的margin和padding */
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+#app {
+    width: 100%;
+    max-width: 620px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+}
+
 ul {
     margin: 0;
     padding: 0;
+    list-style: none;
 }
 
 /* 設置li樣式 */
 ul li {
     cursor: pointer;
     position: relative;
-    /* 代表每個li內部距離(上 右 下 左) */
-    padding: 12px 8px 12px 40px;
-    /* margin: 10px 0px 0px 0px; */
-    background: #eee;
+    padding: 14px 14px 14px 46px;
+    background: #fff;
     font-size: 18px;
-    /* 當有類似css hover動畫效果時的漸變時間 */
     transition: 0.2s;
-    -moz-transition:width 0.2s; /* Firefox 4 */
-    -webkit-transition:width 0.2s; /* Safari and Chrome */
-    -o-transition:width 0.2s; /* Opera */
-    user-select: none; /*使用者不能選中文字*/
+    user-select: none;
+    border-bottom: 1px solid #f0f0f0;
 }
 
-/* 奇數li顏色不同，為了美觀 */
-/* nth-child為 第n個th(3th,4th...)的子元素 */
-/* odd為基數*/
 ul li:nth-child(odd) {
     background: #f9f9f9;
 }
 
-/* hover時背景色改變 */
 ul li:hover {
-    background: #ddd;
+    background: #f1f1f1;
 }
 
-/* 當被選中，文字中加橫線 */
 ul li.checked {
     background: #888;
     color: #fff;
-    /* 文字裝飾 line-through為刪除線 */
     text-decoration: line-through;
 }
 
-/* 為被選中的li增加 “對勾” 圖標 */
 ul li.checked::before {
     content: '';
     position: absolute;
     border-color: #fff;
     border-style: solid;
     border-width: 0 2px 2px 0;
-    top: 10px;
-    left: 16px;
+    top: 14px;
+    left: 18px;
     transform: rotate(45deg);
     height: 15px;
     width: 7px;
+}
+
+.todo-text {
+    display: inline-block;
+    max-width: calc(100% - 60px);
+    vertical-align: middle;
+    word-break: break-word;
+}
+
+.empty-state {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    background: #fff;
 }
 
 /* 關閉按鈕樣式 */
@@ -64,7 +87,10 @@ ul li.checked::before {
     position: absolute;
     right: 0;
     top: 0;
-    padding: 12px 16px 12px 16px
+    padding: 12px 16px;
+    font-size: 20px;
+    color: #999;
+    transition: 0.3s;
 }
 
 .close:hover {
@@ -75,42 +101,137 @@ ul li.checked::before {
 /* 頭部樣式 */
 .header {
     background-color: #f44336;
-    padding: 30px 40px;
+    padding: 26px 30px;
     color: white;
     text-align: center;
 }
 
-/* 清除浮動 */
-.header:after {
-    content: "";
-    display: table;
-    clear: both;
+.header h2 {
+    margin: 0 0 14px;
 }
 
-/* 輸入框樣式 */
-input {
+.header input {
     border: none;
-    width: 75%;
-    padding: 10px;
-    float: left;
+    width: 70%;
+    padding: 12px;
     font-size: 16px;
     outline: 0;
+    border-radius: 6px 0 0 6px;
 }
 
 /* “添加”按鈕樣式 */
 .addBtn {
-    padding: 9px 10px 8px;
-    width: 25%;
+    padding: 12px 14px 11px;
+    width: 30%;
     background: #d9d9d9;
     color: #555;
-    float: left;
     text-align: center;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
     transition: 0.3s;
+    border-radius: 0 6px 6px 0;
+    display: inline-block;
 }
 
 .addBtn:hover {
     background-color: #bbb;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: #fff;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.filters {
+    display: flex;
+    gap: 8px;
+}
+
+.filter-btn {
+    border: 1px solid #ddd;
+    background: #f7f7f7;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.filter-btn.active {
+    background: #f44336;
+    color: #fff;
+    border-color: #f44336;
+    box-shadow: 0 2px 6px rgba(244, 67, 54, 0.35);
+}
+
+.filter-btn:hover:not(.active) {
+    background: #ededed;
+}
+
+.stats {
+    display: flex;
+    gap: 10px;
+    font-size: 14px;
+    color: #666;
+    margin-left: auto;
+    flex-wrap: wrap;
+}
+
+.stats span {
+    white-space: nowrap;
+}
+
+.clear-btn {
+    border: none;
+    background: #f44336;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.clear-btn:disabled {
+    background: #e0e0e0;
+    color: #aaa;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.clear-btn:not(:disabled):hover {
+    box-shadow: 0 2px 6px rgba(244, 67, 54, 0.35);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 620px) {
+    body {
+        padding: 12px;
+    }
+
+    .header {
+        padding: 22px 20px;
+    }
+
+    .header input {
+        width: 65%;
+    }
+
+    .addBtn {
+        width: 35%;
+    }
+
+    .controls {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .stats {
+        margin-left: 0;
+    }
 }

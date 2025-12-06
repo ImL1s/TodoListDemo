@@ -29,7 +29,7 @@ import {
   logoIonic,
   logoReact,
   wifiOutline,
-  wifiOffOutline,
+  // wifiOffOutline, // deprecated icon in this build
   settings,
   filter,
   add,
@@ -53,7 +53,7 @@ const Home: React.FC = () => {
     loadTodos,
   } = useTodos();
 
-  const { showSuccess, showError, showInfo, showWarning } = useToast();
+  const { showSuccess, showInfo, showWarning } = useToast();
   const { isOnline } = useNetwork();
   const { platformName } = usePlatform();
 
@@ -184,7 +184,7 @@ const Home: React.FC = () => {
             <IonButton>
               <IonIcon
                 slot="icon-only"
-                icon={isOnline ? wifiOutline : wifiOffOutline}
+                icon={wifiOutline}
                 color={isOnline ? 'success' : 'danger'}
               />
             </IonButton>
@@ -245,7 +245,7 @@ const Home: React.FC = () => {
             {!isOnline && (
               <IonText color="warning">
                 <p className="offline-notice">
-                  <IonIcon icon={wifiOffOutline} /> You are currently offline
+                  <IonIcon icon={wifiOutline} /> You are currently offline
                 </p>
               </IonText>
             )}

@@ -12,7 +12,7 @@ interface TodoItemProps {
  * Displays a single todo with edit, delete, and toggle complete functionality
  */
 export function TodoItem({ todo }: TodoItemProps) {
-  const [todos, setTodos] = useRecoilState(todosState);
+  const setTodos = useSetRecoilState(todosState);
   const [editingTodoId, setEditingTodoId] = useRecoilState(editingTodoIdState);
   const [editText, setEditText] = useState(todo.text);
 

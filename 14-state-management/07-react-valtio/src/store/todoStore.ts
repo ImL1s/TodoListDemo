@@ -9,9 +9,12 @@
  * - No boilerplate (no actions/reducers needed)
  */
 
-import { proxy, subscribe, derive } from 'valtio';
+import { proxy, subscribe } from 'valtio';
 import { devtools } from 'valtio/utils';
 import type { Todo, TodoState, FilterType, TodoStats } from '../types';
+
+// Node env guard for browser builds
+declare const process: { env?: Record<string, string | undefined> } | undefined;
 
 // LocalStorage key
 const STORAGE_KEY = 'valtio-todos';
@@ -35,24 +38,21 @@ export const todoState = proxy<TodoState>({
   filter: 'all',
 });
 
-// Derive computed values using derive()
-// derive() creates a separate proxy with computed properties
-// These values are automatically updated when dependencies change
-export const todoStats = derive<TodoStats>(
-  {
-    // Computed: total number of todos
-    total: (get) => get(todoState).todos.length,
+// Computed stats stored in a proxy so components can subscribe with useSnapshot
+export const todoStats = proxy<TodoStats>({
+  total: todoState.todos.length,
+  active: todoState.todos.filter(t => !t.completed).length,
+  completed: todoState.todos.filter(t => t.completed).length,
+});
 
-    // Computed: number of active todos
-    active: (get) => get(todoState).todos.filter(t => !t.completed).length,
-
-    // Computed: number of completed todos
-    completed: (get) => get(todoState).todos.filter(t => t.completed).length,
-  },
-  {
-    proxy: todoState,
-  }
-);
+const updateStats = () => {
+  const total = todoState.todos.length;
+  const active = todoState.todos.filter(t => !t.completed).length;
+  const completed = total - active;
+  todoStats.total = total;
+  todoStats.active = active;
+  todoStats.completed = completed;
+};
 
 /**
  * Actions for managing todos
@@ -172,6 +172,7 @@ export const getFilteredTodos = (): Todo[] => {
 subscribe(todoState, () => {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(todoState.todos));
+    updateStats();
   } catch (error) {
     console.error('Failed to save todos to localStorage:', error);
   }
@@ -181,6 +182,9 @@ subscribe(todoState, () => {
  * Enable Redux DevTools integration (optional)
  * This allows debugging Valtio state in Redux DevTools browser extension
  */
-if (process.env.NODE_ENV === 'development') {
+if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
   devtools(todoState, { name: 'Todo Store', enabled: true });
 }
+
+// Initialize stats on load
+updateStats();

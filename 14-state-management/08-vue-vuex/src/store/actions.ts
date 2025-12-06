@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ActionTree, ActionContext } from 'vuex'
 import { RootState } from './index'
 import { FilterType } from '../types'

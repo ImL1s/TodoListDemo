@@ -255,7 +255,3 @@ export const todoMachine = setup({
   },
 });
 
-// 導出類型
-export type TodoMachine = typeof todoMachine;
-export type TodoContext = typeof todoMachine.context;
-export type TodoEvent = TodoEvent;

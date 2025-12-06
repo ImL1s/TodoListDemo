@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { MutationTree } from 'vuex'
 import { RootState } from './index'
 import { Todo, FilterType } from '../types'

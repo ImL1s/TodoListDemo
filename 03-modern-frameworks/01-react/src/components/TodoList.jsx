@@ -1,7 +1,7 @@
 import TodoItem from './TodoItem'
 import './TodoList.css'
 
-function TodoList({ todos, onToggle, onDelete }) {
+function TodoList({ todos, onToggle, onDelete, onUpdate }) {
   if (todos.length === 0) {
     return (
       <ul className="todo-list">
@@ -18,6 +18,7 @@ function TodoList({ todos, onToggle, onDelete }) {
           todo={todo}
           onToggle={onToggle}
           onDelete={onDelete}
+          onUpdate={onUpdate}
         />
       ))}
     </ul>

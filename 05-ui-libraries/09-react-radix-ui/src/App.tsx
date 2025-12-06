@@ -1,4 +1,3 @@
-import React from 'react';
 import { TodoProvider } from './context/TodoContext';
 import { TodoInput } from './components/TodoInput';
 import { TodoFilters } from './components/TodoFilters';

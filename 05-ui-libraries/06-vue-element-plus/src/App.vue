@@ -4,7 +4,7 @@ import { ElMessage } from 'element-plus'
 import { Sunny, Moon } from '@element-plus/icons-vue'
 import TodoInput from './components/TodoInput.vue'
 import TodoList from './components/TodoList.vue'
-import type { Todo, FilterType, TodoStats, ThemeType } from './types'
+import type { Todo, FilterType, TodoStats } from './types'
 
 // ============================================================================
 // 狀態管理

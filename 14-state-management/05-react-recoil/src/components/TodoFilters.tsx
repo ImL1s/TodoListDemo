@@ -8,7 +8,7 @@ import {
   todosState,
 } from '../state/atoms';
 import { todoStatsState, urgentTodosState } from '../state/selectors';
-import { FilterType, SortType, SortDirection } from '../types';
+import { FilterType, SortType } from '../types';
 
 /**
  * TodoFilters Component

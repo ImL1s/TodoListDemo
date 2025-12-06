@@ -213,8 +213,8 @@ export class TodoListComponent implements OnInit {
   }
 
   getEmptyMessage(): string {
-    let filter: FilterType = 'all';
-    this.filter$.subscribe(f => filter = f).unsubscribe();
+    let filter: string = 'all';
+    this.filter$.subscribe((f: FilterType) => filter = f).unsubscribe();
 
     switch (filter) {
       case 'active':

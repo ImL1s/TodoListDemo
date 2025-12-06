@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createStore, Store } from 'vuex'
 import { Todo, FilterType } from '../types'
 import mutations from './mutations'

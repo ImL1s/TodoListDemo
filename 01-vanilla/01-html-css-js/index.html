@@ -16,22 +16,27 @@
 </head>
 
 <body>
-    <!-- 任務輸入框 -->
-    <div id="myDIV" class="header">
-        <h2>任務清單</h2>
-        <input type="text" id="myInput" placeholder="請輸入任務">
-        <span id="addButton" class="addBtn">添加</span>
-    </div>
+    <div id="app">
+        <!-- 任務輸入框 -->
+        <div id="myDIV" class="header">
+            <h2>任務清單</h2>
+            <input type="text" id="myInput" placeholder="請輸入任務">
+            <span id="addButton" class="addBtn">添加</span>
+        </div>
 
-    <!-- 任務列表 -->
-    <ul id="myUL">
-        <li>七點半起床</li>
-        <li class="checked">洗漱</li>
-        <li>去上班</li>
-        <li>完成報表</li>
-        <li>和小明吃午飯</li>
-        <li>去超市</li>
-    </ul>
+        <div class="controls">
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">全部</button>
+                <button class="filter-btn" data-filter="active">進行中</button>
+                <button class="filter-btn" data-filter="completed">已完成</button>
+            </div>
+            <div class="stats" id="stats">全部 0 · 進行中 0 · 已完成 0</div>
+            <button id="clearCompleted" class="clear-btn" disabled>清除已完成</button>
+        </div>
+
+        <!-- 任務列表 -->
+        <ul id="myUL"></ul>
+    </div>
 </body>
 
 </html>

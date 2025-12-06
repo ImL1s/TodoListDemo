@@ -55,6 +55,32 @@
   text-align: left;
 }
 
+.todo-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.todo-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.edit-btn {
+  border: 1px solid #ddd;
+  background: #f7f7f7;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.edit-btn:hover {
+  background: #ededed;
+}
+
 .close {
   color: #999;
   font-size: 24px;
@@ -62,6 +88,21 @@
   cursor: pointer;
   transition: 0.3s;
   padding: 0 10px;
+}
+
+.edit-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  font-family: inherit;
+  outline: none;
+}
+
+.edit-input:focus {
+  border-color: #f44336;
+  box-shadow: 0 0 0 2px rgba(244, 67, 54, 0.1);
 }
 
 .close:hover {
@@ -75,6 +116,19 @@
 
 .todo-item.checked .close:hover {
   color: #ff6b6b;
+}
+
+.todo-item.editing {
+  background: #fef8f6;
+}
+
+.todo-item.editing.todo-item.checked {
+  background: #fef8f6;
+  color: #333;
+}
+
+.todo-item.editing.todo-item.checked .todo-text {
+  text-decoration: none;
 }
 
 @media (max-width: 600px) {

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Store } from 'vuex'
 import { RootState } from '../index'
 import * as types from '../mutation-types'

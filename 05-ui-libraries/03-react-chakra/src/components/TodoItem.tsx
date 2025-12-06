@@ -74,7 +74,6 @@ function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
         transform: 'translateX(4px)',
         boxShadow: 'md',
       }}
-      transition="all 0.2s"
     >
       <HStack spacing={3} align="center">
         {/* Checkbox */}

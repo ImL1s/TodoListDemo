@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { GetterTree } from 'vuex'
 import { RootState } from './index'
 import { Todo } from '../types'

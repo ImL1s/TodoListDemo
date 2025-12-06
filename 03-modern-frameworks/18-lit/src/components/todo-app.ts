@@ -1,14 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import {
-  Todo,
-  FilterType,
-  TodoEvents,
-  TodoEventDetail,
-  STORAGE_KEY,
-  TodoStats,
-} from '../types';
+import { Todo, FilterType, TodoEventDetail, STORAGE_KEY, TodoStats } from '../types';
 import {
   sharedStyles,
   buttonStyles,

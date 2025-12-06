@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'preact/hooks';
+import { useState, useMemo, useCallback } from 'preact/hooks';
 import TodoInput from './components/TodoInput';
 import TodoList from './components/TodoList';
 import type { Todo, FilterType, TodoStats, UseLocalStorageReturn } from './types';

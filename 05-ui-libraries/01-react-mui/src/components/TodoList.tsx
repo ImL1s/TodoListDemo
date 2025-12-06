@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  List,
-  Paper,
-  Typography,
-  Box,
-} from '@mui/material';
+import { List, Paper, Typography } from '@mui/material';
 import { TodoItem } from './TodoItem';
 import { Todo } from '../types';
 
